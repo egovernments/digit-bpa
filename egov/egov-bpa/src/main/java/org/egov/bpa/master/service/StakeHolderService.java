@@ -39,6 +39,8 @@
  */
 package org.egov.bpa.master.service;
 
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -70,6 +72,7 @@ import org.egov.bpa.transaction.service.collection.StakeHolderBpaBillService;
 import org.egov.bpa.transaction.service.messaging.BPASmsAndEmailService;
 import org.egov.bpa.utils.BpaConstants;
 import org.egov.bpa.utils.BpaUtils;
+import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
@@ -80,6 +83,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -102,6 +106,7 @@ import org.hibernate.criterion.Restrictions;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -119,6 +124,7 @@ public class StakeHolderService {
     public static final String BLOCK = "Block";
     public static final String UNBLOCK = "Unblock";
     public static final String STAKE_HOLDER_DOT_CREATED_DATE = "stakeHolder.createdDate";
+
     @Autowired
     private SecurityUtils securityUtils;
     @PersistenceContext
@@ -164,6 +170,9 @@ public class StakeHolderService {
     private BPASmsAndEmailService bpaSmsAndEmailService;
     @Autowired
     private StakeHolderStateService stakeHolderStateService;
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource messageSource;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -759,6 +768,28 @@ public class StakeHolderService {
         populateLicenceDetails(stakeHolder);
         return stakeHolderRepository.saveAndFlush(stakeHolder);
 
+    }
+
+    public ErrorDetail validateStakeholder(StakeHolder stakeHolder) {
+        ErrorDetail error = new ErrorDetail();
+        if (stakeHolder != null && StakeHolderStatus.BLOCKED.equals(stakeHolder.getStatus())) {
+            error.setErrorMessage(messageSource.getMessage("msg.stakeholder.license.blocked",
+                    new String[] { ApplicationThreadLocals.getMunicipalityName() }, null));
+        }
+
+        if (stakeHolder != null && stakeHolder.getBuildingLicenceExpiryDate().before(new Date())) {
+            error.setErrorMessage(messageSource.getMessage("msg.stakeholder.expiry.reached",
+                    new String[] { securityUtils.getCurrentUser().getName() }, null));
+        }
+
+        User user = securityUtils.getCurrentUser();
+
+        if (user.getType().equals(BUSINESS) && stakeHolder != null && stakeHolder.getDemand() != null
+                && bpaUtils.checkAnyTaxIsPendingToCollect(stakeHolder.getDemand())) {
+            error.setErrorMessage("Fee Pending");
+        }
+
+        return error;
     }
 
     public List<StakeHolder> getStakeHoldersByType(StakeHolderType stkHldrType) {

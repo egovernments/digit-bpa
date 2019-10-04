@@ -19,8 +19,6 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
-import org.egov.bpa.entity.es.BpaIndex;
-import org.egov.bpa.entity.es.StakeHolderIndex;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
@@ -38,8 +36,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
-import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -48,8 +44,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -200,13 +194,12 @@ public class EdcrApplicationService {
         final Pageable pageable = new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
                 searchRequest.orderDir(), searchRequest.orderBy());
         List<SearchBuildingPlanScrutinyForm> searchResults = new ArrayList<>();
-        if (searchRequest.getBpaApplicationNumber() != null) {
-            Page<BpaIndex> bpaIndexList = getSearchResultForBpaApplicationNumber(searchRequest);
-            if (!bpaIndexList.getContent().isEmpty())
-                searchRequest.setBuildingPlanScrutinyNumber(bpaIndexList.getContent().get(0).geteDcrNumber());
-            else
-                searchRequest.setBuildingPlanScrutinyNumber("");
-        }
+        /*
+         * if (searchRequest.getBpaApplicationNumber() != null) { Page<BpaIndex> bpaIndexList =
+         * getSearchResultForBpaApplicationNumber(searchRequest); if (!bpaIndexList.getContent().isEmpty())
+         * searchRequest.setBuildingPlanScrutinyNumber(bpaIndexList.getContent().get(0).geteDcrNumber()); else
+         * searchRequest.setBuildingPlanScrutinyNumber(""); }
+         */
         Page<EdcrApplicationDetail> dcrApplications = edcrApplicationDetailRepository
                 .findAll(DcrReportSearchSpec.searchReportsSpecification(searchRequest), pageable);
         for (EdcrApplicationDetail applicationDetail : dcrApplications)
@@ -231,30 +224,21 @@ public class EdcrApplicationService {
         if (applicationDetail.getReportOutputId() != null)
             planScrtnyFrm.setReportOutputFileName(applicationDetail.getReportOutputId().getFileName());
         planScrtnyFrm.setStakeHolderId(application.getCreatedBy().getId());
-        if (planScrtnyFrm.getStakeHolderId() != null) {
-            List<StakeHolderIndex> stakeHolderIndexes = getSearchResultForStakeholder(planScrtnyFrm);
-            if (!stakeHolderIndexes.isEmpty()) {
-                StakeHolderIndex stakeHolderIndex = stakeHolderIndexes.get(0);
-                if (stakeHolderIndex.getStakeHolderName() != null) {
-                    planScrtnyFrm.setBuildingLicenceeName(stakeHolderIndex.getStakeHolderName());
-                    planScrtnyFrm.setBuildingLicenceeType(stakeHolderIndex.getStakeHolderType());
-                }
-            }
-        }
-        if (isNotBlank(applicationDetail.getStatus())) {
-            planScrtnyFrm.setStatus(applicationDetail.getStatus());
-            if (planScrtnyFrm.getStatus().equals("Accepted")
-                    && isNotBlank(planScrtnyFrm.getBuildingPlanScrutinyNumber())) {
-                List<BpaIndex> bpaIndexList = getSearchResult(planScrtnyFrm);
-                if (!bpaIndexList.isEmpty()) {
-                    BpaIndex bpaIndex = bpaIndexList.get(0);
-                    if (bpaIndex.getApplicationNumber() != null)
-                        planScrtnyFrm.setBpaApplicationNumber(bpaIndex.getApplicationNumber());
-                    if (bpaIndex.getPlanPermissionNumber() != null)
-                        planScrtnyFrm.setPermitNumber(bpaIndex.getPlanPermissionNumber());
-                }
-            }
-        }
+        /*
+         * if (planScrtnyFrm.getStakeHolderId() != null) { List<StakeHolderIndex> stakeHolderIndexes =
+         * getSearchResultForStakeholder(planScrtnyFrm); if (!stakeHolderIndexes.isEmpty()) { StakeHolderIndex stakeHolderIndex =
+         * stakeHolderIndexes.get(0); if (stakeHolderIndex.getStakeHolderName() != null) {
+         * planScrtnyFrm.setBuildingLicenceeName(stakeHolderIndex.getStakeHolderName());
+         * planScrtnyFrm.setBuildingLicenceeType(stakeHolderIndex.getStakeHolderType()); } } }
+         */
+        /*
+         * if (isNotBlank(applicationDetail.getStatus())) { planScrtnyFrm.setStatus(applicationDetail.getStatus()); if
+         * (planScrtnyFrm.getStatus().equals("Accepted") && isNotBlank(planScrtnyFrm.getBuildingPlanScrutinyNumber())) {
+         * List<BpaIndex> bpaIndexList = getSearchResult(planScrtnyFrm); if (!bpaIndexList.isEmpty()) { BpaIndex bpaIndex =
+         * bpaIndexList.get(0); if (bpaIndex.getApplicationNumber() != null)
+         * planScrtnyFrm.setBpaApplicationNumber(bpaIndex.getApplicationNumber()); if (bpaIndex.getPlanPermissionNumber() != null)
+         * planScrtnyFrm.setPermitNumber(bpaIndex.getPlanPermissionNumber()); } } }
+         */
         return planScrtnyFrm;
     }
 
@@ -264,47 +248,31 @@ public class EdcrApplicationService {
                 .filter(QueryBuilders.matchQuery("id", planScrtnyFrm.getStakeHolderId()));
     }
 
-    private List<StakeHolderIndex> getSearchResultForStakeholder(SearchBuildingPlanScrutinyForm planScrtnyFrm) {
-        final BoolQueryBuilder boolQuery = getQueryFilterForStakeHolder(planScrtnyFrm);
-        return getStakeHolderSearchResultByBoolQueryList(boolQuery);
-    }
-
-    private List<StakeHolderIndex> getStakeHolderSearchResultByBoolQueryList(BoolQueryBuilder boolQuery) {
-        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("stakeholder").withQuery(boolQuery)
-                .withSort(new FieldSortBuilder("id").order(SortOrder.DESC)).build();
-        return elasticsearchTemplate.queryForList(searchQuery, StakeHolderIndex.class);
-    }
-
-    private List<BpaIndex> getSearchResult(final SearchBuildingPlanScrutinyForm planScrutinyForm) {
-        final BoolQueryBuilder boolQuery = getQueryFilterForEdcrNumber(planScrutinyForm);
-        return getEdcrNumberSearchResultByBoolQuery(boolQuery);
-    }
-
-    private BoolQueryBuilder getQueryFilterForEdcrNumber(final SearchBuildingPlanScrutinyForm planScrutinyForm) {
-        return QueryBuilders.boolQuery()
-                .filter(QueryBuilders.matchQuery(ULB_NAME, ApplicationThreadLocals.getCityName()))
-                .filter(QueryBuilders.matchQuery("eDcrNumber", planScrutinyForm.getBuildingPlanScrutinyNumber()));
-    }
-
-    private List<BpaIndex> getEdcrNumberSearchResultByBoolQuery(final BoolQueryBuilder boolQuery) {
-        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("bpa").withQuery(boolQuery)
-                .withSort(new FieldSortBuilder("id").order(SortOrder.DESC)).build();
-        return elasticsearchTemplate.queryForList(searchQuery, BpaIndex.class);
-    }
-
-    private Page<BpaIndex> getSearchResultForBpaApplicationNumber(SearchBuildingPlanScrutinyForm srchPlnScrtny) {
-        final BoolQueryBuilder boolQuery = getQueryFilterForBpaApplicationNumber(srchPlnScrtny);
-        return getBpaApplicationNumberSearchResultByBoolQuery(boolQuery, srchPlnScrtny);
-    }
-
-    private Page<BpaIndex> getBpaApplicationNumberSearchResultByBoolQuery(BoolQueryBuilder boolQuery,
-            SearchBuildingPlanScrutinyForm searchRequest) {
-        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("bpa").withQuery(boolQuery)
-                .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
-                        searchRequest.orderDir(), searchRequest.orderBy()))
-                .withSort(new FieldSortBuilder("id").order(SortOrder.DESC)).build();
-        return elasticsearchTemplate.queryForPage(searchQuery, BpaIndex.class);
-    }
+    /*
+     * rivate List<StakeHolderIndex> getSearchResultForStakeholder(SearchBuildingPlanScrutinyForm planScrtnyFrm) { final
+     * BoolQueryBuilder boolQuery = getQueryFilterForStakeHolder(planScrtnyFrm); return
+     * getStakeHolderSearchResultByBoolQueryList(boolQuery); } private List<StakeHolderIndex>
+     * getStakeHolderSearchResultByBoolQueryList(BoolQueryBuilder boolQuery) { final SearchQuery searchQuery = new
+     * NativeSearchQueryBuilder().withIndices("stakeholder").withQuery(boolQuery) .withSort(new
+     * FieldSortBuilder("id").order(SortOrder.DESC)).build(); return elasticsearchTemplate.queryForList(searchQuery,
+     * StakeHolderIndex.class); } private List<BpaIndex> getSearchResult(final SearchBuildingPlanScrutinyForm planScrutinyForm) {
+     * final BoolQueryBuilder boolQuery = getQueryFilterForEdcrNumber(planScrutinyForm); return
+     * getEdcrNumberSearchResultByBoolQuery(boolQuery); } private BoolQueryBuilder getQueryFilterForEdcrNumber(final
+     * SearchBuildingPlanScrutinyForm planScrutinyForm) { return QueryBuilders.boolQuery()
+     * .filter(QueryBuilders.matchQuery(ULB_NAME, ApplicationThreadLocals.getCityName()))
+     * .filter(QueryBuilders.matchQuery("eDcrNumber", planScrutinyForm.getBuildingPlanScrutinyNumber())); } private List<BpaIndex>
+     * getEdcrNumberSearchResultByBoolQuery(final BoolQueryBuilder boolQuery) { final SearchQuery searchQuery = new
+     * NativeSearchQueryBuilder().withIndices("bpa").withQuery(boolQuery) .withSort(new
+     * FieldSortBuilder("id").order(SortOrder.DESC)).build(); return elasticsearchTemplate.queryForList(searchQuery,
+     * BpaIndex.class); } private Page<BpaIndex> getSearchResultForBpaApplicationNumber(SearchBuildingPlanScrutinyForm
+     * srchPlnScrtny) { final BoolQueryBuilder boolQuery = getQueryFilterForBpaApplicationNumber(srchPlnScrtny); return
+     * getBpaApplicationNumberSearchResultByBoolQuery(boolQuery, srchPlnScrtny); } private Page<BpaIndex>
+     * getBpaApplicationNumberSearchResultByBoolQuery(BoolQueryBuilder boolQuery, SearchBuildingPlanScrutinyForm searchRequest) {
+     * final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("bpa").withQuery(boolQuery) .withPageable(new
+     * PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy()))
+     * .withSort(new FieldSortBuilder("id").order(SortOrder.DESC)).build(); return elasticsearchTemplate.queryForPage(searchQuery,
+     * BpaIndex.class); }
+     */
 
     private BoolQueryBuilder getQueryFilterForBpaApplicationNumber(SearchBuildingPlanScrutinyForm srchPlnScrtny) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
