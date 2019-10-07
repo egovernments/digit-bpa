@@ -1189,7 +1189,7 @@
 			value="title.ownership.change" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/ownershipTransfer/ownership-transfer-citizen-new.jsp" />
- 
+
 	</definition>
 	<definition name="ownership-transfer-citizen-view"
 		extends="base_layout">
@@ -1219,7 +1219,7 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/ownershipTransfer/ownership-transfer-update.jsp" />
 	</definition>
- 
+
 	<definition name="search-ownership-transfer"
 		extends="base_layout">
 		<put-attribute name="page-title"
@@ -1227,57 +1227,85 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/ownershipTransfer/search-ownership-transfer.jsp" />
 	</definition>
- 
- <definition name="nocdepartment-new" extends="base_layout">
-  <put-attribute name="page-title" value="title.nocdepartment.new" cascade="true"/>
-  <put-attribute name="body" value="/WEB-INF/views/nocdepartment/nocdepartment-new.jsp"/>
-</definition>
 
-<definition name="nocdepartment-view" extends="base_layout">
-  <put-attribute name="page-title" value="title.nocdepartment.view" cascade="true"/>
-  <put-attribute name="body" value="/WEB-INF/views/nocdepartment/nocdepartment-view.jsp"/>
-</definition>
+	<definition name="nocdepartment-new" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.nocdepartment.new" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/nocdepartment/nocdepartment-new.jsp" />
+	</definition>
 
-<definition name="nocdepartment-edit" extends="base_layout">
-  <put-attribute name="page-title" value="title.nocdepartment.edit" cascade="true"/>
-  <put-attribute name="body" value="/WEB-INF/views/nocdepartment/nocdepartment-edit.jsp"/>
-</definition>
+	<definition name="nocdepartment-view" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.nocdepartment.view" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/nocdepartment/nocdepartment-view.jsp" />
+	</definition>
 
-<definition name="nocdepartment-result" extends="base_layout">
-  <put-attribute name="page-title" value="title.nocdepartment.result" cascade="true"/>
-  <put-attribute name="body" value="/WEB-INF/views/nocdepartment/nocdepartment-result.jsp"/>
-</definition>
+	<definition name="nocdepartment-edit" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.nocdepartment.edit" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/nocdepartment/nocdepartment-edit.jsp" />
+	</definition>
 
-<definition name="nocdepartment-search" extends="base_layout">
-  <put-attribute name="page-title" value="title.nocdepartment.search" cascade="true"/>
-  <put-attribute name="body" value="/WEB-INF/views/nocdepartment/nocdepartment-search.jsp"/>
-</definition>
+	<definition name="nocdepartment-result"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.nocdepartment.result" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/nocdepartment/nocdepartment-result.jsp" />
+	</definition>
 
-<definition name="nocconfig-new" extends="base_layout">
-  <put-attribute name="page-title" value="title.nocconfig.new" cascade="true"/>
-  <put-attribute name="body" value="/WEB-INF/views/nocconfig/nocconfig-new.jsp"/>
-</definition>
+	<definition name="nocdepartment-search"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.nocdepartment.search" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/nocdepartment/nocdepartment-search.jsp" />
+	</definition>
 
-<definition name="nocconfig-view" extends="base_layout">
-  <put-attribute name="page-title" value="title.nocconfig.view" cascade="true"/>
-  <put-attribute name="body" value="/WEB-INF/views/nocconfig/nocconfig-view.jsp"/>
-</definition>
+	<definition name="nocconfig-new" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.nocconfig.new" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/nocconfig/nocconfig-new.jsp" />
+	</definition>
 
-<definition name="nocconfig-edit" extends="base_layout">
-  <put-attribute name="page-title" value="title.nocconfig.edit" cascade="true"/>
-  <put-attribute name="body" value="/WEB-INF/views/nocconfig/nocconfig-edit.jsp"/>
-</definition>
+	<definition name="nocconfig-view" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.nocconfig.view" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/nocconfig/nocconfig-view.jsp" />
+	</definition>
 
-<definition name="nocconfig-result" extends="base_layout">
-  <put-attribute name="page-title" value="title.nocconfig.result" cascade="true"/>
-  <put-attribute name="body" value="/WEB-INF/views/nocconfig/nocconfig-result.jsp"/>
-</definition>
+	<definition name="nocconfig-edit" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.nocconfig.edit" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/nocconfig/nocconfig-edit.jsp" />
+	</definition>
 
-<definition name="nocconfig-search" extends="base_layout">
-  <put-attribute name="page-title" value="title.nocconfig.search" cascade="true"/>
-  <put-attribute name="body" value="/WEB-INF/views/nocconfig/nocconfig-search.jsp"/>
-</definition>
+	<definition name="nocconfig-result" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.nocconfig.result" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/nocconfig/nocconfig-result.jsp" />
+	</definition>
 
+	<definition name="nocconfig-search" extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.nocconfig.search" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/nocconfig/nocconfig-search.jsp" />
+	</definition>
+	
+	<definition name="viewappln-details-bydcrno"
+		extends="base_layout">
+		<put-attribute name="page-title"
+			value="title.appln.permit.oc.dtl" cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/application/viewappln-details-bydcrno.jsp" />
+	</definition>
 
-  
 </tiles-definitions>

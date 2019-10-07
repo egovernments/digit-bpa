@@ -67,6 +67,7 @@ import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.InConstructionInspectionService;
 import org.egov.bpa.transaction.service.InspectionApplicationService;
@@ -74,6 +75,7 @@ import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PermitNocApplicationService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationAdaptor;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
@@ -123,6 +125,8 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     private InspectionApplicationService inspectionAppService;
     @Autowired
     private InConstructionInspectionService inspectionConstService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
 
     @GetMapping("/search")
     public String showSearchApprovedforFee(final Model model) {
@@ -136,7 +140,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     public String searchRegisterStatusMarriageRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
         return new DataTable<>(searchBpaApplicationService.pagedSearch(searchBpaApplicationForm),
                 searchBpaApplicationForm.draw())
-                .toJson(SearchBpaApplicationAdaptor.class);
+                        .toJson(SearchBpaApplicationAdaptor.class);
     }
 
     @GetMapping("/view/{applicationNumber}")
@@ -144,30 +148,34 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
             final HttpServletRequest request) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
         List<PermitNocApplication> nocApplication = permitNocService.findByPermitApplicationNumber(applicationNumber);
-        model.addAttribute("nocApplication",nocApplication);
+        model.addAttribute("nocApplication", nocApplication);
 
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
-			for (PermitNocApplication pna : nocApplication) {
-				if(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode().equalsIgnoreCase(pna.getBpaNocApplication().getNocType())) {
-					nocDocument.setPermitNoc(pna);
-				}
-			}
-		}
+            for (PermitNocApplication pna : nocApplication) {
+                if (nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode()
+                        .equalsIgnoreCase(pna.getBpaNocApplication().getNocType())) {
+                    nocDocument.setPermitNoc(pna);
+                }
+            }
+        }
 
         bpaUtils.loadBoundary(application);
         model.addAttribute("bpaApplication", application);
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         model.addAttribute(APPLICATION_HISTORY,
-                workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(), application.getStateHistory()));
+                workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(),
+                        application.getStateHistory()));
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
         List<InConstructionInspection> inConstInspections = new ArrayList<InConstructionInspection>();
-        final List<PermitInspectionApplication> permitInspections = inspectionAppService.findByApplicationNumber(application.getApplicationNumber());
+        final List<PermitInspectionApplication> permitInspections = inspectionAppService
+                .findByApplicationNumber(application.getApplicationNumber());
 
-        for( PermitInspectionApplication permitInspection : permitInspections) {
-        	List<InConstructionInspection> inspApp = inspectionConstService.findByInspectionApplicationOrderByIdAsc(permitInspection.getInspectionApplication());
-        	inConstInspections.addAll(inspApp);
-        }        
-        model.addAttribute("inconstinspectionList",inConstInspections);
+        for (PermitInspectionApplication permitInspection : permitInspections) {
+            List<InConstructionInspection> inspApp = inspectionConstService
+                    .findByInspectionApplicationOrderByIdAsc(permitInspection.getInspectionApplication());
+            inConstInspections.addAll(inspApp);
+        }
+        model.addAttribute("inconstinspectionList", inConstInspections);
         model.addAttribute("lettertopartylist", lettertoPartyService.findByBpaApplicationOrderByIdDesc(application));
         model.addAttribute("isEDCRIntegrationRequire",
                 bpaDcrService.isEdcrIntegrationRequireByService(application.getServiceType().getCode()));
@@ -190,11 +198,11 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     @PostMapping(value = "/bpacollectfee", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchCollectionPendingRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
-		return new DataTable<>(searchBpaApplicationService.hasFeeCollectionPending(searchBpaApplicationForm),
-				searchBpaApplicationForm.draw())
-				.toJson(SearchBpaApplicationAdaptor.class);
+        return new DataTable<>(searchBpaApplicationService.hasFeeCollectionPending(searchBpaApplicationForm),
+                searchBpaApplicationForm.draw())
+                        .toJson(SearchBpaApplicationAdaptor.class);
     }
-    
+
     @GetMapping("/bpadocumentscrutiny")
     public String showDocumentScrutinyPendingRecords(final Model model) {
         Set<Boundary> employeeMappedZone = new HashSet<>();
@@ -202,7 +210,8 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         Set<Boundary> electionWards = new HashSet<>();
         Set<Boundary> revenueWards = new HashSet<>();
         Set<Boundary> revWards = new HashSet<>();
-        String isUnattendedCancelled=bpaUtils.getAppconfigValueByKeyName(IS_AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_APPLICATION);
+        String isUnattendedCancelled = bpaUtils
+                .getAppconfigValueByKeyName(IS_AUTO_CANCEL_UNATTENDED_DOCUMENT_SCRUTINY_APPLICATION);
         BoundaryType revenueType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
         final Employee employee = employeeService.getEmployeeById(securityUtils.getCurrentUser().getId());
         for (Jurisdiction jurisdiction : employee.getJurisdictions()) {
@@ -210,44 +219,44 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
                 mappedElectionWard.add(jurisdiction.getBoundary());
             }
         }
-        
-		for (Boundary boundary : mappedElectionWard) {
-			List<Boundary> b = crossHierarchyService
-					.getParentBoundaryByChildBoundaryAndParentBoundaryType(boundary.getId(), revenueType.getId());
-			revenueWards.addAll(b);
-		}
-        
-		for (Boundary boundary : revenueWards) {
-			employeeMappedZone.add(boundary.getParent());
-			revWards.addAll(boundaryService.getActiveChildBoundariesByBoundaryId(boundary.getParent().getId()));
-			for (Boundary revenue : revWards) {
-				electionWards.addAll(crossHierarchyService
-						.findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(WARD,
-								REVENUE_HIERARCHY_TYPE, WARD, revenue.getId()));
-			}
-		}
+
+        for (Boundary boundary : mappedElectionWard) {
+            List<Boundary> b = crossHierarchyService
+                    .getParentBoundaryByChildBoundaryAndParentBoundaryType(boundary.getId(), revenueType.getId());
+            revenueWards.addAll(b);
+        }
+
+        for (Boundary boundary : revenueWards) {
+            employeeMappedZone.add(boundary.getParent());
+            revWards.addAll(boundaryService.getActiveChildBoundariesByBoundaryId(boundary.getParent().getId()));
+            for (Boundary revenue : revWards) {
+                electionWards.addAll(crossHierarchyService
+                        .findChildBoundariesByParentBoundaryIdParentBoundaryTypeAndChildBoundaryType(WARD,
+                                REVENUE_HIERARCHY_TYPE, WARD, revenue.getId()));
+            }
+        }
         model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
-        
+
         model.addAttribute("employeeMappedZone", employeeMappedZone);
         model.addAttribute("mappedRevenueBoundries", revWards);
         model.addAttribute("mappedElectionBoundries", electionWards);
         List<ApplicationSubType> appTyps = applicationTypeService.getAllSlotRequiredApplicationTypes();
-		List<ApplicationSubType> applicationTypes = new ArrayList<>();
-                for (ApplicationSubType applType : appTyps)
-                    if (!applType.getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))
-                        applicationTypes.add(applType);
-                    	
-		model.addAttribute("applicationTypes", applicationTypes);
-          model.addAttribute("isUnattendedCancelled",isUnattendedCancelled);
+        List<ApplicationSubType> applicationTypes = new ArrayList<>();
+        for (ApplicationSubType applType : appTyps)
+            if (!applType.getName().equals(OCCUPANCY_CERTIFICATE_NOTICE_TYPE))
+                applicationTypes.add(applType);
+
+        model.addAttribute("applicationTypes", applicationTypes);
+        model.addAttribute("isUnattendedCancelled", isUnattendedCancelled);
         return "search-document-scrutiny";
     }
 
     @PostMapping(value = "/bpadocumentscrutiny", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchDocumentScrutinyPendingRecords(@ModelAttribute final SearchBpaApplicationForm searchBpaApplicationForm) {
-		return new DataTable<>(searchBpaApplicationService.searchForDocumentScrutinyPending(searchBpaApplicationForm),
-				searchBpaApplicationForm.draw())
-				.toJson(SearchBpaApplicationAdaptor.class);
+        return new DataTable<>(searchBpaApplicationService.searchForDocumentScrutinyPending(searchBpaApplicationForm),
+                searchBpaApplicationForm.draw())
+                        .toJson(SearchBpaApplicationAdaptor.class);
     }
 
     @GetMapping("/details-view/by-permit-number/{permitNumber}")
@@ -257,21 +266,24 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         model.addAttribute("bpaApplication", application);
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
         model.addAttribute(APPLICATION_HISTORY,
-                workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(), application.getStateHistory()));
+                workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(),
+                        application.getStateHistory()));
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
-        List<InConstructionInspection> inConstInspections = new ArrayList<InConstructionInspection>();
-        final List<PermitInspectionApplication> permitInspections = inspectionAppService.findByApplicationNumber(application.getApplicationNumber());
+        List<InConstructionInspection> inConstInspections = new ArrayList<>();
+        final List<PermitInspectionApplication> permitInspections = inspectionAppService
+                .findByApplicationNumber(application.getApplicationNumber());
 
-        for( PermitInspectionApplication permitInspection : permitInspections) {
-        	List<InConstructionInspection> inspApp = inspectionConstService.findByInspectionApplicationOrderByIdAsc(permitInspection.getInspectionApplication());
-        	inConstInspections.addAll(inspApp);
-        }        
-        model.addAttribute("inconstinspectionList",inConstInspections);
+        for (PermitInspectionApplication permitInspection : permitInspections) {
+            List<InConstructionInspection> inspApp = inspectionConstService
+                    .findByInspectionApplicationOrderByIdAsc(permitInspection.getInspectionApplication());
+            inConstInspections.addAll(inspApp);
+        }
+        model.addAttribute("inconstinspectionList", inConstInspections);
         model.addAttribute("lettertopartylist", lettertoPartyService.findByBpaApplicationOrderByIdDesc(application));
         buildReceiptDetails(application.getDemand().getEgDemandDetails(), application.getReceipts());
         return "viewapplication-form";
     }
-    
+
     @GetMapping("/search/initiate-revocation")
     public String showRevocationSearchForm(final Model model) {
         model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
@@ -285,7 +297,44 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         userIds.add(securityUtils.getCurrentUser().getId());
         return new DataTable<>(searchBpaApplicationService.searchForRevocation(searchBpaApplicationForm, userIds),
                 searchBpaApplicationForm.draw())
-                .toJson(SearchBpaApplicationAdaptor.class);
+                        .toJson(SearchBpaApplicationAdaptor.class);
     }
-    
+
+    @GetMapping("/view/details/by-dcr-number/{dcrNumber}")
+    public String viewApplicationByDCRNumber(final Model model, @PathVariable final String dcrNumber) {
+        List<BpaApplication> applications = applicationBpaService.findApplicationByEDCRNumber(dcrNumber);
+        if (applications.isEmpty()) {
+            List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByEdcrNumber(dcrNumber);
+            if (occupancyCertificates.isEmpty()) {
+                model.addAttribute("message", "The selected plan not used yet with any application.");
+            } else {
+                OccupancyCertificate oc = occupancyCertificates.get(0);
+                BpaApplication parent = oc.getParent();
+                model.addAttribute("applicationNumber", oc.getApplicationNumber());
+                model.addAttribute("approvalNumber", oc.getOccupancyCertificateNumber());
+                model.addAttribute("stakeholderType",
+                        parent.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getName());
+                model.addAttribute("stakeholderName", parent.getStakeHolder().get(0).getStakeHolder().getName());
+                model.addAttribute("approvalDate", oc.getApprovalDate());
+                model.addAttribute("applicationType", oc.getApplicationType());
+                model.addAttribute("applicationSubType", parent.getApplicationType().getName());
+                model.addAttribute("serviceType", parent.getServiceType().getDescription());
+                model.addAttribute("occupancyType", parent.getOccupanciesName());
+            }
+        } else {
+            BpaApplication application = applications.get(0);
+            model.addAttribute("applicationNumber", application.getApplicationNumber());
+            model.addAttribute("approvalNumber", application.getPlanPermissionNumber());
+            model.addAttribute("stakeholderType",
+                    application.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getName());
+            model.addAttribute("stakeholderName", application.getStakeHolder().get(0).getStakeHolder().getName());
+            model.addAttribute("approvalDate", application.getPlanPermissionDate());
+            model.addAttribute("applicationType", "Permit");
+            model.addAttribute("applicationSubType", application.getApplicationType().getName());
+            model.addAttribute("serviceType", application.getServiceType().getDescription());
+            model.addAttribute("occupancyType", application.getOccupanciesName());
+        }
+        return "viewappln-details-bydcrno";
+    }
+
 }
