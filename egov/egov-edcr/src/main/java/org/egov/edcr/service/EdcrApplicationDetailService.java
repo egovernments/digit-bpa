@@ -62,7 +62,7 @@ public class EdcrApplicationDetailService {
 	}
 	
 	public EdcrApplicationDetail findByDcrAndTransactionNumber(final String dcrNumber, final String transactionNumber) {
-		return edcrApplicationDetailRepository.findByDcrNumberAndApplication_transactionNumber(dcrNumber, transactionNumber);
+		return edcrApplicationDetailRepository.findByDcrNumberAndApplication_TransactionNumber(dcrNumber, transactionNumber);
 	}
 
 	public void buildBuildingDetailForApprovedPlans(EdcrApplicationDetail edcrApplicationDetail, EdcrApplicationInfo applicationInfo) {
