@@ -53,65 +53,64 @@ import java.util.List;
 import org.egov.common.entity.edcr.Plan;
 
 public class EdcrResponse {
-    
+
     private String planReport;
 
     private String planFile;
 
     private String status;
-    
+
     private Plan planDetail;
-    
+
     private List<String> planPdfs;
-    
+
     private String edcrNumber;
 
-	public String getPlanReport() {
-		return planReport;
-	}
+    public String getPlanReport() {
+        return planReport;
+    }
 
-	public void setPlanReport(String planReport) {
-		this.planReport = planReport;
-	}
+    public void setPlanReport(String planReport) {
+        this.planReport = planReport;
+    }
 
-	public String getPlanFile() {
-		return planFile;
-	}
+    public String getPlanFile() {
+        return planFile;
+    }
 
-	public void setPlanFile(String planFile) {
-		this.planFile = planFile;
-	}
+    public void setPlanFile(String planFile) {
+        this.planFile = planFile;
+    }
 
-	public String getStatus() {
-		return status;
-	}
+    public String getStatus() {
+        return status;
+    }
 
-	public void setStatus(String status) {
-		this.status = status;
-	}
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
-	public Plan getPlanDetail() {
-		return planDetail;
-	}
+    public Plan getPlanDetail() {
+        return planDetail;
+    }
 
-	public void setPlanDetail(Plan planDetail) {
-		this.planDetail = planDetail;
-	}
+    public void setPlanDetail(Plan planDetail) {
+        this.planDetail = planDetail;
+    }
 
-	public List<String> getPlanPdfs() {
-		return planPdfs;
-	}
+    public List<String> getPlanPdfs() {
+        return planPdfs;
+    }
 
-	public void setPlanPdfs(List<String> planPdfs) {
-		this.planPdfs = planPdfs;
-	}
+    public void setPlanPdfs(List<String> planPdfs) {
+        this.planPdfs = planPdfs;
+    }
 
-	public String getEdcrNumber() {
-		return edcrNumber;
-	}
+    public String getEdcrNumber() {
+        return edcrNumber;
+    }
 
-	public void setEdcrNumber(String edcrNumber) {
-		this.edcrNumber = edcrNumber;
-	}
+    public void setEdcrNumber(String edcrNumber) {
+        this.edcrNumber = edcrNumber;
+    }
 }
-

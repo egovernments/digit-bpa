@@ -87,39 +87,40 @@ public class RestEdcrApplicationController {
 
     @Autowired
     protected FileStoreUtils fileStoreUtils;
-    
-    @PostMapping(value="/dcr/uploadplan", produces=MediaType.APPLICATION_JSON_VALUE)
+
+    @PostMapping(value = "/dcr/uploadplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> uploadPlan(@Valid @RequestParam("planFile") MultipartFile planFile, @Valid @RequestParam("edcrRequest") String edcrRequest ) {
-		EdcrResponse edcrResponse = new EdcrResponse();
-    	try{
-    		EdcrRequest edcr  = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
-    		ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile);
-    		if(errorResponses!=null)
-    			return new ResponseEntity<ErrorDetail>(errorResponses, HttpStatus.BAD_REQUEST);    
-    		else {
-    			edcrResponse = edcrRestService.createEdcr(edcr, planFile);
-    		}
-    		
-    	}catch (IOException e) {
-    		LOGGER.log(Level.ERROR, e);
-        }        
-		return new ResponseEntity<EdcrResponse>(edcrResponse, HttpStatus.OK);    
+    public ResponseEntity<?> uploadPlan(@Valid @RequestParam("planFile") MultipartFile planFile,
+            @Valid @RequestParam("edcrRequest") String edcrRequest) {
+        EdcrResponse edcrResponse = new EdcrResponse();
+        try {
+            EdcrRequest edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
+            ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile);
+            if (errorResponses != null)
+                return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
+            else {
+                edcrResponse = edcrRestService.createEdcr(edcr, planFile);
+            }
+
+        } catch (IOException e) {
+            LOGGER.log(Level.ERROR, e);
+        }
+        return new ResponseEntity<>(edcrResponse, HttpStatus.OK);
     }
-    
-    @GetMapping(value="/dcr/getdetails", produces=MediaType.APPLICATION_JSON_VALUE)
+
+    @GetMapping(value = "/dcr/getdetails", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> getDetails(@ModelAttribute EdcrRequest edcrRequest) {
-		ErrorDetail errorResponses = edcrRestService.validateSearchRequest(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber());
-		EdcrResponse edcrResponse = new EdcrResponse();
-		if(errorResponses!=null)
-			return new ResponseEntity<ErrorDetail>(errorResponses, HttpStatus.BAD_REQUEST);    
-		else
-	    	edcrResponse = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber());
-		return new ResponseEntity<EdcrResponse>(edcrResponse, HttpStatus.OK);    
+        ErrorDetail errorResponses = edcrRestService.validateSearchRequest(edcrRequest.getEdcrNumber(),
+                edcrRequest.getTransactionNumber());
+        EdcrResponse edcrResponse;
+        if (errorResponses != null)
+            return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
+        else
+            edcrResponse = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber());
+        return new ResponseEntity<>(edcrResponse, HttpStatus.OK);
     }
-    
-    
+
     @GetMapping("/dcr/downloadfile/{fileStoreId}")
     public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, DIGIT_DCR, true);

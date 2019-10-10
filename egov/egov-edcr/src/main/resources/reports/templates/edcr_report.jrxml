@@ -87,7 +87,9 @@
 				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
 			</image>
 			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
-				<reportElement mode="Transparent" x="4" y="0" width="149" height="59" uuid="f778375a-96b7-42de-8819-00bbfd34ae68"/>
+				<reportElement mode="Transparent" x="4" y="0" width="149" height="59" uuid="f778375a-96b7-42de-8819-00bbfd34ae68">
+					<printWhenExpression><![CDATA[$P{cityLogo}  != null]]></printWhenExpression>
+				</reportElement>
 				<imageExpression><![CDATA[$P{cityLogo}]]></imageExpression>
 			</image>
 			<staticText>

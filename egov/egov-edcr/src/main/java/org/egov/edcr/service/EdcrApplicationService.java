@@ -266,7 +266,7 @@ public class EdcrApplicationService {
         edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         edcrApplication.setStatus(ABORTED);
         edcrApplicationRepository.save(edcrApplication);
-        Plan planDetail = callDcrProcess(edcrApplication, NEW_SCRTNY);
+        callDcrProcess(edcrApplication, NEW_SCRTNY);
         return edcrApplication;
     }
 

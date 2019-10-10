@@ -51,55 +51,54 @@ package org.egov.edcr.contract;
 import java.io.File;
 
 public class EdcrRequest {
-    
+
     private String transactionNumber;
-    
+
     private String edcrNumber;
 
     private File planFile;
 
     private String tenant;
-    
+
     private String authToken;
 
-	public String getTransactionNumber() {
-		return transactionNumber;
-	}
+    public String getTransactionNumber() {
+        return transactionNumber;
+    }
 
-	public void setTransactionNumber(String transactionNumber) {
-		this.transactionNumber = transactionNumber;
-	}
+    public void setTransactionNumber(String transactionNumber) {
+        this.transactionNumber = transactionNumber;
+    }
 
-	public File getPlanFile() {
-		return planFile;
-	}
+    public File getPlanFile() {
+        return planFile;
+    }
 
-	public void setPlanFile(File planFile) {
-		this.planFile = planFile;
-	}
+    public void setPlanFile(File planFile) {
+        this.planFile = planFile;
+    }
 
-	public String getAuthToken() {
-		return authToken;
-	}
+    public String getAuthToken() {
+        return authToken;
+    }
 
-	public void setAuthToken(String authToken) {
-		this.authToken = authToken;
-	}
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
+    }
 
-	public String getEdcrNumber() {
-		return edcrNumber;
-	}
+    public String getEdcrNumber() {
+        return edcrNumber;
+    }
 
-	public void setEdcrNumber(String edcrNumber) {
-		this.edcrNumber = edcrNumber;
-	}
-	
-	public String getTenant() {
-		return tenant;
-	}
+    public void setEdcrNumber(String edcrNumber) {
+        this.edcrNumber = edcrNumber;
+    }
 
-	public void setTenant(String tenant) {
-		this.tenant = tenant;
-	}
+    public String getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
+    }
 }
-
