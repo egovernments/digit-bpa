@@ -57,12 +57,15 @@ import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.edcr.contract.EdcrRequest;
 import org.egov.edcr.contract.EdcrResponse;
 import org.egov.edcr.service.EdcrRestService;
+import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -77,9 +80,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 public class RestEdcrApplicationController {
 
     private static final Logger LOGGER = Logger.getLogger(RestEdcrApplicationController.class);
-    
+    private static final String DIGIT_DCR = "Digit DCR";
+
     @Autowired
     private EdcrRestService edcrRestService;
+
+    @Autowired
+    protected FileStoreUtils fileStoreUtils;
     
     @PostMapping(value="/dcr/uploadplan", produces=MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -110,5 +117,11 @@ public class RestEdcrApplicationController {
 		else
 	    	edcrResponse = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber());
 		return new ResponseEntity<EdcrResponse>(edcrResponse, HttpStatus.OK);    
+    }
+    
+    
+    @GetMapping("/dcr/downloadfile/{fileStoreId}")
+    public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId, DIGIT_DCR, true);
     }
 }

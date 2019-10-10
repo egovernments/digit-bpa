@@ -92,7 +92,7 @@ import eu.medsea.mimeutil.MimeUtil;
 public class EdcrRestService {
     private static Logger LOG = Logger.getLogger(EdcrApplicationService.class);
     
-    public static final String FILE_DOWNLOAD_URL = "%s/egi/downloadfile?fileStoreId=%s&moduleName=Digit DCR";
+    public static final String FILE_DOWNLOAD_URL = "%s/edcr/rest/dcr/downloadfile/";
     
     @Autowired
     protected SecurityUtils securityUtils;   
@@ -120,6 +120,7 @@ public class EdcrRestService {
         return entityManager.unwrap(Session.class);
     }
     
+    @Transactional
     public EdcrResponse createEdcr(final EdcrRequest edcrRequest, final MultipartFile file) {
 	    EdcrApplication edcrApplication = new EdcrApplication();
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
@@ -139,8 +140,8 @@ public class EdcrRestService {
 	   List<String> planPdfs = new ArrayList<>();
 	   edcrResponse.setEdcrNumber(edcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber());
 	   edcrResponse.setStatus(edcrApplication.getStatus());
-	   edcrResponse.setPlanFile(format(FILE_DOWNLOAD_URL,ApplicationThreadLocals.getDomainURL(),edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId().getFileStoreId()));
-	   edcrResponse.setPlanReport(format(FILE_DOWNLOAD_URL,ApplicationThreadLocals.getDomainURL(),edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId()));
+	   edcrResponse.setPlanFile(format(getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId().getFileStoreId())));
+	   edcrResponse.setPlanReport(format(getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId())));
 	   
 	   File file = fileStoreService.fetch(edcrApplication.getEdcrApplicationDetails().get(0).getPlanDetailFileStore().getFileStoreId(),
                DcrConstants.APPLICATION_MODULE_TYPE);
@@ -159,7 +160,7 @@ public class EdcrRestService {
 		
 	   List<EdcrPdfDetail> pdfDetails =	 edcrPdfDetailService.findByDcrApplicationId(edcrApplication.getId());
 	   for(EdcrPdfDetail edcrPdf : pdfDetails) {
-		   String planPdf =   format(FILE_DOWNLOAD_URL,ApplicationThreadLocals.getDomainURL(),edcrPdf.getConvertedPdf().getFileStoreId());
+		   String planPdf =   format(getFileDownloadUrl(edcrPdf.getConvertedPdf().getFileStoreId()));
 		   planPdfs.add(planPdf);
 	   }
 	   edcrResponse.setPlanPdfs(planPdfs);
@@ -227,6 +228,9 @@ public class EdcrRestService {
        
         EdcrApplicationInfo applicationInfo = new EdcrApplicationInfo();
         applicationInfo.setErrorDetail(errorDetail);
+        if(StringUtils.isNotBlank(edcrRequest.getTransactionNumber()) && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber())!=null) {
+        	return new ErrorDetail("TransactionNumber","Transaction Number should be unique");
+        }
         if (file != null && !file.isEmpty()) {
             extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
             if (extension != null && !extension.isEmpty()) {
@@ -252,11 +256,15 @@ public class EdcrRestService {
     }
     
     public Boolean validateTenant(final String tenantId) {
-    	return StringUtils.isNotBlank(tenantId) ? true : false;
+    	return StringUtils.isNotBlank(tenantId) ;
     }
     
     public Boolean validateAuthToken(final String authToken) {
-    	return StringUtils.isNotBlank(authToken) ? true : false;
+    	return StringUtils.isNotBlank(authToken) ;
+    }
+    
+    public String getFileDownloadUrl(final String fileStoreId) {
+    	return String.format(FILE_DOWNLOAD_URL, ApplicationThreadLocals.getDomainURL())+fileStoreId;
     }
 
 }

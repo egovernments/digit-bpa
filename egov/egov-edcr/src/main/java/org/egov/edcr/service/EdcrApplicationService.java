@@ -259,6 +259,7 @@ public class EdcrApplicationService {
         }
     }
     
+    @Transactional
     public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication) {
         edcrApplication.setApplicationDate(new Date());
         edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
