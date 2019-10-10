@@ -1,0 +1,187 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: eDCR as service
+  description: Service to upload plan in dxf file format and generate report. Use the transaction number to track the status/retrieve saved information.
+  contact:
+    name: Egovernments Foundation
+    email: contact@egovernments.org
+servers:
+- url: https://digit-bpa-dev-jupiter.egovernments.org/eDcr
+  description: Development server
+paths:
+  /dcr/uploadplan:
+    post:
+      summary: Upload dxf file scrutiny.
+      requestBody:
+        description: The plan will be uploaded in dxf format only. Based on authkey unique user will be identified. A unique transaction number will be expected with each transaction. Single dxf file has to upload.
+        content:
+          multipart/mixed:
+            schema:
+              $ref: '#/components/schemas/UploadPlanRequest'
+            encoding:
+              dxfFile:
+              # only accept dxf file.
+                contentType: application/dxf
+      responses:
+        '200':
+          description: upload plan successful.
+          content:
+            application/json:
+              schema:
+                 $ref: '#/components/schemas/UploadPlanResponse'
+              encoding:
+                dxfFile:
+                # only accept dxf file.
+                  contentType: application/dxf
+                planPdfs:
+                  contentType: application/pdf
+                planReport:
+                  contentType: application/pdf   
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                 $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ErrorRes'
+      tags:
+        - Upload Plan
+
+  /dcr/getUploadPlanDetails:
+    post:
+      summary: Get plan detail object by passing transaction number.
+      requestBody:
+        description: Get the uploaded plan and detail by passing transaction number
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UploadPlanSearchRequest'             
+      responses:
+        '200':
+          description: successful return of details if exist
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                   $ref: '#/components/schemas/UploadPlanResponse'
+              encoding:
+                dxfFile:
+                # only accept dxf file.
+                  contentType: application/dxf
+                planPdfs:
+                  contentType: application/pdf
+                planReport:
+                  contentType: application/pdf     
+      tags:
+        - View Uploaded Plan
+
+components:
+  schemas:
+    UploadPlan:
+      type: object
+      description: EncrReqObject contains data to be encrypted and meta-data required to perform the encryption.
+      properties:
+        tenantId:
+          # Rules scrutiny based on tenant id.
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
+        transactionNumber:
+          type: string
+          description: Unique Transaction Number for each request.
+        status:
+          type: string
+          description: Status of the application
+          enum:
+          - Approved
+          - Rejected
+        planDetail:
+          type: string
+          description: Dxf file content in object format
+        dcrNumber:
+          type: string
+          description: If application approved, dcr number will be generated
+        planPdfs:
+          type:  array
+          items:
+            type: string
+            format: binary 
+            description: Auto generated pdfs
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
+        dxfFile:
+            type: string
+            format: binary  
+            description: Uploaded dxf file
+            maximum: 23333
+        planReport:
+            type: string
+            format: binary  
+            description: Generated report 
+    UploadPlanSearchReq:
+      type: object
+      description: UploadPlanSearchReq contains data to be search as plan
+      properties:
+        tenantId:
+          # Rules scrutiny based on tenant id.
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
+        transactionNumber:
+          type: string
+          description: Transaction Number created in each request
+        dcrNumber:
+          type: string
+          description: generated dcr number on approval of dxf plan scrutiny
+      required:
+         -  tenantId
+         -  transactionNumber
+    UploadPlanReq:
+      type: object
+      description: UploadPlanReq contains data to be submit as plan
+      properties:
+        tenantId:
+          # Rules scrutiny based on tenant id.
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
+        transactionNumber:
+          type: string
+          description: Unique Transaction Number for each request.
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
+        dxfFile:
+            type: string
+            format: binary  
+            description: Uploaded dxf file
+      example:
+          tenantId: "sonpur"
+          transactionNumber: "1"
+          requestInfo: {
+          }
+          dxfFile:  ""
+      required:
+         -  tenantId
+         -  transactionNumber
+         -  dxfFile
+    UploadPlanResponse:
+      description: Contract class for web response. Array of UploadPlan items  are used in case of search.
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ResponseInfo'
+        uploadPlans:
+          description: Used for search result and create only
+          type:  array
+          items:
+            $ref: '#/components/schemas/UploadPlan'
+    UploadPlanSearchRequest:
+      type: object
+      description: UploadPlanSearchRequest contain UploadPlanSearchReq object.
+      properties:
+        uploadPlanSearchRequest:
+          type: object
+          items: 
+            $ref: '#/components/schemas/UploadPlanSearchReq'
+    UploadPlanRequest:
+      type: object
+      description: UploadPlanRequest contain UploadPlanReq object.
+      properties:
+        uploadPlanRequest:
+          type: object
+          items: 
+            $ref: '#/components/schemas/UploadPlanReq'
