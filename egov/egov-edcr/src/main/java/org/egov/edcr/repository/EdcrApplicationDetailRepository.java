@@ -47,16 +47,18 @@
 
 package org.egov.edcr.repository;
 
+import java.util.List;
+
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
 
 @Repository
 public interface EdcrApplicationDetailRepository extends JpaRepository<EdcrApplicationDetail, Long>, JpaSpecificationExecutor<EdcrApplicationDetail> {
 
     List<EdcrApplicationDetail> findByApplicationId(Long dcrApplicationId);
     EdcrApplicationDetail findByDcrNumber(String dcrNumber);
+    EdcrApplicationDetail findByDcrNumberAndApplication_transactionNumber(String dcrNumber, String transactionNumber);
+
 }

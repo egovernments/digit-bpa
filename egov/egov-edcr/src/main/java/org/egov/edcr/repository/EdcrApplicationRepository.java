@@ -60,4 +60,6 @@ public interface EdcrApplicationRepository extends JpaRepository<EdcrApplication
 	EdcrApplication findByApplicationNumberAndApplicationType(String applicationNumber, ApplicationType type);
 
 	EdcrApplication findByPlanPermitNumber(String permitNumber);
+	
+	EdcrApplication findByTransactionNumber(String transactionNumber);
 }

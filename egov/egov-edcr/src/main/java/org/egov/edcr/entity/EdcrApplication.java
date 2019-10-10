@@ -1,10 +1,11 @@
 package org.egov.edcr.entity;
 
-import org.egov.common.entity.edcr.PlanInformation;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+
+import java.io.File;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -22,12 +23,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.io.File;
-import java.util.Date;
-import java.util.List;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
+import org.egov.common.entity.edcr.PlanInformation;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "EDCR_APPLICATION")
@@ -70,6 +71,9 @@ public class EdcrApplication extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "buildingLicensee")
     private User buildingLicensee;
+    
+    @Length(min = 1, max = 128)
+    private String transactionNumber;
 
     private transient MultipartFile dxfFile; // File to be process.
 
@@ -173,7 +177,15 @@ public class EdcrApplication extends AbstractAuditable {
         this.buildingLicensee = buildingLicensee;
     }
 
-    public File getSavedDxfFile() {
+    public String getTransactionNumber() {
+		return transactionNumber;
+	}
+
+	public void setTransactionNumber(String transactionNumber) {
+		this.transactionNumber = transactionNumber;
+	}
+
+	public File getSavedDxfFile() {
         return savedDxfFile;
     }
 

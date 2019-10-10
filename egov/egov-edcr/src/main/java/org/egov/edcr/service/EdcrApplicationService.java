@@ -180,6 +180,10 @@ public class EdcrApplicationService {
     public EdcrApplication findByPlanPermitNumber(String permitNo) {
         return edcrApplicationRepository.findByPlanPermitNumber(permitNo);
     }
+    
+    public EdcrApplication findByTransactionNumber(String transactionNo) {
+        return edcrApplicationRepository.findByTransactionNumber(transactionNo);
+    }
 
     public List<EdcrApplication> search(EdcrApplication edcrApplication) {
         return edcrApplicationRepository.findAll();
@@ -253,6 +257,16 @@ public class EdcrApplicationService {
         } catch (IOException e) {
             LOG.error("Error occurred when reading file!!!!!", e);
         }
+    }
+    
+    public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication) {
+        edcrApplication.setApplicationDate(new Date());
+        edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
+        edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
+        edcrApplication.setStatus(ABORTED);
+        edcrApplicationRepository.save(edcrApplication);
+        Plan planDetail = callDcrProcess(edcrApplication, NEW_SCRTNY);
+        return edcrApplication;
     }
 
 }

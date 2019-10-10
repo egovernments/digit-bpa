@@ -48,35 +48,37 @@
 
 package org.egov.edcr.contract;
 
-import java.io.File;
+import java.util.List;
+
+import org.egov.common.entity.edcr.Plan;
 
 public class EdcrResponse {
     
-    private File planReport;
+    private String planReport;
 
-    private File planFile;
+    private String planFile;
 
     private String status;
     
-    private String planDetail;
+    private Plan planDetail;
     
-    private String planPdfs;
+    private List<String> planPdfs;
     
     private String edcrNumber;
 
-	public File getPlanReport() {
+	public String getPlanReport() {
 		return planReport;
 	}
 
-	public void setPlanReport(File planReport) {
+	public void setPlanReport(String planReport) {
 		this.planReport = planReport;
 	}
 
-	public File getPlanFile() {
+	public String getPlanFile() {
 		return planFile;
 	}
 
-	public void setPlanFile(File planFile) {
+	public void setPlanFile(String planFile) {
 		this.planFile = planFile;
 	}
 
@@ -88,19 +90,19 @@ public class EdcrResponse {
 		this.status = status;
 	}
 
-	public String getPlanDetail() {
+	public Plan getPlanDetail() {
 		return planDetail;
 	}
 
-	public void setPlanDetail(String planDetail) {
+	public void setPlanDetail(Plan planDetail) {
 		this.planDetail = planDetail;
 	}
 
-	public String getPlanPdfs() {
+	public List<String> getPlanPdfs() {
 		return planPdfs;
 	}
 
-	public void setPlanPdfs(String planPdfs) {
+	public void setPlanPdfs(List<String> planPdfs) {
 		this.planPdfs = planPdfs;
 	}
 

@@ -49,6 +49,8 @@ package org.egov.edcr.web.controller.rest;
 
 import java.io.IOException;
 
+import javax.validation.Valid;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
@@ -59,6 +61,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,16 +73,17 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
-@RequestMapping(value = "/dcr")
+@RequestMapping(value = "/rest")
 public class RestEdcrApplicationController {
 
     private static final Logger LOGGER = Logger.getLogger(RestEdcrApplicationController.class);
     
     @Autowired
     private EdcrRestService edcrRestService;
-    @PostMapping(value="/uploadplan", produces=MediaType.APPLICATION_JSON_VALUE)
+    
+    @PostMapping(value="/dcr/uploadplan", produces=MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> uploadPlan(@RequestParam("planFile") MultipartFile planFile, @RequestParam("edcrRequest") String edcrRequest ) {
+    public ResponseEntity<?> uploadPlan(@Valid @RequestParam("planFile") MultipartFile planFile, @Valid @RequestParam("edcrRequest") String edcrRequest ) {
 		EdcrResponse edcrResponse = new EdcrResponse();
     	try{
     		EdcrRequest edcr  = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
@@ -92,6 +97,18 @@ public class RestEdcrApplicationController {
     	}catch (IOException e) {
     		LOGGER.log(Level.ERROR, e);
         }        
+		return new ResponseEntity<EdcrResponse>(edcrResponse, HttpStatus.OK);    
+    }
+    
+    @GetMapping(value="/dcr/getdetails", produces=MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<?> getDetails(@ModelAttribute EdcrRequest edcrRequest) {
+		ErrorDetail errorResponses = edcrRestService.validateSearchRequest(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber());
+		EdcrResponse edcrResponse = new EdcrResponse();
+		if(errorResponses!=null)
+			return new ResponseEntity<ErrorDetail>(errorResponses, HttpStatus.BAD_REQUEST);    
+		else
+	    	edcrResponse = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber());
 		return new ResponseEntity<EdcrResponse>(edcrResponse, HttpStatus.OK);    
     }
 }

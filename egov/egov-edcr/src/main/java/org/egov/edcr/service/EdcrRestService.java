@@ -47,6 +47,9 @@
 
 package org.egov.edcr.service;
 
+import static java.lang.String.format;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,14 +59,20 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
+import org.egov.common.entity.edcr.Plan;
 import org.egov.edcr.config.properties.EdcrApplicationSettings;
 import org.egov.edcr.contract.EdcrRequest;
 import org.egov.edcr.contract.EdcrResponse;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
+import org.egov.edcr.entity.EdcrPdfDetail;
+import org.egov.edcr.utility.DcrConstants;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,17 +80,22 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import eu.medsea.mimeutil.MimeException;
 import eu.medsea.mimeutil.MimeUtil;
+
 
 @Service
 @Transactional(readOnly = true)
 public class EdcrRestService {
     private static Logger LOG = Logger.getLogger(EdcrApplicationService.class);
+    
+    public static final String FILE_DOWNLOAD_URL = "%s/egi/downloadfile?fileStoreId=%s&moduleName=Digit DCR";
+    
     @Autowired
-    protected SecurityUtils securityUtils;
-
-   
+    protected SecurityUtils securityUtils;   
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -91,6 +105,15 @@ public class EdcrRestService {
     
     @Autowired
     private EdcrApplicationService edcrApplicationService;
+    
+    @Autowired
+    private EdcrApplicationDetailService edcrApplicationDetailService;
+    
+    @Autowired
+    private EdcrPdfDetailService edcrPdfDetailService;
+    
+    @Autowired
+    private FileStoreService fileStoreService;
 
 
     public Session getCurrentSession() {
@@ -98,16 +121,70 @@ public class EdcrRestService {
     }
     
     public EdcrResponse createEdcr(final EdcrRequest edcrRequest, final MultipartFile file) {
-    	EdcrResponse edcrResponse = new EdcrResponse();
 	    EdcrApplication edcrApplication = new EdcrApplication();
+        EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
 	    List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
+        edcrApplicationDetails.add(edcrApplicationDetail);
+	    edcrApplication.setTransactionNumber(edcrRequest.getTransactionNumber());
 	    edcrApplication.setApplicantName("Anonymous");
 	    edcrApplication.setServiceType("New Construction");
 	    edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
 	    edcrApplication.setDxfFile(file);
-	    edcrApplication=edcrApplicationService.create(edcrApplication);
-	    edcrResponse.setEdcrNumber(edcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber());
-		return edcrResponse;  
+	    edcrApplication=edcrApplicationService.createRestEdcr(edcrApplication);
+		return setEdcrResponse(edcrApplication);  
+   }
+    
+   public EdcrResponse setEdcrResponse(EdcrApplication edcrApplication) {
+	   EdcrResponse edcrResponse = new EdcrResponse();
+	   List<String> planPdfs = new ArrayList<>();
+	   edcrResponse.setEdcrNumber(edcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber());
+	   edcrResponse.setStatus(edcrApplication.getStatus());
+	   edcrResponse.setPlanFile(format(FILE_DOWNLOAD_URL,ApplicationThreadLocals.getDomainURL(),edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId().getFileStoreId()));
+	   edcrResponse.setPlanReport(format(FILE_DOWNLOAD_URL,ApplicationThreadLocals.getDomainURL(),edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId()));
+	   
+	   File file = fileStoreService.fetch(edcrApplication.getEdcrApplicationDetails().get(0).getPlanDetailFileStore().getFileStoreId(),
+               DcrConstants.APPLICATION_MODULE_TYPE);
+       if (LOG.isInfoEnabled())
+           LOG.info("**************** End - Reading Plan detail file **************" + file);
+       try {
+           ObjectMapper mapper = new ObjectMapper();
+           mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+           Plan pl1 = mapper.readValue(file, Plan.class);
+           if (LOG.isInfoEnabled())
+               LOG.info("**************** Plan detail object **************" + pl1);
+	   edcrResponse.setPlanDetail(pl1);
+       }catch (IOException e) {
+           LOG.log(Level.ERROR, e);
+       }
+		
+	   List<EdcrPdfDetail> pdfDetails =	 edcrPdfDetailService.findByDcrApplicationId(edcrApplication.getId());
+	   for(EdcrPdfDetail edcrPdf : pdfDetails) {
+		   String planPdf =   format(FILE_DOWNLOAD_URL,ApplicationThreadLocals.getDomainURL(),edcrPdf.getConvertedPdf().getFileStoreId());
+		   planPdfs.add(planPdf);
+	   }
+	   edcrResponse.setPlanPdfs(planPdfs);
+		 		   
+	   if(!edcrApplication.getStatus().equalsIgnoreCase("Accepted"))
+		   edcrResponse.setStatus(edcrApplication.getStatus());
+
+	   return edcrResponse;
+   }
+   
+   public EdcrResponse fetchEdcr(final String edcrNumber, final String transactionNumber) {
+	   EdcrApplication edcrApplication = new EdcrApplication();
+	   if(StringUtils.isNotBlank(edcrNumber) && StringUtils.isNotBlank(transactionNumber)) {
+		   EdcrApplicationDetail dcrDetails = edcrApplicationDetailService.findByDcrNumber(edcrNumber);
+		   if(dcrDetails!=null)
+			   edcrApplication = dcrDetails.getApplication();
+	   }else if(StringUtils.isNotBlank(edcrNumber)) {
+		   EdcrApplicationDetail dcrDetails = edcrApplicationDetailService.findByDcrNumber(edcrNumber);
+		   if(dcrDetails!=null)
+			   edcrApplication = dcrDetails.getApplication();
+	   }
+	   else{
+		   edcrApplication = edcrApplicationService.findByTransactionNumber(transactionNumber);
+	   }
+	   return setEdcrResponse(edcrApplication);
    }
 
     
@@ -119,6 +196,13 @@ public class EdcrRestService {
                 Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.mime.types").split(",")));
         String fileSize = edcrApplicationSettings.getValue("dcr.dxf.max.size");
         return validateParam(dcrAllowedExtenstions, dcrMimeTypes, file, "dxfFile", fileSize, edcrRequest);
+    }
+    
+    public ErrorDetail validateSearchRequest(final String edcrNumber, final String transactionNumber) {
+    	ErrorDetail errorDetail = null;
+        if(StringUtils.isBlank(edcrNumber) && StringUtils.isBlank(transactionNumber))
+        	return new ErrorDetail("Valid code","Please enter valid edcrnumber or transactionnumber");
+        return errorDetail;
     }
 
     public String getMimeType(final MultipartFile file) {
@@ -168,11 +252,11 @@ public class EdcrRestService {
     }
     
     public Boolean validateTenant(final String tenantId) {
-    	return tenantId != null ? true : false;
+    	return StringUtils.isNotBlank(tenantId) ? true : false;
     }
     
     public Boolean validateAuthToken(final String authToken) {
-    	return authToken != null ? true : false;
+    	return StringUtils.isNotBlank(authToken) ? true : false;
     }
 
 }
