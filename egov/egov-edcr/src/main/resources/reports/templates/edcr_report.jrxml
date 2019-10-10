@@ -272,7 +272,9 @@
 				<textFieldExpression><![CDATA[$F{planInformation}.getWidthOfPlot()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
-				<reportElement x="104" y="10" width="340" height="17" uuid="1d8eef1e-11e9-40cd-a376-edf9107b8e3f"/>
+				<reportElement x="104" y="10" width="340" height="17" uuid="1d8eef1e-11e9-40cd-a376-edf9107b8e3f">
+					<printWhenExpression><![CDATA[$P{ulbName} != null]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Center">
 					<font fontName="SansSerif" size="12" isBold="true" isUnderline="false"/>
 				</textElement>
