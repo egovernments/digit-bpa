@@ -13,6 +13,9 @@
 	<parameter name="ulbName" class="java.lang.String"/>
 	<parameter name="logoPath" class="java.io.InputStream"/>
 	<parameter name="refusalFormat" class="java.lang.String"/>
+	<parameter name="applicantName" class="java.lang.String"/>
+	<parameter name="applicantAddress" class="java.lang.String"/>
+	<parameter name="stateLogo" class="java.lang.String"/>
 	<field name="applicationNumber" class="java.lang.String"/>
 	<field name="applicationDate" class="java.util.Date"/>
 	<field name="application" class="org.egov.bpa.transaction.entity.BpaApplication"/>
@@ -65,8 +68,17 @@
 				<text><![CDATA[Dated : ]]></text>
 			</staticText>
 			<image>
-				<reportElement x="12" y="0" width="60" height="60" uuid="81d01a85-baca-4d87-a163-f1f059c78074"/>
+				<reportElement x="478" y="0" width="60" height="60" uuid="81d01a85-baca-4d87-a163-f1f059c78074"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
+			<image>
+				<reportElement x="2" y="1" width="60" height="60" uuid="0b57fa2f-db33-4f6c-bc86-0c43143734c6">
+					<property name="com.jaspersoft.studio.unit.width" value="px"/>
+					<property name="com.jaspersoft.studio.unit.height" value="px"/>
+					<property name="com.jaspersoft.studio.unit.x" value="px"/>
+					<property name="com.jaspersoft.studio.unit.y" value="px"/>
+				</reportElement>
+				<imageExpression><![CDATA[$P{stateLogo}]]></imageExpression>
 			</image>
 		</band>
 	</title>
@@ -90,7 +102,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="23" y="19" width="532" height="20" uuid="d7b21c92-04d4-4c38-8a61-56d9052898a3"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["Shri./Smt.\n"+$F{application}.getApplicantName() +",\n"+$F{application}.getOwner().getAddress()+"."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Shri./Smt.\n"+$P{applicantName} +",\n"+ $P{applicantAddress} +"."]]></textFieldExpression>
 			</textField>
 		</band>
 		<band height="78">

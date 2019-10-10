@@ -142,6 +142,8 @@ public class OwnershipTransferNoticeUtil {
             final Map<String, Object> reportParams = bpaNoticeUtil.buildParametersForReport(ownershipTransfer.getApplication());
             reportParams.putAll(getUlbDetails());
             reportParams.put("applicantName", ownershipTransfer.getParent() == null ? ownershipTransfer.getApplication().getApplicantName() : ownershipTransfer.getParent().getApplicantName());
+            reportParams.put("applicantAddress",
+                    ownershipTransfer.getParent() == null  ? ownershipTransfer.getApplication().getOwner().getAddress() : ownershipTransfer.getParent().getOwner().getAddress());
             reportParams.put("refusalFormat", bpaApplicationReportProperties.getOwnershipRefusalFormat());
             reportParams.put("applicationNumber", ownershipTransfer.getApplicationNumber());
             reportParams.put("rejectionReasons", buildRejectionReasons(ownershipTransfer));
