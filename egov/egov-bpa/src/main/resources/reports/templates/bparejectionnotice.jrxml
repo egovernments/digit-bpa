@@ -168,4 +168,23 @@
 			</staticText>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="63">
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="0" y="40" width="130" height="23" uuid="70e3703a-aaf0-4eba-b631-1239ce785a73"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="190" y="40" width="95" height="23" uuid="7137c390-c686-4b54-8bcb-ee96414a4e9e"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="285" y="40" width="95" height="23" uuid="04a0d406-7d35-4d6b-92fe-52e792b2d0a7"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
 </jasperReport>

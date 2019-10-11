@@ -16,6 +16,7 @@
 	<parameter name="applicantName" class="java.lang.String"/>
 	<parameter name="applicantAddress" class="java.lang.String"/>
 	<parameter name="stateLogo" class="java.lang.String"/>
+	<parameter name="newownerName" class="java.lang.String"/>
 	<field name="applicationNumber" class="java.lang.String"/>
 	<field name="applicationDate" class="java.util.Date"/>
 	<field name="application" class="org.egov.bpa.transaction.entity.BpaApplication"/>
@@ -109,7 +110,7 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="30" width="555" height="48" uuid="d9ada7e9-755a-4e4a-aaab-6eea193e0e6f"/>
 				<textElement textAlignment="Justified"/>
-				<textFieldExpression><![CDATA["    Your application, dated " +DateUtils.toDefaultDateFormat($F{applicationDate}) + " for ownership transfer for " + $F{application}.getServiceType().getDescription() + "  in " + $P{ulbName} + " falling in Revenue Ward " +$F{application}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum() + ",Re-Survey No."   +   (($F{application}.getSiteDetail().get(0).getReSurveyNumber() == null) ?   "N/A" : $F{application}.getSiteDetail().get(0).getReSurveyNumber())  + ",is rejected  due to the following reason(s),"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["    Your application, dated " +DateUtils.toDefaultDateFormat($F{applicationDate}) + " for ownership transfer for " + $F{application}.getServiceType().getDescription() + "  in " + $P{ulbName} + " falling in Revenue Ward " +$F{application}.getSiteDetail().get(0).getAdminBoundary().getBoundaryNum() + ",Re-Survey No."   +   (($F{application}.getSiteDetail().get(0).getReSurveyNumber() == null) ?   "N/A" : $F{application}.getSiteDetail().get(0).getReSurveyNumber())  +" . While the ownership transferring from "+ $P{applicantName}  + " to " +  $P{newownerName} + ", the "+ $P{newownerName} +" application is rejected due to following reasons ,"]]></textFieldExpression>
 			</textField>
 			<textField>
 				<reportElement x="0" y="12" width="555" height="19" uuid="bd9a4c63-8f75-42e2-ab92-b852ddc19032"/>
@@ -164,4 +165,23 @@
 			</staticText>
 		</band>
 	</detail>
+	<pageFooter>
+		<band height="63">
+			<textField pattern="MMMMM dd, yyyy">
+				<reportElement x="0" y="35" width="141" height="27" uuid="abd4269d-105f-4d05-9144-42a5c5907ef6"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="210" y="35" width="85" height="28" uuid="bc12867f-6d76-429c-94f4-02b843aaac45"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="295" y="35" width="85" height="28" uuid="3695e160-6d7f-4053-aade-b5876e28435a"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[" of " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
 </jasperReport>
