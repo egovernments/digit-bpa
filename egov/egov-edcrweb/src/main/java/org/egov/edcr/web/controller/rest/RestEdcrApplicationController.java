@@ -49,8 +49,6 @@ package org.egov.edcr.web.controller.rest;
 
 import java.io.IOException;
 
-import javax.validation.Valid;
-
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
@@ -90,11 +88,11 @@ public class RestEdcrApplicationController {
 
     @PostMapping(value = "/uploadplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> uploadPlan(@Valid @RequestParam("planFile") MultipartFile planFile,
-            @Valid @RequestParam("edcrRequest") String edcrRequest) {
+    public ResponseEntity<?> uploadPlan(@RequestParam("planFile") MultipartFile planFile,
+             @RequestParam("edcrRequest") String edcrRequest) {
         EdcrResponse edcrResponse = new EdcrResponse();
         try {
-            EdcrRequest edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
+        	EdcrRequest edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
             ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile);
             if (errorResponses != null)
                 return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
@@ -117,7 +115,7 @@ public class RestEdcrApplicationController {
         if (errorResponses != null)
             return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
         else
-            edcrResponse = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber());
+            edcrResponse = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber(), edcrRequest.getTenant());
         return new ResponseEntity<>(edcrResponse, HttpStatus.OK);
     }
 

@@ -61,12 +61,13 @@ import javax.persistence.PersistenceContext;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.egov.common.entity.dcr.helper.EdcrApplicationInfo;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.edcr.config.properties.EdcrApplicationSettings;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.contract.EdcrRequest;
 import org.egov.edcr.contract.EdcrResponse;
+import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.entity.EdcrPdfDetail;
@@ -91,7 +92,7 @@ import eu.medsea.mimeutil.MimeUtil;
 public class EdcrRestService {
     private static Logger LOG = Logger.getLogger(EdcrApplicationService.class);
 
-    public static final String FILE_DOWNLOAD_URL = "%s/edcr/rest/dcr/downloadfile/";
+    public static final String FILE_DOWNLOAD_URL = "%s/edcr/dcr/downloadfile/";
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -125,18 +126,20 @@ public class EdcrRestService {
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
         edcrApplicationDetails.add(edcrApplicationDetail);
         edcrApplication.setTransactionNumber(edcrRequest.getTransactionNumber());
-        edcrApplication.setApplicantName("Anonymous");
-        edcrApplication.setArchitectInformation("Anonymous");
-        edcrApplication.setServiceType("New Construction");
+        edcrApplication.setApplicantName(DxfFileConstants.ANONYMOUS_APPLICANT);
+        edcrApplication.setArchitectInformation(DxfFileConstants.ANONYMOUS_APPLICANT);
+        edcrApplication.setServiceType(DxfFileConstants.NEWCONSTRUCTION_SERVICE);
+        edcrApplication.setApplicationType(ApplicationType.PERMIT);
         edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
         edcrApplication.setDxfFile(file);
         edcrApplication = edcrApplicationService.createRestEdcr(edcrApplication);
-        return setEdcrResponse(edcrApplication);
+        return setEdcrResponse(edcrApplication, edcrRequest.getTenant());
     }
 
-    public EdcrResponse setEdcrResponse(EdcrApplication edcrApplication) {
+    public EdcrResponse setEdcrResponse(EdcrApplication edcrApplication, String tenantId) {
         EdcrResponse edcrResponse = new EdcrResponse();
         List<String> planPdfs = new ArrayList<>();
+        edcrResponse.setTransactionNumber(edcrApplication.getTransactionNumber());
         edcrResponse.setEdcrNumber(edcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber());
         edcrResponse.setStatus(edcrApplication.getStatus());
         edcrResponse.setPlanFile(
@@ -150,12 +153,14 @@ public class EdcrRestService {
         if (LOG.isInfoEnabled())
             LOG.info("**************** End - Reading Plan detail file **************" + file);
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-            Plan pl1 = mapper.readValue(file, Plan.class);
-            if (LOG.isInfoEnabled())
-                LOG.info("**************** Plan detail object **************" + pl1);
-            edcrResponse.setPlanDetail(pl1);
+        	if(file != null) {
+	            ObjectMapper mapper = new ObjectMapper();
+	            mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+	            Plan pl1 = mapper.readValue(file, Plan.class);
+	            if (LOG.isInfoEnabled())
+	                LOG.info("**************** Plan detail object **************" + pl1);
+	            edcrResponse.setPlanDetail(pl1);
+        	}
         } catch (IOException e) {
             LOG.log(Level.ERROR, e);
         }
@@ -166,6 +171,7 @@ public class EdcrRestService {
             planPdfs.add(planPdf);
         }
         edcrResponse.setPlanPdfs(planPdfs);
+        edcrResponse.setTenantId(tenantId);
 
         if (!edcrApplication.getStatus().equalsIgnoreCase("Accepted"))
             edcrResponse.setStatus(edcrApplication.getStatus());
@@ -173,8 +179,8 @@ public class EdcrRestService {
         return edcrResponse;
     }
 
-    public EdcrResponse fetchEdcr(final String edcrNumber, final String transactionNumber) {
-        EdcrApplication edcrApplication = new EdcrApplication();
+    public EdcrResponse fetchEdcr(final String edcrNumber, final String transactionNumber, String tenantId) {
+        EdcrApplication edcrApplication = null  ;
         if (StringUtils.isNotBlank(edcrNumber) && StringUtils.isNotBlank(transactionNumber)) {
             EdcrApplicationDetail dcrDetails = edcrApplicationDetailService.findByDcrAndTransactionNumber(edcrNumber,
                     transactionNumber);
@@ -187,7 +193,7 @@ public class EdcrRestService {
         } else {
             edcrApplication = edcrApplicationService.findByTransactionNumber(transactionNumber);
         }
-        return setEdcrResponse(edcrApplication);
+        return edcrApplication != null ? setEdcrResponse(edcrApplication, tenantId) : new EdcrResponse();
     }
 
     public ErrorDetail validateRequestParam(final EdcrRequest edcrRequest, final MultipartFile file) {
@@ -225,11 +231,6 @@ public class EdcrRestService {
             MultipartFile file, final String maxAllowSizeInMB, final EdcrRequest edcrRequest) {
         String extension;
         String mimeType;
-        ErrorDetail errorDetail = null;
-
-        EdcrApplicationInfo applicationInfo = new EdcrApplicationInfo();
-        applicationInfo.setErrorDetail(errorDetail);
-       
         if (file != null && !file.isEmpty()) {
             extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
             if (extension != null && !extension.isEmpty()) {
@@ -245,17 +246,22 @@ public class EdcrRestService {
                     return new ErrorDetail("BPA-04", "File size should not exceed 30 MB");
                 }
             }
+        }else {
+            return new ErrorDetail("BPA-05", "Plan file is mandatory");
         }
+        
         if (StringUtils.isNotBlank(edcrRequest.getTransactionNumber())
                 && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber()) != null) {
             return new ErrorDetail("BPA-01", "Transaction Number should be unique");
         }
+        //Validate Tenant id
         if (!validateTenant(edcrRequest.getTenant()))
             return new ErrorDetail("BPA-05", "Please enter valid tenant");
+        //TODO: Validate Auth token. Add validate auth token logic here.
         if (!validateAuthToken(edcrRequest.getAuthToken()))
             return new ErrorDetail("BPA-05", "Please enter valid authtoken");
 
-        return errorDetail;
+        return null;
     }
 
     public Boolean validateTenant(final String tenantId) {

@@ -267,6 +267,7 @@ public class EdcrApplicationService {
         edcrApplication.setStatus(ABORTED);
         edcrApplicationRepository.save(edcrApplication);
         callDcrProcess(edcrApplication, NEW_SCRTNY);
+        edcrIndexService.updateEdcrRestIndexes(edcrApplication, NEW_SCRTNY);
         return edcrApplication;
     }
 

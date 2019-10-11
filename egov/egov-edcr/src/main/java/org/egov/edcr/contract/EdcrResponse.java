@@ -57,14 +57,19 @@ public class EdcrResponse {
     private String planReport;
 
     private String planFile;
+    
+    private String transactionNumber;
 
     private String status;
-
-    private Plan planDetail;
-
+    
+    private String edcrNumber;
+    
     private List<String> planPdfs;
 
-    private String edcrNumber;
+    private Plan planDetail;
+    
+    private String tenantId;
+
 
     public String getPlanReport() {
         return planReport;
@@ -113,4 +118,20 @@ public class EdcrResponse {
     public void setEdcrNumber(String edcrNumber) {
         this.edcrNumber = edcrNumber;
     }
+
+	public String getTransactionNumber() {
+		return transactionNumber;
+	}
+
+	public void setTransactionNumber(String transactionNumber) {
+		this.transactionNumber = transactionNumber;
+	}
+
+	public String getTenantId() {
+		return tenantId;
+	}
+
+	public void setTenantId(String tenantId) {
+		this.tenantId = tenantId;
+	}
 }
