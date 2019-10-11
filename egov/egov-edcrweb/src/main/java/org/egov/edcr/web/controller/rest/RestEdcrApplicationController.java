@@ -76,7 +76,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
-@RequestMapping(value = "/rest")
+@RequestMapping(value = "/dcr")
 public class RestEdcrApplicationController {
 
     private static final Logger LOGGER = Logger.getLogger(RestEdcrApplicationController.class);
@@ -88,7 +88,7 @@ public class RestEdcrApplicationController {
     @Autowired
     protected FileStoreUtils fileStoreUtils;
 
-    @PostMapping(value = "/dcr/uploadplan", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/uploadplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> uploadPlan(@Valid @RequestParam("planFile") MultipartFile planFile,
             @Valid @RequestParam("edcrRequest") String edcrRequest) {
@@ -108,7 +108,7 @@ public class RestEdcrApplicationController {
         return new ResponseEntity<>(edcrResponse, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/dcr/getdetails", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/getdetails", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> getDetails(@ModelAttribute EdcrRequest edcrRequest) {
         ErrorDetail errorResponses = edcrRestService.validateSearchRequest(edcrRequest.getEdcrNumber(),
@@ -121,7 +121,7 @@ public class RestEdcrApplicationController {
         return new ResponseEntity<>(edcrResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/dcr/downloadfile/{fileStoreId}")
+    @GetMapping("/downloadfile/{fileStoreId}")
     public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, DIGIT_DCR, true);
     }

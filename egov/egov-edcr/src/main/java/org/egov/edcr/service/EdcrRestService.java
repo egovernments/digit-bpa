@@ -203,7 +203,7 @@ public class EdcrRestService {
     public ErrorDetail validateSearchRequest(final String edcrNumber, final String transactionNumber) {
         ErrorDetail errorDetail = null;
         if (StringUtils.isBlank(edcrNumber) && StringUtils.isBlank(transactionNumber))
-            return new ErrorDetail("Valid code", "Please enter valid edcrnumber or transactionnumber");
+            return new ErrorDetail("BPA-05", "Please enter valid edcrnumber or transactionnumber");
         return errorDetail;
     }
 
@@ -229,30 +229,31 @@ public class EdcrRestService {
 
         EdcrApplicationInfo applicationInfo = new EdcrApplicationInfo();
         applicationInfo.setErrorDetail(errorDetail);
-        if (StringUtils.isNotBlank(edcrRequest.getTransactionNumber())
-                && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber()) != null) {
-            return new ErrorDetail("TransactionNumber", "Transaction Number should be unique");
-        }
+       
         if (file != null && !file.isEmpty()) {
             extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
             if (extension != null && !extension.isEmpty()) {
                 mimeType = getMimeType(file);
                 if (!allowedExtenstions.contains(extension.toLowerCase())) {
-                    return new ErrorDetail("Invalid File Type", "Please upload " + allowedExtenstions + " format file only");
+                    return new ErrorDetail("BPA-02", "Please upload " + allowedExtenstions + " format file only");
                 } else if (allowedExtenstions.contains(extension.toLowerCase())
                         && (!mimeTypes.contains(mimeType)
                                 || StringUtils.countMatches(file.getOriginalFilename(), ".") > 1
                                 || file.getOriginalFilename().contains("%00"))) {
-                    return new ErrorDetail("Malicious File", "Malicious file upload");
+                    return new ErrorDetail("BPA-03", "Malicious file upload");
                 } else if (file.getSize() > (Long.valueOf(maxAllowSizeInMB) * 1024 * 1024)) {
-                    return new ErrorDetail("File Size", "File size should not exceed 30 MB");
+                    return new ErrorDetail("BPA-04", "File size should not exceed 30 MB");
                 }
             }
         }
+        if (StringUtils.isNotBlank(edcrRequest.getTransactionNumber())
+                && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber()) != null) {
+            return new ErrorDetail("BPA-01", "Transaction Number should be unique");
+        }
         if (!validateTenant(edcrRequest.getTenant()))
-            return new ErrorDetail("tenant", "Please enter valid tenant");
+            return new ErrorDetail("BPA-05", "Please enter valid tenant");
         if (!validateAuthToken(edcrRequest.getAuthToken()))
-            return new ErrorDetail("authToken", "Please enter valid authtoken");
+            return new ErrorDetail("BPA-05", "Please enter valid authtoken");
 
         return errorDetail;
     }
