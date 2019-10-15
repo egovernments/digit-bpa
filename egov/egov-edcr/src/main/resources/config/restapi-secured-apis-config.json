@@ -1,0 +1,8 @@
+{
+	"resources": [
+		{
+			"url": "/dcr/uploadplan/**",
+			"roles": "hasAnyRole('third party operator')"
+		}
+	]
+}
