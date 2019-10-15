@@ -48,9 +48,7 @@
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <mvc:annotation-driven enable-matrix-variables="true"
-                           conversion-service="conversionService"
-                           validator="validator">
+    <mvc:annotation-driven enable-matrix-variables="true" conversion-service="conversionService" validator="validator">
          <mvc:message-converters>
             <!-- Use the HibernateAware mapper instead of the default -->
             <bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
