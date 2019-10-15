@@ -74,7 +74,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
-@RequestMapping(value = "/dcr")
+@RequestMapping(value = "/rest/dcr")
 public class RestEdcrApplicationController {
 
     private static final Logger LOGGER = Logger.getLogger(RestEdcrApplicationController.class);
@@ -93,12 +93,12 @@ public class RestEdcrApplicationController {
         EdcrResponse edcrResponse = new EdcrResponse();
         try {
         	EdcrRequest edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
-            ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile);
+        /*    ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile);
             if (errorResponses != null)
                 return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
-            else {
+            else {*/
                 edcrResponse = edcrRestService.createEdcr(edcr, planFile);
-            }
+          /*  }*/
 
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);

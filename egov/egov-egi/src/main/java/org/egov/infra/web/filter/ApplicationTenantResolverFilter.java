@@ -48,10 +48,18 @@
 
 package org.egov.infra.web.filter;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.core.EnvironmentSettings;
-import org.springframework.beans.factory.annotation.Autowired;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
+import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
+import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.annotation.Resource;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -59,35 +67,113 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
+import javax.servlet.http.HttpSession;
 
-import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
-import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.core.EnvironmentSettings;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MapPropertySource;
 
 public class ApplicationTenantResolverFilter implements Filter {
 
-    @Autowired
-    private EnvironmentSettings environmentSettings;
+	@Autowired
+	private EnvironmentSettings environmentSettings;
 
-    @Override
-    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException, ServletException {
-        String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
-        String domainName = extractRequestedDomainName(domainURL);
-        ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(domainName));
-        ApplicationThreadLocals.setDomainName(domainName);
-        ApplicationThreadLocals.setDomainURL(domainURL);
-        chain.doFilter(request, response);
-    }
+	@Resource(name = "cities")
+	private transient List<String> cities;
 
-    @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
-        //Nothing to be initialized
-    }
+	public static Map<String, String> tenants = new HashMap<>();
+	public static String stateUrl;
 
-    @Override
-    public void destroy() {
-        //Nothing to be cleaned up
-    }
+	@Autowired
+	private ConfigurableEnvironment environment;
+
+	private static final Logger LOG = LoggerFactory.getLogger(ApplicationTenantResolverFilter.class);
+
+	@Override
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+			throws IOException, ServletException {
+		HttpServletRequest req = (HttpServletRequest) request;
+		HttpSession session = req.getSession();
+
+		String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
+		String domainName = extractRequestedDomainName(domainURL);
+		ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(domainName));
+		ApplicationThreadLocals.setDomainName(domainName);
+		ApplicationThreadLocals.setDomainURL(domainURL);
+		prepareRestService(req, session);
+		chain.doFilter(request, response);
+	}
+
+	@Override
+	public void init(final FilterConfig filterConfig) throws ServletException {
+		// Nothing to be initialized
+	}
+
+	@Override
+	public void destroy() {
+		// Nothing to be cleaned up
+	}
+
+	private void prepareRestService(HttpServletRequest req, HttpSession session) {
+
+		if (tenants == null || tenants.isEmpty()) {
+			tenantsMap();
+		}
+		if (req.getRequestURL().toString().contains(tenants.get("state"))
+				&& req.getRequestURL().toString().contains("/rest/")) {
+
+			String fullTenant = req.getParameter("tenantId");
+			if (fullTenant != null) {
+				String tenant = fullTenant.substring(fullTenant.lastIndexOf('.') + 1, fullTenant.length());
+				LOG.info("tenant=" + tenant);
+				LOG.info("City Code" + (String) session.getAttribute(CITY_CODE_KEY));
+				boolean found = false;
+				if (tenant.equalsIgnoreCase("generic")) {
+					ApplicationThreadLocals.setTenantID(tenant);
+					found = true;
+				} else {
+					for (String city : tenants.keySet()) {
+						LOG.info("Key :" + city + " ,Value :" + tenants.get(city) + "request tenant" + tenant);
+
+						if (tenants.get(city).contains(tenant)) {
+							ApplicationThreadLocals.setTenantID(city);
+							found = true;
+							break;
+						}
+					}
+				}
+				if (!found) {
+					throw new RuntimeException("Invalid tenantId");
+				}
+
+			}
+
+		} else {
+			throw new RuntimeException("RestUrl does not contain tenantId");
+		}
+	}
+
+	public Map<String, String> tenantsMap() {
+		URL url;
+		try {
+			url = new URL(ApplicationThreadLocals.getDomainURL());
+			environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
+				if (propertySource instanceof MapPropertySource)
+					((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
+						if (key.startsWith("tenant."))
+							tenants.put(value.toString(), url.getProtocol() + "://" + key.replace("tenant.", "")
+									+ (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+					});
+			});
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return tenants;
+	}
 
 }
