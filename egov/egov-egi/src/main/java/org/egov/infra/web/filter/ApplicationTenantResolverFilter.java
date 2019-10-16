@@ -124,10 +124,16 @@ public class ApplicationTenantResolverFilter implements Filter {
 			tenantsMap();
 		}
 		if (req.getRequestURL().toString().contains(tenants.get("state"))
-				&& req.getRequestURL().toString().contains("/rest/")) {
+				&& (req.getRequestURL().toString().contains("/rest/") || req.getRequestURL().toString().contains("/oauth/")) ) {
 
 			String fullTenant = req.getParameter("tenantId");
-			if (fullTenant != null) {
+			if (fullTenant == null) {
+			  
+			}
+			if(fullTenant==null)
+			{
+				throw new RuntimeException("RestUrl does not contain tenantId");
+			}
 				String tenant = fullTenant.substring(fullTenant.lastIndexOf('.') + 1, fullTenant.length());
 				LOG.info("tenant=" + tenant);
 				LOG.info("City Code" + (String) session.getAttribute(CITY_CODE_KEY));
@@ -150,11 +156,9 @@ public class ApplicationTenantResolverFilter implements Filter {
 					throw new RuntimeException("Invalid tenantId");
 				}
 
-			}else {
-				throw new RuntimeException("RestUrl does not contain tenantId");
-			}
+			} 
 
-		} 
+		
 	}
 
 	public Map<String, String> tenantsMap() {

@@ -137,7 +137,7 @@ public class ApplicationCoreFilter implements Filter {
 
 		 
 		if (req.getRequestURL().toString().contains(ApplicationTenantResolverFilter.tenants.get("state"))
-				&& req.getRequestURL().toString().contains("/rest/")) {
+				&& (req.getRequestURL().toString().contains("/rest/") || req.getRequestURL().toString().contains("/oauth/"))) {
 			prepareThreadLocal(ApplicationThreadLocals.getTenantID());
 		 
 	}
