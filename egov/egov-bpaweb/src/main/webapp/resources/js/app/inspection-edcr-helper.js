@@ -116,7 +116,7 @@ $(document).ready(
                  $.ajax({
                      async: false,
                      crossDomain: true,
-                     url: '/edcr/rest/approved-plan-details/by-edcr-number/' + $('#eDcrNumber').val(),
+                     url: '/edcr/public/approved-plan-details/by-edcr-number/' + $('#eDcrNumber').val(),
                      type: "GET",
                      contentType: 'application/json; charset=utf-8',
                      success: function (response) {
@@ -264,7 +264,7 @@ $(document).ready(
 	            	$.ajax({
 	                    async: false,
 	                    crossDomain: true,
-	                    url: '/edcr/rest/approved-plan-details/by-edcr-number/' + response.dcrNumber,
+	                    url: '/edcr/public/approved-plan-details/by-edcr-number/' + response.dcrNumber,
 	                    type: "GET",
 	                    contentType: 'application/json; charset=utf-8',
 	                    success: function (response) {
