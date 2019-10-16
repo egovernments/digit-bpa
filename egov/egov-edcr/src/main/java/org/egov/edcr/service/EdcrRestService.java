@@ -70,7 +70,6 @@ import org.egov.edcr.contract.EdcrResponse;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
-import org.egov.edcr.entity.EdcrPdfDetail;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -92,7 +91,7 @@ import eu.medsea.mimeutil.MimeUtil;
 public class EdcrRestService {
     private static Logger LOG = Logger.getLogger(EdcrApplicationService.class);
 
-    public static final String FILE_DOWNLOAD_URL = "%s/edcr/dcr/downloadfile/";
+    public static final String FILE_DOWNLOAD_URL = "%s/edcr/rest/dcr/downloadfile/";
 
     @Autowired
     protected SecurityUtils securityUtils;
@@ -108,9 +107,6 @@ public class EdcrRestService {
 
     @Autowired
     private EdcrApplicationDetailService edcrApplicationDetailService;
-
-    @Autowired
-    private EdcrPdfDetailService edcrPdfDetailService;
 
     @Autowired
     private FileStoreService fileStoreService;
@@ -133,7 +129,7 @@ public class EdcrRestService {
         edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
         edcrApplication.setDxfFile(file);
         edcrApplication = edcrApplicationService.createRestEdcr(edcrApplication);
-        return setEdcrResponse(edcrApplication, edcrRequest.getTenant());
+        return setEdcrResponse(edcrApplication, edcrRequest.getTenantId());
     }
 
     public EdcrResponse setEdcrResponse(EdcrApplication edcrApplication, String tenantId) {
@@ -142,8 +138,9 @@ public class EdcrRestService {
         edcrResponse.setTransactionNumber(edcrApplication.getTransactionNumber());
         edcrResponse.setEdcrNumber(edcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber());
         edcrResponse.setStatus(edcrApplication.getStatus());
-        edcrResponse.setPlanFile(
-                format(getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId().getFileStoreId())));
+        edcrResponse.setDxfFile(format(getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId().getFileStoreId())));
+        edcrResponse.setUpdatedDxfFile(
+                format(getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getScrutinizedDxfFileId().getFileStoreId())));
         edcrResponse.setPlanReport(format(
                 getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId())));
 
@@ -165,11 +162,9 @@ public class EdcrRestService {
             LOG.log(Level.ERROR, e);
         }
 
-        List<EdcrPdfDetail> pdfDetails = edcrPdfDetailService.findByDcrApplicationId(edcrApplication.getId());
-        for (EdcrPdfDetail edcrPdf : pdfDetails) {
-            String planPdf = format(getFileDownloadUrl(edcrPdf.getConvertedPdf().getFileStoreId()));
-            planPdfs.add(planPdf);
-        }
+        planPdfs.add(format(getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId().getFileStoreId())));
+        planPdfs.add(format(getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId())));
+        
         edcrResponse.setPlanPdfs(planPdfs);
         edcrResponse.setTenantId(tenantId);
 
@@ -196,14 +191,14 @@ public class EdcrRestService {
         return edcrApplication != null ? setEdcrResponse(edcrApplication, tenantId) : new EdcrResponse();
     }
 
-    public ErrorDetail validateRequestParam(final EdcrRequest edcrRequest, final MultipartFile file) {
+    public ErrorDetail validateRequestParam(final EdcrRequest edcrRequest, final MultipartFile file, final String tenant) {
         List<String> dcrAllowedExtenstions = new ArrayList<>(
                 Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.extenstions").split(",")));
 
         List<String> dcrMimeTypes = new ArrayList<>(
                 Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.mime.types").split(",")));
         String fileSize = edcrApplicationSettings.getValue("dcr.dxf.max.size");
-        return validateParam(dcrAllowedExtenstions, dcrMimeTypes, file, fileSize, edcrRequest);
+        return validateParam(dcrAllowedExtenstions, dcrMimeTypes, file, fileSize, edcrRequest, tenant);
     }
 
     public ErrorDetail validateSearchRequest(final String edcrNumber, final String transactionNumber) {
@@ -228,7 +223,7 @@ public class EdcrRestService {
     }
 
     public ErrorDetail validateParam(List<String> allowedExtenstions, List<String> mimeTypes,
-            MultipartFile file, final String maxAllowSizeInMB, final EdcrRequest edcrRequest) {
+            MultipartFile file, final String maxAllowSizeInMB, final EdcrRequest edcrRequest, final String tenant) {
         String extension;
         String mimeType;
         if (file != null && !file.isEmpty()) {
@@ -255,7 +250,7 @@ public class EdcrRestService {
             return new ErrorDetail("BPA-01", "Transaction Number should be unique");
         }
         //Validate Tenant id
-        if (!validateTenant(edcrRequest.getTenant()))
+        if (!validateTenant(edcrRequest.getTenantId()) && StringUtils.isBlank(tenant))
             return new ErrorDetail("BPA-05", "Please enter valid tenant");
         //TODO: Validate Auth token. Add validate auth token logic here.
         if (!validateAuthToken(edcrRequest.getAuthToken()))

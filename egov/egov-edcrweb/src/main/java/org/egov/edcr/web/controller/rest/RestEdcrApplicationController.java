@@ -65,6 +65,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -86,19 +87,19 @@ public class RestEdcrApplicationController {
     @Autowired
     protected FileStoreUtils fileStoreUtils;
 
-    @PostMapping(value = "/uploadplan", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/scrutinizeplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> uploadPlan(@RequestParam("planFile") MultipartFile planFile,
-             @RequestParam("edcrRequest") String edcrRequest) {
+    public ResponseEntity<?> scrutinizePlan(@RequestParam String tenantId, @RequestBody MultipartFile planFile,
+    		@RequestParam String edcrRequest) {
         EdcrResponse edcrResponse = new EdcrResponse();
         try {
         	EdcrRequest edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
-        /*    ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile);
+            ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile, tenantId);
             if (errorResponses != null)
                 return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
-            else {*/
+            else {
                 edcrResponse = edcrRestService.createEdcr(edcr, planFile);
-          /*  }*/
+            }
 
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
@@ -106,16 +107,16 @@ public class RestEdcrApplicationController {
         return new ResponseEntity<>(edcrResponse, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/getdetails", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/scrutinydetails", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> getDetails(@ModelAttribute EdcrRequest edcrRequest) {
+    public ResponseEntity<?> scrutinyDetails(@ModelAttribute EdcrRequest edcrRequest) {
         ErrorDetail errorResponses = edcrRestService.validateSearchRequest(edcrRequest.getEdcrNumber(),
                 edcrRequest.getTransactionNumber());
         EdcrResponse edcrResponse;
         if (errorResponses != null)
             return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
         else
-            edcrResponse = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber(), edcrRequest.getTenant());
+            edcrResponse = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber(), edcrRequest.getTenantId());
         return new ResponseEntity<>(edcrResponse, HttpStatus.OK);
     }
 

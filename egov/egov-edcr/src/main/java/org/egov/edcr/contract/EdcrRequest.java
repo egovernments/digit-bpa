@@ -50,7 +50,14 @@ package org.egov.edcr.contract;
 
 import java.io.File;
 
+import org.egov.infra.microservice.models.RequestInfo;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class EdcrRequest {
+	
+	@JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
 
     private String transactionNumber;
 
@@ -58,11 +65,19 @@ public class EdcrRequest {
 
     private File planFile;
 
-    private String tenant;
+    private String tenantId;
 
     private String authToken;
 
-    public String getTransactionNumber() {
+    public RequestInfo getRequestInfo() {
+		return requestInfo;
+	}
+
+	public void setRequestInfo(RequestInfo requestInfo) {
+		this.requestInfo = requestInfo;
+	}
+
+	public String getTransactionNumber() {
         return transactionNumber;
     }
 
@@ -94,11 +109,11 @@ public class EdcrRequest {
         this.edcrNumber = edcrNumber;
     }
 
-    public String getTenant() {
-        return tenant;
-    }
+	public String getTenantId() {
+		return tenantId;
+	}
 
-    public void setTenant(String tenant) {
-        this.tenant = tenant;
-    }
+	public void setTenantId(String tenantId) {
+		this.tenantId = tenantId;
+	}
 }

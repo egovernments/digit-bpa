@@ -54,9 +54,11 @@ import org.egov.common.entity.edcr.Plan;
 
 public class EdcrResponse {
 
-    private String planReport;
+    private String dxfFile;
 
-    private String planFile;
+    private String updatedDxfFile;
+    
+    private String planReport;
     
     private String transactionNumber;
 
@@ -77,14 +79,6 @@ public class EdcrResponse {
 
     public void setPlanReport(String planReport) {
         this.planReport = planReport;
-    }
-
-    public String getPlanFile() {
-        return planFile;
-    }
-
-    public void setPlanFile(String planFile) {
-        this.planFile = planFile;
     }
 
     public String getStatus() {
@@ -133,5 +127,21 @@ public class EdcrResponse {
 
 	public void setTenantId(String tenantId) {
 		this.tenantId = tenantId;
+	}
+
+	public String getDxfFile() {
+		return dxfFile;
+	}
+
+	public void setDxfFile(String dxfFile) {
+		this.dxfFile = dxfFile;
+	}
+
+	public String getUpdatedDxfFile() {
+		return updatedDxfFile;
+	}
+
+	public void setUpdatedDxfFile(String updatedDxfFile) {
+		this.updatedDxfFile = updatedDxfFile;
 	}
 }
