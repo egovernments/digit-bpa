@@ -150,11 +150,11 @@ public class ApplicationTenantResolverFilter implements Filter {
 					throw new RuntimeException("Invalid tenantId");
 				}
 
+			}else {
+				throw new RuntimeException("RestUrl does not contain tenantId");
 			}
 
-		} else {
-			throw new RuntimeException("RestUrl does not contain tenantId");
-		}
+		} 
 	}
 
 	public Map<String, String> tenantsMap() {
