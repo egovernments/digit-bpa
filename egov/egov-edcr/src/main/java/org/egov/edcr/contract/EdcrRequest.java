@@ -67,8 +67,6 @@ public class EdcrRequest {
 
     private String tenantId;
 
-    private String authToken;
-
     public RequestInfo getRequestInfo() {
 		return requestInfo;
 	}
@@ -91,14 +89,6 @@ public class EdcrRequest {
 
     public void setPlanFile(File planFile) {
         this.planFile = planFile;
-    }
-
-    public String getAuthToken() {
-        return authToken;
-    }
-
-    public void setAuthToken(String authToken) {
-        this.authToken = authToken;
     }
 
     public String getEdcrNumber() {

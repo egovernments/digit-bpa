@@ -45,52 +45,103 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.infra.microservice.contract;
 
-public class ResponseInfo {
+package org.egov.edcr.contract;
 
-    private String apiId;
+import java.util.List;
 
-    private String ver;
+import org.egov.common.entity.edcr.Plan;
 
-    private String ts;
+public class EdcrDetail {
 
-    private String resMsgId;
+    private String dxfFile;
 
-    private String msgId;
+    private String updatedDxfFile;
+    
+    private String planReport;
+    
+    private String transactionNumber;
 
     private String status;
     
-    public ResponseInfo(String apiId, String ver, String ts, String resMsgId, String msgId, String status) {
-        this.apiId = apiId;
-        this.ver = ver;
-        this.ts = ts;
-        this.resMsgId = resMsgId;
-        this.msgId = msgId;
-        this.status = status;
+    private String edcrNumber;
+    
+    private List<String> planPdfs;
+
+    private Plan planDetail;
+    
+    private String tenantId;
+
+
+    public String getPlanReport() {
+        return planReport;
     }
 
-    public String getApiId() {
-        return apiId;
-    }
-
-    public String getVer() {
-        return ver;
-    }
-
-    public String getTs() {
-        return ts;
-    }
-
-    public String getResMsgId() {
-        return resMsgId;
-    }
-
-    public String getMsgId() {
-        return msgId;
+    public void setPlanReport(String planReport) {
+        this.planReport = planReport;
     }
 
     public String getStatus() {
         return status;
     }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public Plan getPlanDetail() {
+        return planDetail;
+    }
+
+    public void setPlanDetail(Plan planDetail) {
+        this.planDetail = planDetail;
+    }
+
+    public List<String> getPlanPdfs() {
+        return planPdfs;
+    }
+
+    public void setPlanPdfs(List<String> planPdfs) {
+        this.planPdfs = planPdfs;
+    }
+
+    public String getEdcrNumber() {
+        return edcrNumber;
+    }
+
+    public void setEdcrNumber(String edcrNumber) {
+        this.edcrNumber = edcrNumber;
+    }
+
+	public String getTransactionNumber() {
+		return transactionNumber;
+	}
+
+	public void setTransactionNumber(String transactionNumber) {
+		this.transactionNumber = transactionNumber;
+	}
+
+	public String getTenantId() {
+		return tenantId;
+	}
+
+	public void setTenantId(String tenantId) {
+		this.tenantId = tenantId;
+	}
+
+	public String getDxfFile() {
+		return dxfFile;
+	}
+
+	public void setDxfFile(String dxfFile) {
+		this.dxfFile = dxfFile;
+	}
+
+	public String getUpdatedDxfFile() {
+		return updatedDxfFile;
+	}
+
+	public void setUpdatedDxfFile(String updatedDxfFile) {
+		this.updatedDxfFile = updatedDxfFile;
+	}
 }

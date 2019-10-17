@@ -65,14 +65,16 @@ import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.edcr.config.properties.EdcrApplicationSettings;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.contract.EdcrDetail;
 import org.egov.edcr.contract.EdcrRequest;
-import org.egov.edcr.contract.EdcrResponse;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.microservice.contract.ResponseInfo;
+import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +117,7 @@ public class EdcrRestService {
     }
 
     @Transactional
-    public EdcrResponse createEdcr(final EdcrRequest edcrRequest, final MultipartFile file) {
+    public EdcrDetail createEdcr(final EdcrRequest edcrRequest, final MultipartFile file) {
         EdcrApplication edcrApplication = new EdcrApplication();
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
@@ -131,18 +133,18 @@ public class EdcrRestService {
         return setEdcrResponse(edcrApplication, edcrRequest.getTenantId());
     }
 
-    public EdcrResponse setEdcrResponse(EdcrApplication edcrApplication, String tenantId) {
-        EdcrResponse edcrResponse = new EdcrResponse();
+    public EdcrDetail setEdcrResponse(EdcrApplication edcrApplication, String tenantId) {
+        EdcrDetail edcrDetail = new EdcrDetail();
         List<String> planPdfs = new ArrayList<>();
-        edcrResponse.setTransactionNumber(edcrApplication.getTransactionNumber());
-        edcrResponse.setEdcrNumber(edcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber());
-        edcrResponse.setStatus(edcrApplication.getStatus());
-        edcrResponse.setDxfFile(
+        edcrDetail.setTransactionNumber(edcrApplication.getTransactionNumber());
+        edcrDetail.setEdcrNumber(edcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber());
+        edcrDetail.setStatus(edcrApplication.getStatus());
+        edcrDetail.setDxfFile(
                 format(getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId().getFileStoreId())));
-        edcrResponse.setUpdatedDxfFile(
+        edcrDetail.setUpdatedDxfFile(
                 format(getFileDownloadUrl(
                         edcrApplication.getEdcrApplicationDetails().get(0).getScrutinizedDxfFileId().getFileStoreId())));
-        edcrResponse.setPlanReport(format(
+        edcrDetail.setPlanReport(format(
                 getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId())));
 
         File file = fileStoreService.fetch(
@@ -157,7 +159,7 @@ public class EdcrRestService {
                 Plan pl1 = mapper.readValue(file, Plan.class);
                 if (LOG.isInfoEnabled())
                     LOG.info("**************** Plan detail object **************" + pl1);
-                edcrResponse.setPlanDetail(pl1);
+                edcrDetail.setPlanDetail(pl1);
             }
         } catch (IOException e) {
             LOG.log(Level.ERROR, e);
@@ -168,16 +170,16 @@ public class EdcrRestService {
         planPdfs.add(format(
                 getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId())));
 
-        edcrResponse.setPlanPdfs(planPdfs);
-        edcrResponse.setTenantId(tenantId);
+        edcrDetail.setPlanPdfs(planPdfs);
+        edcrDetail.setTenantId(tenantId);
 
         if (!edcrApplication.getStatus().equalsIgnoreCase("Accepted"))
-            edcrResponse.setStatus(edcrApplication.getStatus());
+        	edcrDetail.setStatus(edcrApplication.getStatus());
 
-        return edcrResponse;
+        return edcrDetail;
     }
 
-    public EdcrResponse fetchEdcr(final String edcrNumber, final String transactionNumber, String tenantId) {
+    public EdcrDetail fetchEdcr(final String edcrNumber, final String transactionNumber, String tenantId) {
         EdcrApplication edcrApplication = null;
         if (StringUtils.isNotBlank(edcrNumber) && StringUtils.isNotBlank(transactionNumber)) {
             EdcrApplicationDetail dcrDetails = edcrApplicationDetailService.findByDcrAndTransactionNumber(edcrNumber,
@@ -191,7 +193,7 @@ public class EdcrRestService {
         } else {
             edcrApplication = edcrApplicationService.findByTransactionNumber(transactionNumber);
         }
-        return edcrApplication != null ? setEdcrResponse(edcrApplication, tenantId) : new EdcrResponse();
+        return edcrApplication != null ? setEdcrResponse(edcrApplication, tenantId) : new EdcrDetail();
     }
 
     public ErrorDetail validateRequestParam(final EdcrRequest edcrRequest, final MultipartFile file, final String tenant) {
@@ -248,19 +250,30 @@ public class EdcrRestService {
         // Validate Tenant id
         if (!validateTenant(edcrRequest.getTenantId()) && StringUtils.isBlank(tenant))
             return new ErrorDetail(BPA_05, "Please enter valid tenant");
-        // TODO: Validate Auth token. Add validate auth token logic here.
-        if (!validateAuthToken(edcrRequest.getAuthToken()))
-            return new ErrorDetail(BPA_05, "Please enter valid authtoken");
 
         return null;
     }
+    
+    public ResponseInfo createResponseInfoFromRequestInfo(RequestInfo requestInfo, Boolean success) {
+    	String apiId = null;
+		String ver = null;
+		String ts = null;
+		String resMsgId = "";
+		String msgId = null;
+		if (requestInfo != null) {
+			apiId = requestInfo.getApiId();
+			ver = requestInfo.getVer();
+			if(requestInfo.getTs()!=null)
+			ts = requestInfo.getTs().toString();
+			msgId = requestInfo.getMsgId();
+		}
+		String responseStatus = success ? "successful" : "failed";
+
+		return new ResponseInfo(apiId, ver, ts, resMsgId, msgId, responseStatus);
+	}
 
     public Boolean validateTenant(final String tenantId) {
         return StringUtils.isNotBlank(tenantId);
-    }
-
-    public Boolean validateAuthToken(final String authToken) {
-        return StringUtils.isNotBlank(authToken);
     }
 
     public String getFileDownloadUrl(final String fileStoreId) {

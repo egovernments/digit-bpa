@@ -49,12 +49,18 @@ package org.egov.edcr.web.controller.rest;
 
 import java.io.IOException;
 
+import javax.validation.Valid;
+
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
+import org.egov.edcr.contract.EdcrDetail;
 import org.egov.edcr.contract.EdcrRequest;
 import org.egov.edcr.contract.EdcrResponse;
 import org.egov.edcr.service.EdcrRestService;
+import org.egov.infra.microservice.contract.RequestInfoWrapper;
+import org.egov.infra.microservice.contract.ResponseInfo;
+import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -91,37 +97,47 @@ public class RestEdcrApplicationController {
     @ResponseBody
     public ResponseEntity<?> scrutinizePlan(@RequestParam String tenantId, @RequestBody MultipartFile planFile,
     		@RequestParam String edcrRequest) {
-        EdcrResponse edcrResponse = new EdcrResponse();
+        EdcrDetail edcrDetail = new EdcrDetail();
+        EdcrRequest edcr = new EdcrRequest();
         try {
-        	EdcrRequest edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
+        	edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
             ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile, tenantId);
             if (errorResponses != null)
                 return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
             else {
-                edcrResponse = edcrRestService.createEdcr(edcr, planFile);
+            	edcrDetail = edcrRestService.createEdcr(edcr, planFile);
             }
 
         } catch (IOException e) {
             LOGGER.log(Level.ERROR, e);
         }
-        return new ResponseEntity<>(edcrResponse, HttpStatus.OK);
+        return getSuccessResponse(edcrDetail, edcr.getRequestInfo());
     }
 
-    @GetMapping(value = "/scrutinydetails", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/scrutinydetails", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> scrutinyDetails(@ModelAttribute EdcrRequest edcrRequest) {
+    public ResponseEntity<?> scrutinyDetails(@ModelAttribute EdcrRequest edcrRequest, @RequestBody @Valid RequestInfoWrapper requestInfoWrapper) {
         ErrorDetail errorResponses = edcrRestService.validateSearchRequest(edcrRequest.getEdcrNumber(),
                 edcrRequest.getTransactionNumber());
-        EdcrResponse edcrResponse;
+        EdcrDetail edcrDetail;
         if (errorResponses != null)
             return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
         else
-            edcrResponse = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber(), edcrRequest.getTenantId());
-        return new ResponseEntity<>(edcrResponse, HttpStatus.OK);
+            edcrDetail = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber(), edcrRequest.getTenantId());
+        return getSuccessResponse(edcrDetail, requestInfoWrapper.getRequestInfo());
     }
 
     @GetMapping("/downloadfile/{fileStoreId}")
     public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, DIGIT_DCR, true);
     }
+    
+	private ResponseEntity<?> getSuccessResponse(EdcrDetail edcrDetail, RequestInfo requestInfo) {
+		EdcrResponse edcrRes = new EdcrResponse();
+		edcrRes.setEdcrDetail(edcrDetail);
+		ResponseInfo responseInfo = edcrRestService.createResponseInfoFromRequestInfo(requestInfo, true);
+		edcrRes.setResponseInfo(responseInfo);
+		return new ResponseEntity<>(edcrRes, HttpStatus.OK);
+
+	}
 }
