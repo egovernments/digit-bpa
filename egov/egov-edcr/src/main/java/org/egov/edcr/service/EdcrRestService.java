@@ -196,14 +196,14 @@ public class EdcrRestService {
         return edcrApplication != null ? setEdcrResponse(edcrApplication, tenantId) : new EdcrDetail();
     }
 
-    public ErrorDetail validateRequestParam(final EdcrRequest edcrRequest, final MultipartFile file, final String tenant) {
+    public ErrorDetail validateRequestParam(final EdcrRequest edcrRequest, final MultipartFile file) {
         List<String> dcrAllowedExtenstions = new ArrayList<>(
                 Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.extenstions").split(",")));
 
         List<String> dcrMimeTypes = new ArrayList<>(
                 Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.mime.types").split(",")));
         String fileSize = edcrApplicationSettings.getValue("dcr.dxf.max.size");
-        return validateParam(dcrAllowedExtenstions, dcrMimeTypes, file, fileSize, edcrRequest, tenant);
+        return validateParam(dcrAllowedExtenstions, dcrMimeTypes, file, fileSize, edcrRequest);
     }
 
     public ErrorDetail validateSearchRequest(final String edcrNumber, final String transactionNumber) {
@@ -222,7 +222,7 @@ public class EdcrRestService {
      */
 
     public ErrorDetail validateParam(List<String> allowedExtenstions, List<String> mimeTypes,
-            MultipartFile file, final String maxAllowSizeInMB, final EdcrRequest edcrRequest, final String tenant) {
+            MultipartFile file, final String maxAllowSizeInMB, final EdcrRequest edcrRequest) {
         String extension;
         String mimeType;
         if (file != null && !file.isEmpty()) {
@@ -248,7 +248,7 @@ public class EdcrRestService {
             return new ErrorDetail("BPA-01", "Transaction Number should be unique");
         }
         // Validate Tenant id
-        if (!validateTenant(edcrRequest.getTenantId()) && StringUtils.isBlank(tenant))
+        if (!validateTenant(edcrRequest.getTenantId()))
             return new ErrorDetail(BPA_05, "Please enter valid tenant");
 
         return null;

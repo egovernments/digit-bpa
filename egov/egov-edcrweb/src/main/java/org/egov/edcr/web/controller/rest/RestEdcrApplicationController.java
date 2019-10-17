@@ -95,13 +95,13 @@ public class RestEdcrApplicationController {
 
     @PostMapping(value = "/scrutinizeplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> scrutinizePlan(@RequestParam String tenantId, @RequestBody MultipartFile planFile,
+    public ResponseEntity<?> scrutinizePlan(@RequestBody MultipartFile planFile,
     		@RequestParam String edcrRequest) {
         EdcrDetail edcrDetail = new EdcrDetail();
         EdcrRequest edcr = new EdcrRequest();
         try {
         	edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
-            ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile, tenantId);
+            ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile);
             if (errorResponses != null)
                 return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
             else {
