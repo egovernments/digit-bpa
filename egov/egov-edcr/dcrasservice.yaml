@@ -2,7 +2,7 @@ openapi: "3.0.0"
 info:
   version: 1.0.0
   title: eDCR as service
-  description: Service to upload plan in dxf file format and generate report. Use the transaction number to track the status/retrieve saved information.
+  description: Service to scrutinize plan in dxf file format and generate report. Use the transaction number to track the status/retrieve saved information.
   contact:
     name: Egovernments Foundation
     email: contact@egovernments.org
@@ -10,26 +10,25 @@ servers:
 - url: https://digit-bpa-dev-jupiter.egovernments.org/eDcr
   description: Development server
 paths:
-  /dcr/uploadplan:
+  /rest/dcr/scrutinizeplan:
     post:
-      summary: Upload dxf file scrutiny.
+      summary: Scrutinize dxf file scrutiny.
       requestBody:
-        description: The plan will be uploaded in dxf format only. Based on authkey unique user will be identified. A unique transaction number will be expected with each transaction. Single dxf file has to upload.
         content:
           multipart/mixed:
             schema:
-              $ref: '#/components/schemas/UploadPlanRequest'
+              $ref: '#/components/schemas/ScrutinizePlanRequest'
             encoding:
               dxfFile:
               # only accept dxf file.
                 contentType: application/dxf
       responses:
         '200':
-          description: upload plan successful.
+          description: scrutinize plan successful.
           content:
             application/json:
               schema:
-                 $ref: '#/components/schemas/UploadPlanResponse'
+                 $ref: '#/components/schemas/ScrutinizePlanResponse'
               encoding:
                 dxfFile:
                 # only accept dxf file.
@@ -45,17 +44,36 @@ paths:
               schema:
                  $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ErrorRes'
       tags:
-        - Upload Plan
+        - Scrutinize Plan
 
-  /dcr/getUploadPlanDetails:
+  /rest/dcr/scrutinydetails:
     post:
-      summary: Get plan detail object by passing transaction number.
+      summary: Get plan detail object by passing transaction number or edcr number.
       requestBody:
-        description: Get the uploaded plan and detail by passing transaction number
+        description: Get the scrutinized plan and detail by passing transaction number or edcr number.
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/UploadPlanSearchRequest'             
+              $ref: '#/components/schemas/ScrutinizePlanSearchRequest'  
+      parameters:
+        - name: tenantId
+          in: path
+          description: city name
+          required: true
+          schema:
+           type: string
+        - name: edcrNumber
+          in: path
+          description: edcr Number 
+          required: true
+          schema:
+           type: string
+        - name: transactionNumber
+          in: path
+          description: transaction Number 
+          required: true
+          schema:
+           type: string
       responses:
         '200':
           description: successful return of details if exist
@@ -64,7 +82,7 @@ paths:
               schema:
                 type: array
                 items:
-                   $ref: '#/components/schemas/UploadPlanResponse'
+                   $ref: '#/components/schemas/ScrutinizePlanResponse'
               encoding:
                 dxfFile:
                 # only accept dxf file.
@@ -74,30 +92,21 @@ paths:
                 planReport:
                   contentType: application/pdf     
       tags:
-        - View Uploaded Plan
+        - View Scrutiny Details
 
 components:
   schemas:
-    UploadPlan:
+    ScrutinizePlan:
       type: object
       description: EncrReqObject contains data to be encrypted and meta-data required to perform the encryption.
       properties:
-        tenantId:
-          # Rules scrutiny based on tenant id.
-          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
         transactionNumber:
           type: string
           description: Unique Transaction Number for each request.
-        status:
-          type: string
-          description: Status of the application
-          enum:
-          - Approved
-          - Rejected
         planDetail:
           type: string
           description: Dxf file content in object format
-        dcrNumber:
+        edcrNumber:
           type: string
           description: If application approved, dcr number will be generated
         planPdfs:
@@ -106,20 +115,32 @@ components:
             type: string
             format: binary 
             description: Auto generated pdfs
-        requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
         dxfFile:
             type: string
             format: binary  
-            description: Uploaded dxf file
+            description: Scrutinizeed dxf file
+            maximum: 23333
+        updatedDxfFile:
+            type: string
+            format: binary  
+            description: Scrutinizeed dxf file
             maximum: 23333
         planReport:
             type: string
             format: binary  
             description: Generated report 
-    UploadPlanSearchReq:
+        status:
+            type: string
+            description: Status of the application
+            enum:
+              - Approved
+              - Rejected
+        tenantId:
+          # Rules scrutiny based on tenant id.
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
+    ScrutinizePlanSearchReq:
       type: object
-      description: UploadPlanSearchReq contains data to be search as plan
+      description: ScrutinizePlanSearchReq contains data to be search as plan
       properties:
         tenantId:
           # Rules scrutiny based on tenant id.
@@ -133,9 +154,9 @@ components:
       required:
          -  tenantId
          -  transactionNumber
-    UploadPlanReq:
+    ScrutinizePlanReq:
       type: object
-      description: UploadPlanReq contains data to be submit as plan
+      description: ScrutinizePlanReq contains data to be submit as plan
       properties:
         tenantId:
           # Rules scrutiny based on tenant id.
@@ -148,7 +169,7 @@ components:
         dxfFile:
             type: string
             format: binary  
-            description: Uploaded dxf file
+            description: Scrutinized dxf file
       example:
           tenantId: "sonpur"
           transactionNumber: "1"
@@ -159,29 +180,29 @@ components:
          -  tenantId
          -  transactionNumber
          -  dxfFile
-    UploadPlanResponse:
-      description: Contract class for web response. Array of UploadPlan items  are used in case of search.
+    ScrutinizePlanResponse:
+      description: Contract class for web response. Array of ScrutinizePlan items  are used in case of search.
       properties:
         responseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ResponseInfo'
-        uploadPlans:
+        edcrDetail:
           description: Used for search result and create only
           type:  array
           items:
-            $ref: '#/components/schemas/UploadPlan'
-    UploadPlanSearchRequest:
+            $ref: '#/components/schemas/ScrutinizePlan'
+    ScrutinizePlanSearchRequest:
       type: object
-      description: UploadPlanSearchRequest contain UploadPlanSearchReq object.
+      description: ScrutinizePlanSearchRequest contain ScrutinizePlanSearchReq object.
       properties:
-        uploadPlanSearchRequest:
+        scrutinizePlanSearchRequest:
           type: object
           items: 
-            $ref: '#/components/schemas/UploadPlanSearchReq'
-    UploadPlanRequest:
+            $ref: '#/components/schemas/ScrutinizePlanSearchReq'
+    ScrutinizePlanRequest:
       type: object
-      description: UploadPlanRequest contain UploadPlanReq object.
+      description: ScrutinizePlanRequest contain ScrutinizePlanReq object.
       properties:
-        uploadPlanRequest:
+        ScrutinizePlanRequest:
           type: object
           items: 
-            $ref: '#/components/schemas/UploadPlanReq'
+            $ref: '#/components/schemas/ScrutinizePlanReq'
