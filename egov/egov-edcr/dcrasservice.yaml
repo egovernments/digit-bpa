@@ -148,12 +148,16 @@ components:
         transactionNumber:
           type: string
           description: Transaction Number created in each request
-        dcrNumber:
+        edcrNumber:
           type: string
           description: generated dcr number on approval of dxf plan scrutiny
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
       required:
          -  tenantId
          -  transactionNumber
+         -  edcrNumber
+         -  requestInfo
     ScrutinizePlanReq:
       type: object
       description: ScrutinizePlanReq contains data to be submit as plan
