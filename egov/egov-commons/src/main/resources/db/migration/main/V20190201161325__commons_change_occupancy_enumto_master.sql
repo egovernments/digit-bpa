@@ -6,7 +6,6 @@ ALTER SEQUENCE seq_eg_sub_occupancy RENAME TO seq_egbpa_sub_occupancy;
 
 truncate table egbpa_sub_occupancy cascade;
 truncate table egbpa_occupancy cascade;
-truncate table egbpa_sub_usage cascade;
 
 alter table egbpa_occupancy rename description to name;
 alter table egbpa_occupancy rename additionaldescription to description;
@@ -65,9 +64,3 @@ CREATE TABLE EGBPA_OCCUPANCY_MAPPING (
     CONSTRAINT FK_EGBPA_ALTERNATIVE_OCCUPANCY FOREIGN KEY (alternativeoccupancy) REFERENCES EGBPA_OCCUPANCY (id),
     CONSTRAINT FK_EGBPA_ALTERNATIVE_SUBOCCUPANCY FOREIGN KEY (alternativesuboccupancy) REFERENCES EGBPA_SUB_OCCUPANCY (id)
 );
-
-ALTER TABLE egbpa_sub_usage RENAME TO egbpa_builing_usage;
-
-alter table egbpa_builing_usage drop constraint fk_egbpa_sub_usage;
-alter table egbpa_builing_usage rename suboccupancy to usage;
-alter table egbpa_builing_usage add FOREIGN KEY (usage) REFERENCES egbpa_usage(id);
