@@ -17,7 +17,7 @@ paths:
         content:
           multipart/mixed:
             schema:
-              $ref: '#/components/schemas/ScrutinizePlanRequest'
+              $ref: '#/components/schemas/ScrutinizePlanReq'
             encoding:
               dxfFile:
               # only accept dxf file.
@@ -54,22 +54,22 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/ScrutinizePlanSearchRequest'  
+              $ref: '#/components/schemas/ScrutinizePlanSearchReq'  
       parameters:
         - name: tenantId
-          in: path
+          in: query
           description: city name
           required: true
           schema:
            type: string
         - name: edcrNumber
-          in: path
+          in: query
           description: edcr Number 
-          required: true
+          required: false
           schema:
            type: string
         - name: transactionNumber
-          in: path
+          in: query
           description: transaction Number 
           required: true
           schema:
@@ -96,7 +96,7 @@ paths:
 
 components:
   schemas:
-    ScrutinizePlan:
+    EdcrDetail:
       type: object
       description: EncrReqObject contains data to be encrypted and meta-data required to perform the encryption.
       properties:
@@ -142,21 +142,9 @@ components:
       type: object
       description: ScrutinizePlanSearchReq contains data to be search as plan
       properties:
-        tenantId:
-          # Rules scrutiny based on tenant id.
-          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
-        transactionNumber:
-          type: string
-          description: Transaction Number created in each request
-        edcrNumber:
-          type: string
-          description: generated dcr number on approval of dxf plan scrutiny
         requestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
       required:
-         -  tenantId
-         -  transactionNumber
-         -  edcrNumber
          -  requestInfo
     ScrutinizePlanReq:
       type: object
@@ -193,20 +181,4 @@ components:
           description: Used for search result and create only
           type:  array
           items:
-            $ref: '#/components/schemas/ScrutinizePlan'
-    ScrutinizePlanSearchRequest:
-      type: object
-      description: ScrutinizePlanSearchRequest contain ScrutinizePlanSearchReq object.
-      properties:
-        scrutinizePlanSearchRequest:
-          type: object
-          items: 
-            $ref: '#/components/schemas/ScrutinizePlanSearchReq'
-    ScrutinizePlanRequest:
-      type: object
-      description: ScrutinizePlanRequest contain ScrutinizePlanReq object.
-      properties:
-        ScrutinizePlanRequest:
-          type: object
-          items: 
-            $ref: '#/components/schemas/ScrutinizePlanReq'
+            $ref: '#/components/schemas/EdcrDetail'

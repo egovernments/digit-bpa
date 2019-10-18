@@ -48,13 +48,15 @@
 
 package org.egov.edcr.contract;
 
+import java.util.List;
+
 import org.egov.infra.microservice.contract.ResponseInfo;
 
 public class EdcrResponse {
 
     private ResponseInfo responseInfo;
     
-    private EdcrDetail edcrDetail;
+    private List<EdcrDetail> edcrDetail;
 
 	public ResponseInfo getResponseInfo() {
 		return responseInfo;
@@ -64,11 +66,11 @@ public class EdcrResponse {
 		this.responseInfo = responseInfo;
 	}
 
-	public EdcrDetail getEdcrDetail() {
+	public List<EdcrDetail> getEdcrDetail() {
 		return edcrDetail;
 	}
 
-	public void setEdcrDetail(EdcrDetail edcrDetail) {
+	public void setEdcrDetail(List<EdcrDetail> edcrDetail) {
 		this.edcrDetail = edcrDetail;
-	}
+	}	
 }

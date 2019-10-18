@@ -48,6 +48,7 @@
 package org.egov.edcr.web.controller.rest;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import javax.validation.Valid;
 
@@ -134,7 +135,7 @@ public class RestEdcrApplicationController {
     
 	private ResponseEntity<?> getSuccessResponse(EdcrDetail edcrDetail, RequestInfo requestInfo) {
 		EdcrResponse edcrRes = new EdcrResponse();
-		edcrRes.setEdcrDetail(edcrDetail);
+		edcrRes.setEdcrDetail(Arrays.asList(edcrDetail));
 		ResponseInfo responseInfo = edcrRestService.createResponseInfoFromRequestInfo(requestInfo, true);
 		edcrRes.setResponseInfo(responseInfo);
 		return new ResponseEntity<>(edcrRes, HttpStatus.OK);
