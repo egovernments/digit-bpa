@@ -1,10 +1,13 @@
 package org.egov.edcr.entity;
 
-import org.egov.common.entity.edcr.PlanInformation;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
+import static org.egov.infra.validation.constants.ValidationErrorCode.INVALID_PERSON_NAME;
+import static org.egov.infra.validation.constants.ValidationRegex.PERSON_NAME;
+
+import java.io.File;
+import java.util.Date;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -21,13 +24,15 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import javax.validation.constraints.NotNull;
-import java.io.File;
-import java.util.Date;
-import java.util.List;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
 
-import static javax.persistence.CascadeType.ALL;
-import static javax.persistence.FetchType.LAZY;
+import org.egov.common.entity.edcr.PlanInformation;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "EDCR_APPLICATION")
@@ -42,17 +47,18 @@ public class EdcrApplication extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EDCR_APPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @Enumerated(EnumType.STRING)
     private ApplicationType applicationType;
 
-    @NotNull
+    @SafeHtml
     @Length(min = 1, max = 128)
     private String applicationNumber;
 
     @Temporal(value = TemporalType.DATE)
     private Date applicationDate;
 
+    @SafeHtml
     private String status;
 
     @OneToMany(mappedBy = "application", fetch = LAZY, cascade = ALL)
@@ -60,13 +66,14 @@ public class EdcrApplication extends AbstractAuditable {
     private List<EdcrApplicationDetail> edcrApplicationDetails;
 
     private transient PlanInformation planInformation;
-    
+
     @Length(min = 1, max = 128)
+    @SafeHtml
     private String planPermitNumber;
-    
+
     @Temporal(value = TemporalType.DATE)
     private Date permitApplicationDate;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "buildingLicensee")
     private User buildingLicensee;
@@ -77,18 +84,29 @@ public class EdcrApplication extends AbstractAuditable {
 
     private transient EdcrApplicationDetail savedEdcrApplicationDetail;
 
+    @NotBlank
+    @SafeHtml
+    @Length(min = 2, max = 100)
+    @Pattern(regexp = PERSON_NAME, message = INVALID_PERSON_NAME)
     private String applicantName;
 
+    @SafeHtml
     private String occupancy;
 
+    @NotBlank
+    @SafeHtml
     private String serviceType;
 
+    @SafeHtml
     private String amenities;
 
+    @SafeHtml
     private String architectInformation;
 
+    @SafeHtml
     private String projectType;
-    
+
+    @SafeHtml
     private transient String permitDateTemp;
 
     @Override
@@ -252,5 +270,5 @@ public class EdcrApplication extends AbstractAuditable {
     public void setPermitDateTemp(String permitDateTemp) {
         this.permitDateTemp = permitDateTemp;
     }
-    
+
 }

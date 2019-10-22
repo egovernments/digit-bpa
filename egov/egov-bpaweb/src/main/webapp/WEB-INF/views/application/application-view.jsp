@@ -103,6 +103,8 @@
 			<input type="hidden" id="isOneDayPermitApplication" value="${bpaApplication.isOneDayPermitApplication}" />
 			<input type="hidden" id="approveComments" value="${bpaApplication.state.comments}" />
 			<input type="hidden" id="captureTSRemarks" value="${captureTSRemarks}">
+			<form:hidden path="permitOccupanciesTemp" />
+
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab" href="#applicant-info"
 									  data-tabidx=0><spring:message code='lbl.appln.details' /></a></li>

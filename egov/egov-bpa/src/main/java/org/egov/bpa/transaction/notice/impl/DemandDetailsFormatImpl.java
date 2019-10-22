@@ -77,7 +77,7 @@ public class DemandDetailsFormatImpl implements PermitApplicationNoticesFormat {
 
     @Override
     public ReportOutput generateNotice(BpaApplication application) throws IOException {
-        String fileName = "bpa_demand_notice_" + application.getApplicationNumber();
+        String fileName = "bpa_demand_notice_" + application.getApplicationNumber() + ".pdf";
         BpaNotice bpaNotice = bpaNoticeUtil.findByApplicationAndNoticeType(application, BPA_DEMAND_NOTICE_TYPE);
         ReportOutput reportOutput = bpaNoticeUtil.getReportOutput(application, fileName, bpaNotice, DEMANDNOCFILENAME,
                 BPA_DEMAND_NOTICE_TYPE, null);

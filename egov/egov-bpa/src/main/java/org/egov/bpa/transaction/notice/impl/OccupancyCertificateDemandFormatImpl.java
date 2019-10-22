@@ -70,7 +70,7 @@ public class OccupancyCertificateDemandFormatImpl implements OccupancyCertificat
 
 	@Override
     public ReportOutput generateNotice(OccupancyCertificate occupancyCertificate) {
-        String fileName = "oc_demand_notice_" + occupancyCertificate.getApplicationNumber();
+        String fileName = "oc_demand_notice_" + occupancyCertificate.getApplicationNumber() + ".pdf";
         OCNotice ocNotice = ocNoticeUtil.findByOcAndNoticeType(occupancyCertificate, BPA_DEMAND_NOTICE_TYPE);
         ReportOutput reportOutput = new ReportOutput();
 		try {

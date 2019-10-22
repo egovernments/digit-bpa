@@ -214,7 +214,7 @@ public class BpaConstants {
     public static final String FWDINGTOLPINITIATORPENDING = "Forward to LP Initiator pending";
     public static final String LPCREATED = "LP Created";
     public static final String LPREPLIED = "LP Reply Received";
-    public static final String LETTERTOPARTYINITIATE = "LP Initiate";
+    public static final String LETTERTOPARTYINITIATE = "LP Initiated";
     public static final String LETTERTOPARTYDETAILS = "lettertoparty";
     public static final String LETTERTOPARTY_REPLY_RECEIVED = "Letter To Party Reply Received";
     // inspection related constants

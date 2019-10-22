@@ -105,10 +105,12 @@
                                 </div>
                             </c:forEach>
                         </td>
-                        <td><form:textarea
-                                path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].remarks"
-                                class="form-control remarks" rows="3" maxlength="1024"/></td>
-                    </tr>
+							<td><form:textarea
+									path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].remarks"
+									class="form-control remarks" rows="3" maxlength="1024" /> <form:errors
+									path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].remarks"
+									cssClass="error-msg" /></td>
+						</tr>
                 </c:forEach>
             </c:when>
             <c:otherwise>
@@ -136,10 +138,12 @@
                                 </div>
                             </c:forEach>
                         </td>
-                        <td><form:textarea
-                                path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].remarks"
-                                class="form-control remarks" rows="3" maxlength="1024"/></td>
-                    </tr>
+							<td><form:textarea
+									path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].remarks"
+									class="form-control remarks" rows="3" maxlength="1024" /> <form:errors
+									path="inspection.planScrutinyChecklistForDrawingTemp[${planScrutinyDrawStatus.index}].remarks"
+									cssClass="error-msg" /></td>
+						</tr>
                 </c:forEach>
             </c:otherwise>
         </c:choose>

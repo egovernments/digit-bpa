@@ -119,7 +119,7 @@
 									path="inspection.docket[${status1.index}].docketDetail[${status.index}].remarks" />
 			
 								<form:errors path="inspection.docket[${status1.index}].docketDetail[${status.index}].remarks"
-									cssClass="add-margin error-msg" />
+									cssClass=" error-msg" />
 							</div>
 						</div>
 					</c:forEach>
@@ -1056,8 +1056,8 @@
 		<form:textarea class="form-control patternvalidation"
 			data-pattern="alphanumericspecialcharacters" maxlength="1000"
 			id="inspection.inspectionRemarks" rows="3" path="inspection.inspectionRemarks" />
-
-		<form:errors path="inspection.inspectionRemarks" cssClass="add-margin error-msg" />
+		<form:errors path="inspection.inspectionRemarks" cssClass="error-msg" />
+		
 	</div>
 </div>
 </div>

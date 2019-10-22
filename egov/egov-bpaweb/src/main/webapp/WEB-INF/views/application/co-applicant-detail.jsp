@@ -85,11 +85,14 @@
 									data-pattern="number" maxlength="10"
 									id="coApplicants[0].mobileNumber"
 									path="coApplicants[${counter.index}].coApplicant.mobileNumber"
-									disabled="true" /></td>
+									disabled="true" /><form:errors path="coApplicants[0].mobileNumber"
+								cssClass="error-msg" /></td>
 							<td><form:input class="form-control emailId" maxlength="120"
 									id="coApplicants[${counter.index}].coApplicant.emailId"
 									path="coApplicants[${counter.index}].coApplicant.emailId"
-									disabled="true" /></td>
+									disabled="true" />
+									<form:errors path="coApplicants[${counter.index}].coApplicant.emailId"
+								cssClass="error-msg" /></td>
 							<td><form:select
 									path="coApplicants[${counter.index}].coApplicant.gender"
 									id="coApplicants[${counter.index}].coApplicant.gender"

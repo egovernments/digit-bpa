@@ -140,6 +140,7 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
             final BindingResult errors, final Model model, final HttpServletRequest request,
             final RedirectAttributes redirectAttributes) {
         ownershipTransferService.validateDocs(ownershipTransfer, errors);
+        ownershipTransferService.validateOwnershipTransfer(ownershipTransfer,errors);
         if (errors.hasErrors()) {
             model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
             return OWNERSHIP_CITIZEN_NEW;

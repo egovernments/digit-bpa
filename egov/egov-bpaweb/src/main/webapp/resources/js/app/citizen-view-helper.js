@@ -56,7 +56,7 @@ $(document).ready(function($) {
 							$('.loader-class').modal('show', {
 								backdrop : 'static'
 							});
-							document.forms[0].submit();
+							 $('#citizenViewApplicationForm').trigger('submit');
 						}
 					},
 					'cancel' : {
@@ -90,7 +90,7 @@ $(document).ready(function($) {
      						$('.loader-class').modal('show', {
      							backdrop : 'static'
      						});
-     						document.forms[0].submit();
+     						$('#citizenViewApplicationForm').trigger('submit');
                          }
                      },
                      'cancel': {

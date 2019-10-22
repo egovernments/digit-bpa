@@ -81,7 +81,7 @@ public class PermitRejectionFormatImpl implements PermitApplicationNoticesFormat
 
     @Override
     public ReportOutput generateNotice(BpaApplication application) throws IOException {
-        String fileName = "bpa_rejection_notice_" + application.getApplicationNumber();
+        String fileName = "bpa_rejection_notice_" + application.getApplicationNumber() + ".pdf";
         BpaNotice bpaNotice = bpaNoticeUtil.findByApplicationAndNoticeType(application, BPA_REJECTION_NOTICE_TYPE);
         ReportOutput reportOutput = bpaNoticeUtil.getReportOutput(application, fileName, bpaNotice, BPAREJECTIONFILENAME,
                 BPA_REJECTION_NOTICE_TYPE, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());

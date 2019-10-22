@@ -83,14 +83,14 @@ public class InspectionController extends BpaGenericApplicationController {
         Position ownerPosition = application.getCurrentState().getOwnerPosition();
         if (validateLoginUserAndOwnerIsSame(model, securityUtils.getCurrentUser(), ownerPosition))
             return COMMON_ERROR;
-        loadApplication(model, application);
+        loadApplication(model, application, new PermitInspection(),new InspectionCommon());
         return CREATEINSPECTIONDETAIL_FORM;
     }
 
     @GetMapping("/createpreinspectiondetails/{applicationNumber}")
     public String inspectionDetail(final Model model, @PathVariable final String applicationNumber) {
         final BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
-        loadApplication(model, application);
+        loadApplication(model, application, new PermitInspection(),new InspectionCommon());
         return CREATEINSPECTIONDETAIL_FORM;
     }
 
@@ -101,7 +101,7 @@ public class InspectionController extends BpaGenericApplicationController {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
         inspectionService.validatePermitInspectionDocs(inspection, resultBinder);
         if (resultBinder.hasErrors()) {
-            loadApplication(model, application);
+            loadApplication(model, application, inspection,inspection.getInspection());
             return CREATEINSPECTIONDETAIL_FORM;
         }
         Position ownerPosition = application.getCurrentState().getOwnerPosition();
@@ -119,7 +119,7 @@ public class InspectionController extends BpaGenericApplicationController {
             final Model model) {
         BpaApplication application = applicationBpaService.findByApplicationNumber(applicationNumber);
         if (resultBinder.hasErrors()) {
-            loadApplication(model, application);
+            loadApplication(model, application, inspection,inspection.getInspection());
             return CREATEINSPECTIONDETAIL_FORM;
         }
         final PermitInspection savedInspection = inspectionService.save(inspection, application);
@@ -127,7 +127,7 @@ public class InspectionController extends BpaGenericApplicationController {
         return "redirect:/application/view-inspection/" + savedInspection.getId();
     }
 
-    private void loadApplication(final Model model, final BpaApplication application) {
+    private void loadApplication(final Model model, final BpaApplication application , final PermitInspection permitInspn,final InspectionCommon inspection) {
 
         if (application != null && application.getState() != null
                 && application.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
@@ -137,8 +137,7 @@ public class InspectionController extends BpaGenericApplicationController {
                     workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(),
                             application.getStateHistory()));
         }
-        final PermitInspection permitInspn = new PermitInspection();
-        InspectionCommon inspection = new InspectionCommon();
+       
         inspection.setInspectionDate(new Date());
         permitInspn.setApplication(application);
         permitInspn.setInspection(inspection);

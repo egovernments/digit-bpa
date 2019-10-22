@@ -73,7 +73,7 @@ public class OwnershipTransferNoticeService {
     private OwnershipTransferNoticeUtil noticeUtil;
 
     public ReportOutput generateNotice(OwnershipTransfer ownershipTransfer) throws IOException {
-        String fileName = "ownership_rejection_notice_" + ownershipTransfer.getApplicationNumber();
+        String fileName = "ownership_rejection_notice_" + ownershipTransfer.getApplicationNumber()+".pdf";
         OwnershipTransferNotice ownershipNotice = noticeUtil.findByOwnershipAndNoticeType(ownershipTransfer, BPA_REJECTION_NOTICE_TYPE);
         ReportOutput reportOutput = noticeUtil.getReportOutput(ownershipTransfer, fileName, ownershipNotice, "ownershiptransferrejectionnotice",
                 BPA_REJECTION_NOTICE_TYPE, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());
@@ -82,7 +82,7 @@ public class OwnershipTransferNoticeService {
     }
     
     public ReportOutput generateOwnershipOrder(final OwnershipTransfer ownershipTransfer) throws IOException {
-        String fileName = "ownership_transfer_order" + ownershipTransfer.getApplicationNumber();
+        String fileName = "ownership_transfer_order" + ownershipTransfer.getApplicationNumber()+".pdf";
         OwnershipTransferNotice ownershipNotice = noticeUtil.findByOwnershipAndNoticeType(ownershipTransfer, OWNERSHIP_ORDER_NOTICE_TYPE);
         ReportOutput reportOutput = noticeUtil.getReportOutput(ownershipTransfer, fileName, ownershipNotice, "ownershiptransferorder",
         		OWNERSHIP_ORDER_NOTICE_TYPE, ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest());

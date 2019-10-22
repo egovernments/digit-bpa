@@ -45,6 +45,7 @@ import static org.egov.bpa.utils.BpaConstants.APPLICATION_STATUS_SUBMITTED;
 import static org.egov.bpa.utils.BpaConstants.WF_APPROVE_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_LBE_SUBMIT_BUTTON;
 import static org.egov.bpa.utils.BpaConstants.WF_SAVE_BUTTON;
+import static org.egov.infra.validation.constants.ValidationRegex.NUMERIC;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -53,6 +54,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -90,6 +93,8 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.service.CitizenService;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -103,6 +108,8 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @Transactional(readOnly = true)
 public class OwnershipTransferService {
+
+    private static final String MSG_INVALID_VALUE = "msg.invalid.value";
 
 	@Autowired
 	private OwnershipTransferRepository ownershipTransferRepository;
@@ -407,4 +414,21 @@ public class OwnershipTransferService {
 		}
 
 	}
+
+	    public void validateOwnershipTransfer(final OwnershipTransfer ownershipTransfer, final BindingResult resultBinder) {
+	        Pattern pattern;
+	        Matcher matcher;
+	        Applicant applicant = ownershipTransfer.getOwner();
+	        User user = applicant.getUser();
+	        if (StringUtils.isNotBlank(user.getMobileNumber()) && !Jsoup.isValid(user.getMobileNumber(), Whitelist.basic())) {
+	            resultBinder.rejectValue("owner.user.mobileNumber", MSG_INVALID_VALUE);
+	        } else {
+	            pattern = Pattern.compile(NUMERIC);
+	            matcher = pattern.matcher(user.getMobileNumber());
+	            if (!matcher.matches())
+	                resultBinder.rejectValue("owner.user.mobileNumber", "invalid.mobile.number");
+	        } if(user.getMobileNumber().length()<10 || user.getMobileNumber().length()>10){
+	            resultBinder.rejectValue("owner.user.mobileNumber", "invalid.mobile.no");
+	        }
+	    }
 }

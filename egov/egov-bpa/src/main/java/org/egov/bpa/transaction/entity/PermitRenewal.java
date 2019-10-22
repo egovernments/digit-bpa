@@ -107,7 +107,7 @@ public class PermitRenewal extends StateAware<Position> {
     @GeneratedValue(generator = SEQ_PERMIT_RENEWAL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    
     @Enumerated(EnumType.STRING)
     private Source source;
 

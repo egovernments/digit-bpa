@@ -252,3 +252,6 @@
 	src="<cdn:url value='/resources/js/app/documentsuploadvalidation.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/ownershipTransfer/citizen-ownership-transfer-helper.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/applicant-helper.js?rnd=${app_release_no}'/>"></script>
+	

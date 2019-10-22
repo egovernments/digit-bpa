@@ -65,6 +65,7 @@ import org.egov.bpa.master.entity.ChecklistServiceTypeMapping;
 import org.egov.bpa.transaction.entity.enums.ChecklistValues;
 import org.egov.bpa.transaction.entity.enums.ScrutinyChecklistType;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
@@ -96,6 +97,7 @@ public class PlanScrutinyChecklistCommon extends AbstractAuditable {
     private ScrutinyChecklistType scrutinyChecklistType;
 
     @SafeHtml
+    @Length(min = 1, max = 1000)
     private String remarks;
 
     @PositiveOrZero

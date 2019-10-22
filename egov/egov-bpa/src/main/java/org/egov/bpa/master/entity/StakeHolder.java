@@ -100,9 +100,8 @@ public class StakeHolder extends User {
     private StakeHolderType stakeHolderType;
 
     @SafeHtml
-    @NotNull
     @Length(min = 1, max = 128)
-    @Column(name = "code", unique = true)
+    @Column(name = "code", unique = true ,nullable = false)
     @Audited
     private String code;
 

@@ -12,6 +12,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -151,7 +152,7 @@ public class EdcrApplicationController {
     }
 
     @PostMapping("/edcrapplication/create")
-    public String create(@ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
+    public String create(@Valid @ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
         if (errors.hasErrors()) {
             prepareNewForm(model, request);
@@ -200,7 +201,7 @@ public class EdcrApplicationController {
     }
 
     @PostMapping("/edcrapplication/update")
-    public String update(@ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
+    public String update(@Valid @ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
         if (errors.hasErrors()) {
             prepareNewForm(model, request);
@@ -263,7 +264,7 @@ public class EdcrApplicationController {
     }
 
     @PostMapping("/occupancy-certificate/plan/submit")
-    public String submitPlanForOccupancyCertificate(@ModelAttribute final EdcrApplication edcrApplication,
+    public String submitPlanForOccupancyCertificate(@Valid @ModelAttribute final EdcrApplication edcrApplication,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
         if (errors.hasErrors()) {
             prepareNewForm(model, request);
@@ -305,7 +306,7 @@ public class EdcrApplicationController {
     }
 
     @PostMapping("/occupancy-certificate/plan/resubmit")
-    public String resubmitPlanForOccupancyCertificate(@ModelAttribute final EdcrApplication edcrApplication,
+    public String resubmitPlanForOccupancyCertificate(@Valid @ModelAttribute final EdcrApplication edcrApplication,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
         if (errors.hasErrors()) {
             prepareNewForm(model, request);
@@ -358,7 +359,7 @@ public class EdcrApplicationController {
 
     @PostMapping(value = "/edcrapplication/ajaxsearch/{mode}", produces = MediaType.TEXT_PLAIN_VALUE)
     public @ResponseBody String ajaxsearch(@PathVariable("mode") final String mode, Model model,
-            @ModelAttribute final EdcrApplication edcrApplication) {
+            @Valid  @ModelAttribute final EdcrApplication edcrApplication) {
         List<EdcrApplication> searchResultList = edcrApplicationService.search(edcrApplication);
         return new StringBuilder("{ \"data\":")
                 .append(toJSON(searchResultList, EdcrApplication.class, EdcrApplicationJsonAdaptor.class)).append("}")

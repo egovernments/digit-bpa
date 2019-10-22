@@ -78,6 +78,7 @@
 				value="${citizenOrBusinessUser}">
 			<input type="hidden" id="applicationStatus"
 				value="${bpaApplication.status.code}">
+		   <form:hidden path="permitOccupanciesTemp"/>
 			<ul class="nav nav-tabs" id="settingstab">
 				<li class="active"><a data-toggle="tab"
 					href="#appliccation-info" data-tabidx=0><spring:message

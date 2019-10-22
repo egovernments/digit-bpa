@@ -123,7 +123,7 @@
 							<div class="col-sm-5 add-margin">
 								<form:textarea path="inspectionApplication.remarks" id="remarks"	class="form-control patternvalidation"
 			                            data-pattern="alphanumericspecialcharacters" maxlength="256" cols="25" rows="4" />
-								<form:errors path="inspectionApplication.remarks" cssClass="add-margin error-msg" />
+								<form:errors path="inspectionApplication.remarks" cssClass="error-msg" />
 							</div>		
 						</div>	
 			</div>		

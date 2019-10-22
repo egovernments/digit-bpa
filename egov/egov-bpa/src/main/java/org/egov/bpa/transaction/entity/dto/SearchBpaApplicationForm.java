@@ -142,7 +142,7 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
     @SafeHtml
     private String revocationNumber;
     private Date planPermissionDate;
-    @PositiveOrZero
+    @SafeHtml
     private String occupancyCertificateNumber;
     private Boolean wfEnded;
     private Boolean feeCollector;

@@ -139,6 +139,8 @@
                 <div class="col-sm-8 add-margin">
                     <form:textarea class="form-control" path="approvalComent" maxlength="1024" id="approvalComent"
                                    name="approvalComent"/>
+                  <form:errors path="approvalComent" cssClass="error-msg" />
+                                   
                 </div>
             </div>
    			<input type="hidden" id="approveDepReq" value="<spring:message code='msg.validate.approverdepart.req'/>"/>

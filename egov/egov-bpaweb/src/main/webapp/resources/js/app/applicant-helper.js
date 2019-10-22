@@ -44,7 +44,7 @@ jQuery(document).ready(function() {
 	var tbody;
 	var row = '<tr>'+
 	'<td class="text-center"><span class="applcntSerialNo text-center">{{sno}}</span></td>'+
-	'<td><input type="etxt" name="coApplicants[{{idx}}].coApplicant.name" data-first-option="false" class="form-control name toggle-mandatory duplicate-clear" maxlength="99" /></td>'+
+	'<td><input type="text" name="coApplicants[{{idx}}].coApplicant.name" data-first-option="false" class="form-control name toggle-mandatory duplicate-clear" maxlength="99" /></td>'+
 	'<td><input type="text" class="form-control patternvalidation mobileNumber duplicate-clear" name="coApplicants[{{idx}}].coApplicant.mobileNumber" data-pattern="number" minlength="10" maxlength="10" /></td>'+
 	'<td><input type="text" class="form-control patternvalidation emailId duplicate-clear" name="coApplicants[{{idx}}].coApplicant.emailId" data-pattern="string" maxlength="120" /><span></span><form:errors path="coApplicants[{{idx}}].coApplicant.emailId" cssClass="error-msg" /></td>'+
 	'<td><select name="coApplicants[{{idx}}].coApplicant.gender" data-first-option="false" class="form-control gender"> <option value="">Select</option></select></td>'+

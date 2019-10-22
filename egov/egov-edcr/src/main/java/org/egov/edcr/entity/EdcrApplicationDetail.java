@@ -39,8 +39,6 @@
  */
 package org.egov.edcr.entity;
 
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -58,6 +56,7 @@ import org.egov.common.entity.edcr.PlanInformation;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "EDCR_APPLICATION_DETAIL")
@@ -88,8 +87,10 @@ public class EdcrApplicationDetail extends AbstractAuditable {
     private FileStoreMapper planDetailFileStore;
 
     @Length(min = 1, max = 128)
+    @SafeHtml
     private String dcrNumber;
 
+    @SafeHtml
     private String status;
 
     @Transient
@@ -98,10 +99,10 @@ public class EdcrApplicationDetail extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "scrutinizedDxfFileId")
     private FileStoreMapper scrutinizedDxfFileId;
-/*
-    @OneToMany(mappedBy = "edcrApplicationDetail", fetch = LAZY, cascade = ALL)
-    @OrderBy("id DESC ")
-    private List<EdcrPdfDetail> edcrPdfDetails;*/
+    /*
+     * @OneToMany(mappedBy = "edcrApplicationDetail", fetch = LAZY, cascade = ALL)
+     * @OrderBy("id DESC ") private List<EdcrPdfDetail> edcrPdfDetails;
+     */
 
     @Transient
     private Long noOfErrors;
@@ -171,7 +172,6 @@ public class EdcrApplicationDetail extends AbstractAuditable {
         this.dcrNumber = dcrNumber;
     }
 
-    
     public FileStoreMapper getScrutinizedDxfFileId() {
         return scrutinizedDxfFileId;
     }
@@ -180,14 +180,10 @@ public class EdcrApplicationDetail extends AbstractAuditable {
         this.scrutinizedDxfFileId = scrutinizedDxfFileId;
     }
 
-   /* public List<EdcrPdfDetail> getEdcrPdfDetails() {
-        return edcrPdfDetails;
-    }
-
-    public void setEdcrPdfDetails(List<EdcrPdfDetail> edcrPdfDetails) {
-        this.edcrPdfDetails = edcrPdfDetails;
-    }
-*/
+    /*
+     * public List<EdcrPdfDetail> getEdcrPdfDetails() { return edcrPdfDetails; } public void setEdcrPdfDetails(List<EdcrPdfDetail>
+     * edcrPdfDetails) { this.edcrPdfDetails = edcrPdfDetails; }
+     */
     public Long getNoOfErrors() {
         return noOfErrors;
     }
@@ -204,11 +200,11 @@ public class EdcrApplicationDetail extends AbstractAuditable {
         this.planInformation = planInformation;
     }
 
-	public Plan getPlan() {
-		return plan;
-	}
+    public Plan getPlan() {
+        return plan;
+    }
 
-	public void setPlan(Plan plan) {
-		this.plan = plan;
-	}
+    public void setPlan(Plan plan) {
+        this.plan = plan;
+    }
 }

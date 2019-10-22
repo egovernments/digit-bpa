@@ -81,7 +81,7 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
 
     @GetMapping("/create-inspection/{applicationNumber}")
     public String inspectionDetailForm(final Model model, @PathVariable final String applicationNumber) {
-        loadApplication(model, applicationNumber);
+        loadApplication(model, applicationNumber, new OCInspection(),new InspectionCommon());
         return CREATE_INSPECTION;
     }
 
@@ -91,7 +91,7 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
             final BindingResult resultBinder,
             final Model model) {
         if (resultBinder.hasErrors()) {
-            loadApplication(model, applicationNumber);
+            loadApplication(model, applicationNumber, ocInspection,ocInspection.getInspection());
             return CREATE_INSPECTION;
         }
         final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
@@ -99,7 +99,7 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
         // ocInspection.getInspection().setDocket(ocInspectionService.buildDocDetFromUI(ocInspection));
         ocInspectionService.validateinspectionDocs(ocInspection, resultBinder);
         if (resultBinder.hasErrors()) {
-            loadApplication(model, applicationNumber);
+            loadApplication(model, applicationNumber, ocInspection, ocInspection.getInspection());
             return CREATE_INSPECTION;
         }
         final OCInspection savedInspection = ocInspectionService.save(ocInspection);
@@ -108,7 +108,7 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
                 + savedInspection.getInspection().getInspectionNumber();
     }
 
-    private void loadApplication(final Model model, final String applicationNumber) {
+    private void loadApplication(final Model model, final String applicationNumber , final OCInspection ocInspection, final InspectionCommon inspectionCommon ) {
         final OccupancyCertificate oc = occupancyCertificateService.findByApplicationNumber(applicationNumber);
         if (oc != null && oc.getState() != null
                 && oc.getState().getValue().equalsIgnoreCase(BpaConstants.APPLICATION_STATUS_REGISTERED)) {
@@ -118,8 +118,6 @@ public class CreateInspectionForOccupancyCertificateController extends BpaGeneri
                     workflowHistoryService.getHistoryForOC(oc.getAppointmentSchedules(), oc.getCurrentState(),
                             oc.getStateHistory()));
         }
-        final OCInspection ocInspection = new OCInspection();
-        InspectionCommon inspectionCommon = new InspectionCommon();
         inspectionCommon.setInspectionDate(new Date());
         final OcInspectionService ocInspectionService = (OcInspectionService) specificNoticeService
                 .find(OcInspectionService.class, specificNoticeService.getCityDetails());

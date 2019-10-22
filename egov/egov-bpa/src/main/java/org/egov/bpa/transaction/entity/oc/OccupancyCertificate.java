@@ -143,8 +143,8 @@ public class OccupancyCertificate extends StateAware<Position> {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status", nullable = false)
     private BpaStatus status;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    
+    @ManyToOne(fetch = FetchType.LAZY ,cascade = CascadeType.ALL)
     @JoinColumn(name = "demand")
     private EgDemand demand;
 

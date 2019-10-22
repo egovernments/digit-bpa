@@ -1258,6 +1258,8 @@ public class ApplicationBpaService extends GenericBillGeneratorService {
         User user = applicant.getUser();
         if (StringUtils.isNotBlank(user.getMobileNumber()) && !Jsoup.isValid(user.getMobileNumber(), Whitelist.basic())) {
             resultBinder.rejectValue("owner.user.mobileNumber", MSG_INVALID_VALUE);
+        } else if (user.getMobileNumber().length() < 10 || user.getMobileNumber().length() > 10) {
+            resultBinder.rejectValue("owner.user.mobileNumber", "invalid.mobile.no");
         } else {
             pattern = Pattern.compile(NUMERIC);
             matcher = pattern.matcher(user.getMobileNumber());

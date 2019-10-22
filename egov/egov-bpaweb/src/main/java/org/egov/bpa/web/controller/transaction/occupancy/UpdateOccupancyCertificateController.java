@@ -561,9 +561,9 @@ public class UpdateOccupancyCertificateController extends BpaGenericApplicationC
     @PostMapping("/update-submit")
     public String updateOccupancyCertificateApplication(
             @RequestParam final BigDecimal amountRule,
-            @Valid @ModelAttribute final OccupancyCertificate occupancyCertificate,
-            final HttpServletRequest request, final Model model,
-            final BindingResult errors, final RedirectAttributes redirectAttributes) {
+            @Valid @ModelAttribute final OccupancyCertificate occupancyCertificate, final BindingResult errors,
+            final Model model, final HttpServletRequest request,
+            final RedirectAttributes redirectAttributes) {
         occupancyCertificateService.validateDocs(occupancyCertificate, errors);
         if (errors.hasErrors()) {
             prepareFormData(occupancyCertificate, model);

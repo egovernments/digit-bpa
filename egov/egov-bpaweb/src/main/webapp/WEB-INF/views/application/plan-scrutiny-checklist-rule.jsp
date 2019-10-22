@@ -97,7 +97,9 @@
 								</c:forEach></td>
 							<td><form:textarea
 									path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].remarks"
-									class="form-control remarks" rows="3" maxlength="1024" /></td>
+									class="form-control remarks" rows="3" maxlength="1024" />
+         <form:errors path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].remarks" cssClass="error-msg" />
+							</td>		
 						</tr>
 					</c:forEach>
 				</c:when>
@@ -127,7 +129,8 @@
 								</c:forEach></td>
 							<td><form:textarea
 									path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].remarks"
-									class="form-control remarks" rows="3" maxlength="1024" /></td>
+									class="form-control remarks" rows="3" maxlength="1024" />
+         <form:errors path="inspection.planScrutinyChecklistForRuleTemp[${planScrutinyStatus.index}].remarks" cssClass="error-msg" /></td>
 						</tr>
 					</c:forEach>
 				</c:otherwise>

@@ -74,7 +74,7 @@ public class OccupancyRejectionFormatImpl implements OccupancyCertificateNotices
 
     @Override
     public ReportOutput generateNotice(OccupancyCertificate occupancyCertificate) {
-        String fileName = "oc_rejection_notice_" + occupancyCertificate.getApplicationNumber();
+        String fileName = "oc_rejection_notice_" + occupancyCertificate.getApplicationNumber() + ".pdf";
         ReportOutput reportOutput = new ReportOutput();
         OCNotice ocNotice = ocNoticeUtil.findByOcAndNoticeType(occupancyCertificate, BPA_REJECTION_NOTICE_TYPE);
 		try {

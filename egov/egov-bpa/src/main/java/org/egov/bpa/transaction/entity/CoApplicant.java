@@ -110,7 +110,7 @@ public class CoApplicant extends AbstractAuditable {
 
     @Pattern(regexp = MOBILE_NUMBER, message = INVALID_MOBILE_NUMBER)
     @SafeHtml
-    @Length(max = 15)
+    @Length(min = 10, max = 10)
     private String mobileNumber;
 
     @SafeHtml
