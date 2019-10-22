@@ -29,7 +29,7 @@ public class PortalUtils {
                     ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
                         if (key.startsWith("tenant."))
                             tenants.put(value.toString(), url.getProtocol() + "://" + key.replace("tenant.", "")
-                                    + (url.getPort() >= 8080 ? ":" + url.getPort() : "") + "/");
+                                    + (url.getPort() >= 8080 ? ":" + url.getPort() : ""));
                     });
             });
         } catch (MalformedURLException e) {
