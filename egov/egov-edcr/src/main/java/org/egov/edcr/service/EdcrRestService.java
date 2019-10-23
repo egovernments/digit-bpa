@@ -174,7 +174,7 @@ public class EdcrRestService {
         edcrDetail.setTenantId(tenantId);
 
         if (!edcrApplication.getStatus().equalsIgnoreCase("Accepted"))
-        	edcrDetail.setStatus(edcrApplication.getStatus());
+            edcrDetail.setStatus(edcrApplication.getStatus());
 
         return edcrDetail;
     }
@@ -253,31 +253,32 @@ public class EdcrRestService {
 
         return null;
     }
-    
-    public ResponseInfo createResponseInfoFromRequestInfo(RequestInfo requestInfo, Boolean success) {
-    	String apiId = null;
-		String ver = null;
-		String ts = null;
-		String resMsgId = "";
-		String msgId = null;
-		if (requestInfo != null) {
-			apiId = requestInfo.getApiId();
-			ver = requestInfo.getVer();
-			if(requestInfo.getTs()!=null)
-			ts = requestInfo.getTs().toString();
-			msgId = requestInfo.getMsgId();
-		}
-		String responseStatus = success ? "successful" : "failed";
 
-		return new ResponseInfo(apiId, ver, ts, resMsgId, msgId, responseStatus);
-	}
+    public ResponseInfo createResponseInfoFromRequestInfo(RequestInfo requestInfo, Boolean success) {
+        String apiId = null;
+        String ver = null;
+        String ts = null;
+        String resMsgId = "";
+        String msgId = null;
+        if (requestInfo != null) {
+            apiId = requestInfo.getApiId();
+            ver = requestInfo.getVer();
+            if (requestInfo.getTs() != null)
+                ts = requestInfo.getTs().toString();
+            msgId = requestInfo.getMsgId();
+        }
+        String responseStatus = success ? "successful" : "failed";
+
+        return new ResponseInfo(apiId, ver, ts, resMsgId, msgId, responseStatus);
+    }
 
     public Boolean validateTenant(final String tenantId) {
         return StringUtils.isNotBlank(tenantId);
     }
 
     public String getFileDownloadUrl(final String fileStoreId) {
-        return String.format(FILE_DOWNLOAD_URL, ApplicationThreadLocals.getDomainURL()) + fileStoreId;
+        return String.format(FILE_DOWNLOAD_URL, ApplicationThreadLocals.getDomainURL()) + fileStoreId + "?tenantId="
+                + ApplicationThreadLocals.getTenantID();
     }
 
 }

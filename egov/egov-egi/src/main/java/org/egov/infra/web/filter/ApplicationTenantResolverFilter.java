@@ -53,11 +53,15 @@ import static org.egov.infra.web.utils.WebUtils.extractRequestDomainURL;
 import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
 
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.annotation.Resource;
 import javax.servlet.Filter;
@@ -69,8 +73,11 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.rest.support.MultiReadRequestWrapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,105 +86,151 @@ import org.springframework.core.env.MapPropertySource;
 
 public class ApplicationTenantResolverFilter implements Filter {
 
-	@Autowired
-	private EnvironmentSettings environmentSettings;
+    @Autowired
+    private EnvironmentSettings environmentSettings;
 
-	@Resource(name = "cities")
-	private transient List<String> cities;
+    @Resource(name = "cities")
+    private transient List<String> cities;
 
-	public static Map<String, String> tenants = new HashMap<>();
-	public static String stateUrl;
+    public static Map<String, String> tenants = new HashMap<>();
 
-	@Autowired
-	private ConfigurableEnvironment environment;
+    public static String stateUrl;
 
-	private static final Logger LOG = LoggerFactory.getLogger(ApplicationTenantResolverFilter.class);
+    @Autowired
+    private ConfigurableEnvironment environment;
 
-	@Override
-	public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
-			throws IOException, ServletException {
-		HttpServletRequest req = (HttpServletRequest) request;
-		HttpSession session = req.getSession();
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationTenantResolverFilter.class);
 
-		String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
-		String domainName = extractRequestedDomainName(domainURL);
-		ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(domainName));
-		ApplicationThreadLocals.setDomainName(domainName);
-		ApplicationThreadLocals.setDomainURL(domainURL);
-		prepareRestService(req, session);
-		chain.doFilter(request, response);
-	}
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
+            throws IOException, ServletException {
+        HttpServletRequest req = (HttpServletRequest) request;
+        HttpSession session = req.getSession();
 
-	@Override
-	public void init(final FilterConfig filterConfig) throws ServletException {
-		// Nothing to be initialized
-	}
+        String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
+        String domainName = extractRequestedDomainName(domainURL);
+        ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(domainName));
+        ApplicationThreadLocals.setDomainName(domainName);
+        ApplicationThreadLocals.setDomainURL(domainURL);
+        MultiReadRequestWrapper customRequest = prepareRestService(req, session);
+        if (customRequest == null)
+            chain.doFilter(request, response);
+        else
+            chain.doFilter(customRequest, response);
+    }
 
-	@Override
-	public void destroy() {
-		// Nothing to be cleaned up
-	}
+    @Override
+    public void init(final FilterConfig filterConfig) throws ServletException {
+        // Nothing to be initialized
+    }
 
-	private void prepareRestService(HttpServletRequest req, HttpSession session) {
+    @Override
+    public void destroy() {
+        // Nothing to be cleaned up
+    }
 
-		if (tenants == null || tenants.isEmpty()) {
-			tenantsMap();
-		}
-		if (req.getRequestURL().toString().contains(tenants.get("state"))
-				&& (req.getRequestURL().toString().contains("/rest/") || req.getRequestURL().toString().contains("/oauth/")) ) {
+    private MultiReadRequestWrapper prepareRestService(HttpServletRequest req, HttpSession session) {
+        MultiReadRequestWrapper customRequest = null;
+        if (tenants == null || tenants.isEmpty()) {
+            tenantsMap();
+        }
+        // restricted only the state URL to access the rest API
+        if (req.getRequestURL().toString().contains(tenants.get("state"))
+                && (req.getRequestURL().toString().contains("/rest/") || req.getRequestURL().toString().contains("/oauth/"))) {
+            String tenantFromBody = StringUtils.EMPTY;
+            customRequest = setCustomHeader(req, tenantFromBody);
+            String fullTenant = req.getParameter("tenantId");
+            if (StringUtils.isBlank(fullTenant)) {
+                fullTenant = tenantFromBody;
+            }
+            if (StringUtils.isBlank(fullTenant)) {
+                throw new RuntimeException("RestUrl does not contain tenantId");
+            }
+            String tenant = fullTenant.substring(fullTenant.lastIndexOf('.') + 1, fullTenant.length());
+            LOG.info("tenant=" + tenant);
+            LOG.info("City Code" + (String) session.getAttribute(CITY_CODE_KEY));
+            boolean found = false;
+            if (tenant.equalsIgnoreCase("generic")) {
+                ApplicationThreadLocals.setTenantID(tenant);
+                found = true;
+            } else {
+                for (String city : tenants.keySet()) {
+                    LOG.info("Key :" + city + " ,Value :" + tenants.get(city) + "request tenant" + tenant);
 
-			String fullTenant = req.getParameter("tenantId");
-			if (fullTenant == null) {
-			  
-			}
-			if(fullTenant==null)
-			{
-				throw new RuntimeException("RestUrl does not contain tenantId");
-			}
-				String tenant = fullTenant.substring(fullTenant.lastIndexOf('.') + 1, fullTenant.length());
-				LOG.info("tenant=" + tenant);
-				LOG.info("City Code" + (String) session.getAttribute(CITY_CODE_KEY));
-				boolean found = false;
-				if (tenant.equalsIgnoreCase("generic")) {
-					ApplicationThreadLocals.setTenantID(tenant);
-					found = true;
-				} else {
-					for (String city : tenants.keySet()) {
-						LOG.info("Key :" + city + " ,Value :" + tenants.get(city) + "request tenant" + tenant);
+                    if (tenants.get(city).contains(tenant)) {
+                        ApplicationThreadLocals.setTenantID(city);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (!found) {
+                throw new RuntimeException("Invalid tenantId");
+            }
 
-						if (tenants.get(city).contains(tenant)) {
-							ApplicationThreadLocals.setTenantID(city);
-							found = true;
-							break;
-						}
-					}
-				}
-				if (!found) {
-					throw new RuntimeException("Invalid tenantId");
-				}
+        }
+        return customRequest;
+    }
 
-			} 
+    public Map<String, String> tenantsMap() {
+        URL url;
+        try {
+            url = new URL(ApplicationThreadLocals.getDomainURL());
+            environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
+                if (propertySource instanceof MapPropertySource)
+                    ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
+                        if (key.startsWith("tenant."))
+                            tenants.put(value.toString(), url.getProtocol() + "://" + key.replace("tenant.", "")
+                                    + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                    });
+            });
+        } catch (MalformedURLException e) {
+            LOG.error("Error occurred, while forming URL", e);
+        }
+        return tenants;
+    }
 
-		
-	}
+    private MultiReadRequestWrapper setCustomHeader(HttpServletRequest request, String tenantAtBody) {
+        MultiReadRequestWrapper multiReadRequestWrapper = new MultiReadRequestWrapper(request);
+        if (request.getRequestURL().toString().contains("/rest/")) {
+            try {
+                StringWriter writer = new StringWriter();
+                IOUtils.copy(multiReadRequestWrapper.getInputStream(), writer, StandardCharsets.UTF_8);
+                String reqBody = String.valueOf(writer);
+                if (StringUtils.isNoneBlank(reqBody)) {
+                    Pattern p = Pattern.compile("\\{.*?\\}");
+                    Matcher m = p.matcher(reqBody);
+                    while (m.find()) {
+                        CharSequence charSequence = m.group().subSequence(1, m.group().length() - 1);
+                        String[] reqBodyParams = String.valueOf(charSequence).split(",");
+                        for (String param : reqBodyParams) {
+                            if (param.contains("tenantId")) {
+                                String[] tenant = param.split(":");
+                                if (tenant[1].startsWith("\"") && tenant[1].endsWith("\""))
+                                    tenantAtBody = tenant[1].substring(1, tenant[1].length() - 1);
+                                else
+                                    tenantAtBody = tenant[1];
+                            } else if (param.contains("authToken")) {
+                                String[] authTokenVal = param.split(":");
+                                // Next to 'bearer' word space is required to differentiate token type and access token
+                                String tokenType = "bearer ";
+                                if (authTokenVal[1].startsWith("\"") && authTokenVal[1].endsWith("\"")) {
+                                    String authToken = authTokenVal[1].substring(1, authTokenVal[1].length() - 1);
+                                    multiReadRequestWrapper.putHeader("Authorization", tokenType + authToken);
+                                } else {
+                                    multiReadRequestWrapper.putHeader("Authorization", tokenType + authTokenVal[1]);
+                                }
+                            }
+                        }
+                    }
+                }
 
-	public Map<String, String> tenantsMap() {
-		URL url;
-		try {
-			url = new URL(ApplicationThreadLocals.getDomainURL());
-			environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
-				if (propertySource instanceof MapPropertySource)
-					((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-						if (key.startsWith("tenant."))
-							tenants.put(value.toString(), url.getProtocol() + "://" + key.replace("tenant.", "")
-									+ (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
-					});
-			});
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return tenants;
-	}
+            } catch (IOException e) {
+                LOG.error("Error occurred, while parsing request body into json", e);
+            }
+
+        }
+        return multiReadRequestWrapper;
+    }
 
 }

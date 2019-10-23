@@ -75,7 +75,6 @@ import javax.servlet.http.HttpSession;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -88,7 +87,6 @@ import org.springframework.security.core.userdetails.User;
 
 public class ApplicationCoreFilter implements Filter {
 
-
     @Autowired
     private CityService cityService;
 
@@ -97,55 +95,44 @@ public class ApplicationCoreFilter implements Filter {
 
     @Value("${cdn.domain.url}")
     private String cdnURL;
-    
-    @Resource(name = "cities")
-	private transient List<String> cities;
 
-    
-     
-    
+    @Resource(name = "cities")
+    private transient List<String> cities;
+
     @Value("${client.id}")
     private String clientId;
 
     @Value("${app.version}_${app.build.no}")
     private String applicationRelease;
-    
-    @Autowired
-	private transient UserService userService;
 
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationCoreFilter.class);
 
-    
-    private static final Logger LOG=LoggerFactory.getLogger(ApplicationCoreFilter.class);
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest request = (HttpServletRequest) req;
         HttpSession session = request.getSession();
         try {
-        	 
             prepareUserSession(session);
             prepareApplicationThreadLocal(session);
-            prepareRestService(request,session);
+            prepareRestService(request, session);
             chain.doFilter(request, resp);
         } finally {
             ApplicationThreadLocals.clearValues();
         }
     }
- 
-    
-    
+
     private void prepareRestService(HttpServletRequest req, HttpSession session) {
 
-		 
-		if (req.getRequestURL().toString().contains(ApplicationTenantResolverFilter.tenants.get("state"))
-				&& (req.getRequestURL().toString().contains("/rest/") || req.getRequestURL().toString().contains("/oauth/"))) {
-			prepareThreadLocal(ApplicationThreadLocals.getTenantID());
-		 
-	}
+        if (req.getRequestURL().toString().contains(ApplicationTenantResolverFilter.tenants.get("state"))
+                && (req.getRequestURL().toString().contains("/rest/") || req.getRequestURL().toString().contains("/oauth/"))) {
+            prepareThreadLocal(ApplicationThreadLocals.getTenantID());
+
+        }
     }
 
-	private void prepareUserSession(HttpSession session) {
-        //if (session.getAttribute(CITY_CODE_KEY) == null)
-            cityService.cityDataAsMap().forEach(session::setAttribute);
+    private void prepareUserSession(HttpSession session) {
+        // if (session.getAttribute(CITY_CODE_KEY) == null)
+        cityService.cityDataAsMap().forEach(session::setAttribute);
         if (session.getAttribute(APP_RELEASE_ATTRIB_NAME) == null)
             session.setAttribute(APP_RELEASE_ATTRIB_NAME, applicationRelease);
         if (session.getAttribute(TENANTID_KEY) == null)
@@ -163,62 +150,56 @@ public class ApplicationCoreFilter implements Filter {
     }
 
     private void prepareApplicationThreadLocal(HttpSession session) {
-    	
+
         ApplicationThreadLocals.setCityCode((String) session.getAttribute(CITY_CODE_KEY));
         ApplicationThreadLocals.setCityName((String) session.getAttribute(CITY_NAME_KEY));
         ApplicationThreadLocals.setCityNameLocal((String) session.getAttribute(CITY_LOCAL_NAME_KEY));
         ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
         ApplicationThreadLocals.setUserId((Long) session.getAttribute(USERID_KEY));
-        if(session.getAttribute(CITY_CODE_KEY)!=null)
-        {
-		 City city = cityService.getCityByCode((String) session.getAttribute(CITY_CODE_KEY));
-		 if(city!=null)
-		 {
-		 ApplicationThreadLocals.setDistrictCode(city.getDistrictCode());
-		 ApplicationThreadLocals.setDistrictName(city.getDistrictName());
-		 ApplicationThreadLocals.setStateName(clientId);
-		 ApplicationThreadLocals.setGrade(city.getGrade());
-		 }
+        if (session.getAttribute(CITY_CODE_KEY) != null) {
+            City city = cityService.getCityByCode((String) session.getAttribute(CITY_CODE_KEY));
+            if (city != null) {
+                ApplicationThreadLocals.setDistrictCode(city.getDistrictCode());
+                ApplicationThreadLocals.setDistrictName(city.getDistrictName());
+                ApplicationThreadLocals.setStateName(clientId);
+                ApplicationThreadLocals.setGrade(city.getGrade());
+            }
         }
-		 
-	 
-        
+
     }
-    
-   private void prepareThreadLocal(String tenant) {
-		ApplicationThreadLocals.setTenantID(tenant);
-		//ApplicationThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
-		 
-			// TODO: get the city by tenant
-			City city = this.cityService.findAll().get(0);
-			if (city != null) {
-				ApplicationThreadLocals.setCityCode(city.getCode());
-				ApplicationThreadLocals.setCityName(city.getName());
-				ApplicationThreadLocals.setDistrictCode(city.getDistrictCode());
-				ApplicationThreadLocals.setDistrictName(city.getDistrictName());
-				ApplicationThreadLocals.setStateName(clientId);
-				ApplicationThreadLocals.setGrade(city.getGrade());
-				ApplicationThreadLocals.setDomainName(city.getDomainURL());
-				//ApplicationThreadLocals.setDomainURL("https://"+city.getDomainURL());
-			} else {
-				LOG.warn("Unable to find the city");
-			}
-			CityPreferences cityPreferences = city.getPreferences();
-			if (cityPreferences != null)
-				ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
-			else
-    		LOG.warn("City preferences not set for {}", city.getName());
+
+    private void prepareThreadLocal(String tenant) {
+        ApplicationThreadLocals.setTenantID(tenant);
+        // ApplicationThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
+
+        // TODO: get the city by tenant
+        City city = this.cityService.findAll().get(0);
+        if (city != null) {
+            ApplicationThreadLocals.setCityCode(city.getCode());
+            ApplicationThreadLocals.setCityName(city.getName());
+            ApplicationThreadLocals.setDistrictCode(city.getDistrictCode());
+            ApplicationThreadLocals.setDistrictName(city.getDistrictName());
+            ApplicationThreadLocals.setStateName(clientId);
+            ApplicationThreadLocals.setGrade(city.getGrade());
+            ApplicationThreadLocals.setDomainName(city.getDomainURL());
+            // ApplicationThreadLocals.setDomainURL("https://"+city.getDomainURL());
+        } else {
+            LOG.warn("Unable to find the city");
+        }
+        CityPreferences cityPreferences = city.getPreferences();
+        if (cityPreferences != null)
+            ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
+        else
+            LOG.warn("City preferences not set for {}", city.getName());
     }
-		
- 
 
     @Override
     public void destroy() {
-        //Nothing to be destroyed
+        // Nothing to be destroyed
     }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        //Nothing to be initialized
+        // Nothing to be initialized
     }
 }

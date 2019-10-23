@@ -62,7 +62,7 @@
 				<security:filter-chain pattern="/index.jsp" filters="none" />
 				<security:filter-chain pattern="/public/**" filters="none"/>
 				<security:filter-chain pattern="/collection/citizen/**" filters="none" />
-				<security:filter-chain pattern="/rest/**" filters="springSecurityFilterChain"/>
+				<security:filter-chain pattern="/rest/downloadfile/**" filters="none"/>
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>
