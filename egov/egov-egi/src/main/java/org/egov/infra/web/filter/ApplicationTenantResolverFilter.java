@@ -134,8 +134,11 @@ public class ApplicationTenantResolverFilter implements Filter {
         if (tenants == null || tenants.isEmpty()) {
             tenantsMap();
         }
+
+        LOG.info("*All tenants*****" + tenants);
+        LOG.info("**tenants.get(state))****" + tenants.get("state"));
         // restricted only the state URL to access the rest API
-        LOG.info("***********Enter to set tenant id and custom header**************"+req.getRequestURL().toString());
+        LOG.info("***********Enter to set tenant id and custom header**************" + req.getRequestURL().toString());
         if (req.getRequestURL().toString().contains(tenants.get("state"))
                 && (req.getRequestURL().toString().contains("/rest/") || req.getRequestURL().toString().contains("/oauth/"))) {
             LOG.info("***********Inside method to set tenant id and custom header**************");
@@ -178,14 +181,20 @@ public class ApplicationTenantResolverFilter implements Filter {
         URL url;
         try {
             url = new URL(ApplicationThreadLocals.getDomainURL());
+
             environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
+                LOG.info(
+                        "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
                 if (propertySource instanceof MapPropertySource)
+
                     ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-                        if (key.startsWith("tenant."))
+                        if (key.startsWith("tenant.")) {
                             tenants.put(value.toString(), url.getProtocol() + "://" + key.replace("tenant.", "")
                                     + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
-                        LOG.info("*****tenants******"+value.toString(), url.getProtocol() + "://" + key.replace("tenant.", "")
-                        + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                            LOG.info("*****tenants******" + value.toString() + url.getProtocol() + "://"
+                                    + key.replace("tenant.", "")
+                                    + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                        }
                     });
             });
         } catch (MalformedURLException e) {
@@ -208,23 +217,23 @@ public class ApplicationTenantResolverFilter implements Filter {
                     while (m.find()) {
                         CharSequence charSequence = m.group().subSequence(1, m.group().length() - 1);
                         String[] reqBodyParams = String.valueOf(charSequence).split(",");
-                        LOG.info("***********Request Body Params**************"+String.valueOf(charSequence));
+                        LOG.info("***********Request Body Params**************" + String.valueOf(charSequence));
                         for (String param : reqBodyParams) {
-                            LOG.info("***********Request Param After Split by comma**************"+param);
+                            LOG.info("*************************" + param);
                             if (param.contains("tenantId")) {
                                 String[] tenant = param.split(":");
                                 if (tenant[1].startsWith("\"") && tenant[1].endsWith("\""))
                                     tenantAtBody = tenant[1].substring(1, tenant[1].length() - 1);
                                 else
                                     tenantAtBody = tenant[1];
-                                LOG.info("############Tenant From Body######"+tenantAtBody);
+                                LOG.info("############Tenant From Body######" + tenantAtBody);
                             } else if (param.contains("authToken")) {
                                 String[] authTokenVal = param.split(":");
                                 // Next to 'bearer' word space is required to differentiate token type and access token
                                 String tokenType = "bearer ";
                                 if (authTokenVal[1].startsWith("\"") && authTokenVal[1].endsWith("\"")) {
                                     String authToken = authTokenVal[1].substring(1, authTokenVal[1].length() - 1);
-                                    LOG.info("############Auth Token######"+tokenType + authToken);
+                                    LOG.info("############Auth Token######" + tokenType + authToken);
                                     multiReadRequestWrapper.putHeader("Authorization", tokenType + authToken);
                                 } else {
                                     multiReadRequestWrapper.putHeader("Authorization", tokenType + authTokenVal[1]);
