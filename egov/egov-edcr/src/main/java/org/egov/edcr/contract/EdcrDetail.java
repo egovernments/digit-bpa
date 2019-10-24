@@ -71,6 +71,8 @@ public class EdcrDetail {
     private Plan planDetail;
     
     private String tenantId;
+    
+    private String errors;
 
 
     public String getPlanReport() {
@@ -143,5 +145,13 @@ public class EdcrDetail {
 
 	public void setUpdatedDxfFile(String updatedDxfFile) {
 		this.updatedDxfFile = updatedDxfFile;
+	}
+
+	public String getErrors() {
+		return errors;
+	}
+
+	public void setErrors(String errors) {
+		this.errors = errors;
 	}
 }

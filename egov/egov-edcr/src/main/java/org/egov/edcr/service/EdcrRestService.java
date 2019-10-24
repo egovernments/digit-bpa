@@ -193,7 +193,14 @@ public class EdcrRestService {
         } else {
             edcrApplication = edcrApplicationService.findByTransactionNumber(transactionNumber);
         }
-        return edcrApplication != null ? setEdcrResponse(edcrApplication, tenantId) : new EdcrDetail();
+        if(edcrApplication != null)
+           return setEdcrResponse(edcrApplication, tenantId) ;
+        else
+        {
+        	EdcrDetail edcrDetail = new EdcrDetail();
+        	edcrDetail.setErrors("No Record Found");
+        	return edcrDetail;
+        }
     }
 
     public ErrorDetail validateRequestParam(final EdcrRequest edcrRequest, final MultipartFile file) {

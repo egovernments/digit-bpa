@@ -52,7 +52,6 @@ import java.util.Arrays;
 
 import javax.validation.Valid;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.edcr.contract.EdcrDetail;
@@ -109,8 +108,8 @@ public class RestEdcrApplicationController {
             	edcrDetail = edcrRestService.createEdcr(edcr, planFile);
             }
 
-        } catch (IOException e) {
-            LOGGER.log(Level.ERROR, e);
+        }catch (IOException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);        	 
         }
         return getSuccessResponse(edcrDetail, edcr.getRequestInfo());
     }
@@ -125,7 +124,11 @@ public class RestEdcrApplicationController {
             return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
         else
             edcrDetail = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber(), edcrRequest.getTenantId());
-        return getSuccessResponse(edcrDetail, requestInfoWrapper.getRequestInfo());
+        
+        if(edcrDetail.getErrors()!=null)
+            return new ResponseEntity<>(edcrDetail.getErrors(), HttpStatus.NOT_FOUND);
+        else        
+            return getSuccessResponse(edcrDetail, requestInfoWrapper.getRequestInfo());
     }
 
     @GetMapping("/downloadfile/{fileStoreId}")
