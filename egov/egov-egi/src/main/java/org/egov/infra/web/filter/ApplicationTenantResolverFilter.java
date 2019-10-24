@@ -194,17 +194,17 @@ public class ApplicationTenantResolverFilter implements Filter {
             environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
                 LOG.info(
                         "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
-                if (propertySource.getName().contains("egov-erp-override.properties")) {
-                    if (propertySource instanceof MapPropertySource)
-                        ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-                            if (key.startsWith(TENANT)) {
-                                tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")
-                                        + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
-                                LOG.info("*****override tenants******" + value.toString() + url.getProtocol() + "://"
-                                        + key.replace(TENANT, "")
-                                        + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
-                            }
-                        });
+                if (propertySource.getName().contains("egov-erp-override.properties")
+                        && propertySource instanceof MapPropertySource) {
+                    ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
+                        if (key.startsWith(TENANT)) {
+                            tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")
+                                    + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                            LOG.info("*****override tenants******" + value.toString() + url.getProtocol() + "://"
+                                    + key.replace(TENANT, "")
+                                    + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                        }
+                    });
                 }
 
             });
@@ -212,19 +212,18 @@ public class ApplicationTenantResolverFilter implements Filter {
             environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
                 LOG.info(
                         "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
-                if (propertySource.getName().contains("application-config.properties")) {
-                    if (propertySource instanceof MapPropertySource)
-                        ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-                            if (key.startsWith(TENANT)) {
-                                if (!tenants.containsKey(key)) {
-                                    tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")
-                                            + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
-                                    LOG.info("*****application config tenants******" + value.toString() + url.getProtocol() + "://"
+                if (propertySource.getName().contains("application-config.properties")
+                        && propertySource instanceof MapPropertySource) {
+                    ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
+                        if (key.startsWith(TENANT) && !tenants.containsKey(value)) {
+                            tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")
+                                    + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                            LOG.info(
+                                    "*****application config tenants******" + value.toString() + url.getProtocol() + "://"
                                             + key.replace(TENANT, "")
                                             + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
-                                }
-                            }
-                        });
+                        }
+                    });
                 }
 
             });
