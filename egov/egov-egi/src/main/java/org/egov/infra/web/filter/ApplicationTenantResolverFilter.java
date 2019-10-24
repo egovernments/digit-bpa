@@ -198,11 +198,9 @@ public class ApplicationTenantResolverFilter implements Filter {
                         && propertySource instanceof MapPropertySource) {
                     ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
                         if (key.startsWith(TENANT)) {
-                            tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")
-                                    + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                            tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, ""));
                             LOG.info("*****override tenants******" + value.toString() + url.getProtocol() + "://"
-                                    + key.replace(TENANT, "")
-                                    + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                                    + key.replace(TENANT, ""));
                         }
                     });
                 }
@@ -216,12 +214,10 @@ public class ApplicationTenantResolverFilter implements Filter {
                         && propertySource instanceof MapPropertySource) {
                     ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
                         if (key.startsWith(TENANT) && !tenants.containsKey(value)) {
-                            tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")
-                                    + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                            tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, ""));
                             LOG.info(
                                     "*****application config tenants******" + value.toString() + url.getProtocol() + "://"
-                                            + key.replace(TENANT, "")
-                                            + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                                            + key.replace(TENANT, ""));
                         }
                     });
                 }
