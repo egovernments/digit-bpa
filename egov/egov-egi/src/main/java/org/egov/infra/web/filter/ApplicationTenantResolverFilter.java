@@ -75,6 +75,7 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.config.core.ApplicationConfiguration;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.rest.support.MultiReadRequestWrapper;
@@ -86,8 +87,13 @@ import org.springframework.core.env.MapPropertySource;
 
 public class ApplicationTenantResolverFilter implements Filter {
 
+    private static final String TENANT = "tenant.";
+
     @Autowired
     private EnvironmentSettings environmentSettings;
+
+    @Autowired
+    private ApplicationConfiguration applicationConfiguration;
 
     @Resource(name = "cities")
     private transient List<String> cities;
@@ -179,23 +185,48 @@ public class ApplicationTenantResolverFilter implements Filter {
 
     public Map<String, String> tenantsMap() {
         URL url;
+
+        LOG.info("cities" + applicationConfiguration.cities());
         try {
             url = new URL(ApplicationThreadLocals.getDomainURL());
 
+            // first get from override properties
             environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
                 LOG.info(
                         "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
-                if (propertySource instanceof MapPropertySource)
+                if (propertySource.getName().contains("egov-erp-override.properties")) {
+                    if (propertySource instanceof MapPropertySource)
+                        ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
+                            if (key.startsWith(TENANT)) {
+                                tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")
+                                        + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                                LOG.info("*****override tenants******" + value.toString() + url.getProtocol() + "://"
+                                        + key.replace(TENANT, "")
+                                        + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                            }
+                        });
+                }
 
-                    ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-                        if (key.startsWith("tenant.")) {
-                            tenants.put(value.toString(), url.getProtocol() + "://" + key.replace("tenant.", "")
-                                    + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
-                            LOG.info("*****tenants******" + value.toString() + url.getProtocol() + "://"
-                                    + key.replace("tenant.", "")
-                                    + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
-                        }
-                    });
+            });
+            // second get from application config only properties if it is not overriden
+            environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
+                LOG.info(
+                        "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
+                if (propertySource.getName().contains("application-config.properties")) {
+                    if (propertySource instanceof MapPropertySource)
+                        ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
+                            if (key.startsWith(TENANT)) {
+                                if (!tenants.containsKey(key)) {
+                                    tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")
+                                            + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                                    LOG.info("*****application config tenants******" + value.toString() + url.getProtocol() + "://"
+                                            + key.replace(TENANT, "")
+                                            + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                                }
+                            }
+                        });
+                }
+
             });
         } catch (MalformedURLException e) {
             LOG.error("Error occurred, while forming URL", e);
