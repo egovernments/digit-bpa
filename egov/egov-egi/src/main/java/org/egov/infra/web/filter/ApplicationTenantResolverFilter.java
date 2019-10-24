@@ -135,8 +135,10 @@ public class ApplicationTenantResolverFilter implements Filter {
             tenantsMap();
         }
         // restricted only the state URL to access the rest API
+        LOG.info("***********Enter to set tenant id and custom header**************"+req.getRequestURL().toString());
         if (req.getRequestURL().toString().contains(tenants.get("state"))
                 && (req.getRequestURL().toString().contains("/rest/") || req.getRequestURL().toString().contains("/oauth/"))) {
+            LOG.info("***********Inside method to set tenant id and custom header**************");
             String tenantFromBody = StringUtils.EMPTY;
             customRequest = setCustomHeader(req, tenantFromBody);
             String fullTenant = req.getParameter("tenantId");
@@ -182,6 +184,8 @@ public class ApplicationTenantResolverFilter implements Filter {
                         if (key.startsWith("tenant."))
                             tenants.put(value.toString(), url.getProtocol() + "://" + key.replace("tenant.", "")
                                     + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
+                        LOG.info("*****tenants******"+value.toString(), url.getProtocol() + "://" + key.replace("tenant.", "")
+                        + (url.getPort() != 80 ? ":" + url.getPort() : "") + "/");
                     });
             });
         } catch (MalformedURLException e) {
@@ -193,6 +197,7 @@ public class ApplicationTenantResolverFilter implements Filter {
     private MultiReadRequestWrapper setCustomHeader(HttpServletRequest request, String tenantAtBody) {
         MultiReadRequestWrapper multiReadRequestWrapper = new MultiReadRequestWrapper(request);
         if (request.getRequestURL().toString().contains("/rest/")) {
+            LOG.info("***********Inside method to fetch auth token and tenant from reqbody**************");
             try {
                 StringWriter writer = new StringWriter();
                 IOUtils.copy(multiReadRequestWrapper.getInputStream(), writer, StandardCharsets.UTF_8);
@@ -203,7 +208,9 @@ public class ApplicationTenantResolverFilter implements Filter {
                     while (m.find()) {
                         CharSequence charSequence = m.group().subSequence(1, m.group().length() - 1);
                         String[] reqBodyParams = String.valueOf(charSequence).split(",");
+                        LOG.info("***********Request Body Params**************"+String.valueOf(charSequence));
                         for (String param : reqBodyParams) {
+                            LOG.info("***********Request Param After Split by comma**************"+param);
                             if (param.contains("tenantId")) {
                                 String[] tenant = param.split(":");
                                 if (tenant[1].startsWith("\"") && tenant[1].endsWith("\""))
