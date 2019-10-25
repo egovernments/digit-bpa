@@ -111,19 +111,19 @@ paths:
         - name: userName
           in: header
           required: true
-          description: Client User Name
+          description: Client User Name provided by erp for each client to generate authtoken
           schema:
             type: string
         - name: password
           in: header
           required: true
-          description: Client Password
+          description: Client Password provided by erp for each client to generate authtoken
           schema:
             type: string
             format: password
       responses:
         '200':
-          description: successful return of details if exist
+          description: Authtoken generated in case of valid user details.
           content:
             application/json:
               schema:
@@ -213,17 +213,17 @@ components:
     
     AuthTokenRequest:
       type: object
-      description: ScrutinizePlanReq contains data to be submit as plan
+      description: Pass the username and password created/provided by erp system to access the secured rest api's.
       properties:
         grant_type:
           type: string
-          description: Refers to the way an application gets an access token.
+          description: Pass "password" as default value. 
         username:
           type: string
-          description: The unique user name of the User.
+          description: Unique application user name provided by erp system.
         password:
             type: string
-            description: The password of the user name to login to the system.
+            description: The password of the application user name provided by erp system.
       example:
           grant_type: "password"
           username: "username"
