@@ -54,8 +54,6 @@ import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
@@ -75,25 +73,18 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.config.core.ApplicationConfiguration;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.rest.support.MultiReadRequestWrapper;
+import org.egov.infra.utils.TenantUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.env.ConfigurableEnvironment;
-import org.springframework.core.env.MapPropertySource;
 
 public class ApplicationTenantResolverFilter implements Filter {
 
-    private static final String TENANT = "tenant.";
-
     @Autowired
     private EnvironmentSettings environmentSettings;
-
-    @Autowired
-    private ApplicationConfiguration applicationConfiguration;
 
     @Resource(name = "cities")
     private transient List<String> cities;
@@ -103,7 +94,7 @@ public class ApplicationTenantResolverFilter implements Filter {
     public static String stateUrl;
 
     @Autowired
-    private ConfigurableEnvironment environment;
+    private TenantUtils tenantUtils;
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationTenantResolverFilter.class);
 
@@ -138,7 +129,7 @@ public class ApplicationTenantResolverFilter implements Filter {
     private MultiReadRequestWrapper prepareRestService(HttpServletRequest req, HttpSession session) {
         MultiReadRequestWrapper customRequest = null;
         if (tenants == null || tenants.isEmpty()) {
-            tenantsMap();
+            tenants = tenantUtils.tenantsMap();
         }
 
         LOG.info("*All tenants*****" + tenants);
@@ -183,51 +174,24 @@ public class ApplicationTenantResolverFilter implements Filter {
         return customRequest;
     }
 
-    public Map<String, String> tenantsMap() {
-        URL url;
-
-        LOG.info("cities" + applicationConfiguration.cities());
-        try {
-            url = new URL(ApplicationThreadLocals.getDomainURL());
-
-            // first get from override properties
-            environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
-                LOG.info(
-                        "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
-                if (propertySource.getName().contains("egov-erp-override.properties")
-                        && propertySource instanceof MapPropertySource) {
-                    ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-                        if (key.startsWith(TENANT)) {
-                            tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, ""));
-                            LOG.info("*****override tenants******" + value.toString() + url.getProtocol() + "://"
-                                    + key.replace(TENANT, ""));
-                        }
-                    });
-                }
-
-            });
-            // second get from application config only properties if it is not overriden
-            environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
-                LOG.info(
-                        "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
-                if (propertySource.getName().contains("application-config.properties")
-                        && propertySource instanceof MapPropertySource) {
-                    ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
-                        if (key.startsWith(TENANT) && !tenants.containsKey(value)) {
-                            tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, ""));
-                            LOG.info(
-                                    "*****application config tenants******" + value.toString() + url.getProtocol() + "://"
-                                            + key.replace(TENANT, ""));
-                        }
-                    });
-                }
-
-            });
-        } catch (MalformedURLException e) {
-            LOG.error("Error occurred, while forming URL", e);
-        }
-        return tenants;
-    }
+    /*
+     * public Map<String, String> tenantsMap() { URL url; LOG.info("cities" + applicationConfiguration.cities()); try { url = new
+     * URL(ApplicationThreadLocals.getDomainURL()); // first get from override properties
+     * environment.getPropertySources().iterator().forEachRemaining(propertySource -> { LOG.info( "Property Source" +
+     * propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName()); if
+     * (propertySource.getName().contains("egov-erp-override.properties") && propertySource instanceof MapPropertySource) {
+     * ((MapPropertySource) propertySource).getSource().forEach((key, value) -> { if (key.startsWith(TENANT)) {
+     * tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")); LOG.info("*****override tenants******"
+     * + value.toString() + url.getProtocol() + "://" + key.replace(TENANT, "")); } }); } }); // second get from application
+     * config only properties if it is not overriden environment.getPropertySources().iterator().forEachRemaining(propertySource
+     * -> { LOG.info( "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
+     * if (propertySource.getName().contains("application-config.properties") && propertySource instanceof MapPropertySource) {
+     * ((MapPropertySource) propertySource).getSource().forEach((key, value) -> { if (key.startsWith(TENANT) &&
+     * !tenants.containsKey(value)) { tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, ""));
+     * LOG.info( "*****application config tenants******" + value.toString() + url.getProtocol() + "://" + key.replace(TENANT,
+     * "")); } }); } }); } catch (MalformedURLException e) { LOG.error("Error occurred, while forming URL", e); } return tenants;
+     * }
+     */
 
     private MultiReadRequestWrapper setCustomHeader(HttpServletRequest request, String tenantAtBody) {
         MultiReadRequestWrapper multiReadRequestWrapper = new MultiReadRequestWrapper(request);
