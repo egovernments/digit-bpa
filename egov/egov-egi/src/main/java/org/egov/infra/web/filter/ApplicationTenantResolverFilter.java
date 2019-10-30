@@ -137,7 +137,8 @@ public class ApplicationTenantResolverFilter implements Filter {
         // restricted only the state URL to access the rest API
         LOG.info("***********Enter to set tenant id and custom header**************" + req.getRequestURL().toString());
         if (req.getRequestURL().toString().contains(tenants.get("state"))
-                && (req.getRequestURL().toString().contains("/rest/") || req.getRequestURL().toString().contains("/oauth/"))) {
+                && (req.getRequestURL().toString().contains("/edcr/") && (req.getRequestURL().toString().contains("/rest/")
+                        || req.getRequestURL().toString().contains("/oauth/")))) {
             LOG.info("***********Inside method to set tenant id and custom header**************");
             String tenantFromBody = StringUtils.EMPTY;
             customRequest = setCustomHeader(req, tenantFromBody);
