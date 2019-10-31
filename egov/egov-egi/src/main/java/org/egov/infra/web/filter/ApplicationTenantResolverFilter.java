@@ -141,7 +141,8 @@ public class ApplicationTenantResolverFilter implements Filter {
                         || req.getRequestURL().toString().contains("/oauth/")))) {
             LOG.info("***********Inside method to set tenant id and custom header**************");
             String tenantFromBody = StringUtils.EMPTY;
-            customRequest = setCustomHeader(req, tenantFromBody);
+            customRequest = new MultiReadRequestWrapper(req);
+            tenantFromBody=   setCustomHeader(req, tenantFromBody,customRequest);
             String fullTenant = req.getParameter("tenantId");
             if (StringUtils.isBlank(fullTenant)) {
                 fullTenant = tenantFromBody;
@@ -194,8 +195,8 @@ public class ApplicationTenantResolverFilter implements Filter {
      * }
      */
 
-    private MultiReadRequestWrapper setCustomHeader(HttpServletRequest request, String tenantAtBody) {
-        MultiReadRequestWrapper multiReadRequestWrapper = new MultiReadRequestWrapper(request);
+    private String setCustomHeader(HttpServletRequest request, String tenantAtBody,MultiReadRequestWrapper multiReadRequestWrapper) {
+       
         if (request.getRequestURL().toString().contains("/rest/")) {
             LOG.info("***********Inside method to fetch auth token and tenant from reqbody**************");
             try {
@@ -239,7 +240,7 @@ public class ApplicationTenantResolverFilter implements Filter {
             }
 
         }
-        return multiReadRequestWrapper;
+        return tenantAtBody;
     }
 
 }
