@@ -137,7 +137,19 @@ public class CityService {
     public Map<String, Object> cityDataAsMap() {
         Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         if (cityPrefs.isEmpty()) {
-            cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(getDomainName()).toMap());
+        	
+        	List<City> cityEntries = cityRepository.findAll();
+        	if(cityEntries!=null && cityEntries.size()==1)
+        	{
+            cityPrefCache.putAll(cityPrefCacheKey(),cityEntries.get(0).toMap());
+        	}else
+        	{
+        		if(getCityByURL(getDomainName())!=null)
+        		cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(getDomainName()).toMap());
+        		else
+        		cityPrefCache.putAll(cityPrefCacheKey(),cityEntries.get(0).toMap());
+        	}
+        	//cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(getDomainName()).toMap());
             cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         }
         return cityPrefs;
