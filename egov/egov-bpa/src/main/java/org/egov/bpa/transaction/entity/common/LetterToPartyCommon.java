@@ -86,9 +86,9 @@ public class LetterToPartyCommon extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_OC_LETTERTOPARTY, strategy = GenerationType.SEQUENCE)
     private Long id;
-    @Valid
+    
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "inspection", nullable = false)
+    @JoinColumn(name = "inspection")
     private InspectionCommon inspection;
 
     @SafeHtml

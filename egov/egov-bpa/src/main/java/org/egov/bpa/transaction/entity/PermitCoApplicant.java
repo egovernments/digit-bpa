@@ -56,7 +56,7 @@ public class PermitCoApplicant extends AbstractAuditable {
     private Long id;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "application", nullable = false)
+    @JoinColumn(name = "application")
     private BpaApplication application;
 
     @Valid
