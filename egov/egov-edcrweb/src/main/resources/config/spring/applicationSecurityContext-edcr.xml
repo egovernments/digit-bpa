@@ -65,6 +65,7 @@
 				<security:filter-chain pattern="/rest/dcr/scrutinizeplan/**" filters="springSecurityFilterChain"/>
 				<security:filter-chain pattern="/oauth/**" filters="springSecurityFilterChain"/>
 				<security:filter-chain pattern="/rest/dcr/downloadfile/**" filters="none"/>
+				<security:filter-chain pattern="/rest/dcr/scrutinydetails/**" filters="none"/>
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>
