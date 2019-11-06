@@ -142,7 +142,7 @@ public class User extends AbstractAuditable {
     @Pattern(regexp = USERNAME, message = INVALID_USERNAME)
     private String username;
 
-    @NotNull
+    
     @Length(min = 4, max = 64)
     @Audited
     private String password;
