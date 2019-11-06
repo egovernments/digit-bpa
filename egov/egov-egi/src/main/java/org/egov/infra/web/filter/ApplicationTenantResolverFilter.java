@@ -132,14 +132,16 @@ public class ApplicationTenantResolverFilter implements Filter {
             tenants = tenantUtils.tenantsMap();
         }
 
-        LOG.info("*All tenants*****" + tenants);
-        LOG.info("**tenants.get(state))****" + tenants.get("state"));
+      
         // restricted only the state URL to access the rest API
-        LOG.info("***********Enter to set tenant id and custom header**************" + req.getRequestURL().toString());
+      //  LOG.info("***********Enter to set tenant id and custom header**************" + req.getRequestURL().toString());
         if (req.getRequestURL().toString().contains(tenants.get("state"))
                 && (req.getRequestURL().toString().contains("/edcr/") && (req.getRequestURL().toString().contains("/rest/")
                         || req.getRequestURL().toString().contains("/oauth/")))) {
-            LOG.info("***********Inside method to set tenant id and custom header**************");
+        	
+           LOG.debug("All tenants from config" + tenants);
+           LOG.info("tenants.get(state))" + tenants.get("state"));
+           LOG.info("Inside method to set tenant id and custom header");
             String tenantFromBody = StringUtils.EMPTY;
             customRequest = new MultiReadRequestWrapper(req);
             tenantFromBody=   setCustomHeader(req, tenantFromBody,customRequest);
@@ -151,13 +153,17 @@ public class ApplicationTenantResolverFilter implements Filter {
                 throw new RuntimeException("RestUrl does not contain tenantId");
             }
             String tenant = fullTenant.substring(fullTenant.lastIndexOf('.') + 1, fullTenant.length());
-            LOG.info("tenant=" + tenant);
-            LOG.info("City Code" + (String) session.getAttribute(CITY_CODE_KEY));
+            LOG.info("tenant from rest request =" + tenant);
+            LOG.info("City Code from session " + (String) session.getAttribute(CITY_CODE_KEY));
             boolean found = false;
             if (tenant.equalsIgnoreCase("generic")) {
                 ApplicationThreadLocals.setTenantID(tenant);
                 found = true;
-            } else {
+            } else if (tenant.equalsIgnoreCase("state")) {
+                ApplicationThreadLocals.setTenantID(tenant);
+                found = true;
+            } else
+            {
                 for (String city : tenants.keySet()) {
                     LOG.info("Key :" + city + " ,Value :" + tenants.get(city) + "request tenant" + tenant);
 
@@ -165,6 +171,9 @@ public class ApplicationTenantResolverFilter implements Filter {
                         ApplicationThreadLocals.setTenantID(city);
                         found = true;
                         break;
+                    }else
+                    {
+                    	
                     }
                 }
             }
