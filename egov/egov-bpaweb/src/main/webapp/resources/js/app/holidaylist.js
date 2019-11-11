@@ -50,9 +50,9 @@ $(document).ready( function () {
 var tbody = $('#holiday').children('tbody');
 	var table = tbody.length ? tbody : $('#holiday');
 	var row = '<tr>'+
-	'<td ><input type="text" class="form-control holidayDate"   name="holidaysTemp[{{idx}}].holidayDate" required="required" id="holidaysTemp[{{idx}}].holidayDate" /></td>'+
+	'<td ><input type="text" class="form-control holidayDate"   name="holidaysTemp[{{idx}}].holidayDate" required="required" id="holidaysTemp[{{idx}}].holidayDate" /><form:errors path="holidaysTemp[{{idx}}].holidayDate" cssClass="error-msg" /></td>'+
 	'<td ><select name="holidaysTemp[{{idx}}].holidayType" data-first-option="false" id="holoidaysTemp[{{idx}}]holidayType" class="form-control holidayType " required="required" > <option value="">Select</option><options items="${holidayType}" /></select></td>'+
-	'<td ><input type="text" class="form-control table-input  patternvalidation description" name="holidaysTemp[{{idx}}].description" id="holidaysTemp[{{idx}}]description" required="required" maxlength="256" /></td>'+
+	'<td ><input type="text" class="form-control table-input  patternvalidation description" name="holidaysTemp[{{idx}}].description" id="holidaysTemp[{{idx}}]description" required="required" maxlength="256" /><form:errors path="holidaysTemp[{{idx}}]description" cssClass="error-msg" /></td>'+
 	'<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-danger" id="deleteHolidayRow" ><i class="fa fa-trash"></i></a></td>'+
 	'</tr>';
 	//adding row dynamically

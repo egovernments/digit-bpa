@@ -95,7 +95,8 @@
 											<td><input type="text"
 												name="holidaysTemp[${vs.index}].description"
 												value="${holidaysTemp.description}"
-												class="form-control patternvalidation " required="required" /></td>
+												class="form-control patternvalidation " required="required" />
+												<form:errors path="holidaysTemp[${vs.index}].description" cssClass="error-msg" /></td>
 
 											<td class="text-center"><span class="add-padding"><i
 													class="fa fa-trash delete-row btn-sm btn-danger"
@@ -119,7 +120,8 @@
 											</form:select></td>
 										<td width="4%"><input type="text"
 											name="holidaysTemp[0].description"
-											class="form-control patternvalidation " required="required" /></td>
+											class="form-control patternvalidation " required="required" />
+												<form:errors path="holidaysTemp[0].description" cssClass="error-msg" /></td>
 
 										<td class="text-center"><span class="add-padding"><i
 												class="fa fa-trash delete-row btn-sm btn-danger"
