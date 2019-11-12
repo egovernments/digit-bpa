@@ -47,7 +47,6 @@ jQuery(document)
 					accountDetailGlcode_initialize();
 					
 					$('#submit').click(function(e) {
-					bootbox.alert($('#category').val());
 						if ($('form').valid()) {
 							console.log('submitted')
 						} else {
@@ -137,7 +136,7 @@ jQuery(document)
 							+ '<td ><select name="bpaFeeMapTemp[{{idx}}].applicationSubType" data-first-option="false" id="bpaFeeMap[{{idx}}]applicationSubType" class="form-control applicationSubType " required="required" > <option value="">Select</option><options items="${appSubTypes}" itemValue="id" itemLabel="description" /></select></td>'
                             + '<td ><select name="bpaFeeMapTemp[{{idx}}].feeSubType" data-first-option="false" id="bpaFeeMap[{{idx}}]feeSubType" class="form-control feeSubType " required="required" > <option value="">Select</option><options items="${feeSubTypes}" itemLabel="feeSubTypeVal" /></select></td>'
 							+ '<td ><select name="bpaFeeMapTemp[{{idx}}].calculationType" data-first-option="false" id="bpaFeeMap[{{idx}}]calculationType" class="form-control calculationType " required="required" > <option value="">Select</option><options items="${calculationTypes}" /></select></td>'
-							+ '<td ><input type="text" class="form-control patternvalidation text-right" data-pattern="number" name="bpaFeeMapTemp[{{idx}}].amount" id="bpaFeeMapTemp[{{idx}}]amount" required="required" maxlength="8" /></td>'
+							+ '<td ><input type="text" class="form-control patternvalidation text-right" data-pattern="number" name="bpaFeeMapTemp[{{idx}}].amount" id="bpaFeeMapTemp[{{idx}}]amount" required="required" maxlength="8" /><form:errors path="bpaFeeMapTemp[{{idx}}]amount" cssClass="error-msg" /></td>'
 							+ '<td class="text-center"><a href="javascript:void(0);" class="btn-sm btn-danger" id="deleteFeeMapRow" ><i class="fa fa-trash"></i></a></td>'
 							+ '</tr>';
 
