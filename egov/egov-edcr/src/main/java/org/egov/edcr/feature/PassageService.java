@@ -98,8 +98,8 @@ public class PassageService extends FeatureProcess {
 
 				if (passage != null) {
 
-					List<BigDecimal> passagePolylines = passage.getPassagePolyLines();
-					List<BigDecimal> passageStairPolylines = passage.getPassageStairPolyLines();
+					List<BigDecimal> passagePolylines = passage.getPassageDimensions();
+					List<BigDecimal> passageStairPolylines = passage.getPassageStairDimensions();
 
 					if (passagePolylines != null && passagePolylines.size() > 0) {
 

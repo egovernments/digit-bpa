@@ -80,7 +80,7 @@ public class VehicleRamp extends FeatureProcess {
 					List<org.egov.common.entity.edcr.VehicleRamp> vehicleRamps = floor.getVehicleRamps();
 					if (vehicleRamps != null && !vehicleRamps.isEmpty()) {
 						for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : vehicleRamps) {
-							List<Measurement> vehicleRampPolyLines = vehicleRamp.getRampPolyLines();
+							List<Measurement> vehicleRampPolyLines = vehicleRamp.getRamps();
 							if (vehicleRampPolyLines != null && !vehicleRampPolyLines.isEmpty()) {
 								validateDimensions(pl, block.getNumber(), floor.getNumber(),
 										vehicleRamp.getNumber().toString(), vehicleRampPolyLines);
@@ -129,9 +129,9 @@ public class VehicleRamp extends FeatureProcess {
 					if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
 						for (Floor floor : block.getBuilding().getFloors()) {
 							for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor.getVehicleRamps()) {
-								if (vehicleRamp.getRampPolyLineClosed()) {
+								if (vehicleRamp.getRampClosed()) {
 									vehicleRampLengths = new ArrayList<>();
-									for (Measurement measurement : vehicleRamp.getRampPolyLines()) {
+									for (Measurement measurement : vehicleRamp.getRamps()) {
 										vehicleRampLengths.add(measurement.getHeight());
 									}
 									vehicleRampTotalLength = BigDecimal.ZERO;
@@ -160,7 +160,7 @@ public class VehicleRamp extends FeatureProcess {
 										for (org.egov.common.entity.edcr.VehicleRamp vehicleRamp : floor
 												.getVehicleRamps()) {
 											minWidth = BigDecimal.ZERO;
-											for (Measurement polyLine : vehicleRamp.getRampPolyLines()) {
+											for (Measurement polyLine : vehicleRamp.getRamps()) {
 												if (polyLine.getWidth().compareTo(minWidth) < 0) {
 													minWidth = polyLine.getWidth();
 												}

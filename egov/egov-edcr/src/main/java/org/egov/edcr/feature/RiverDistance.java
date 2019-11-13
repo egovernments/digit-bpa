@@ -47,16 +47,21 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.DxfFileConstants.MAINRIVER;
+import static org.egov.edcr.constants.DxfFileConstants.SUBRIVER;
+
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
+import org.egov.common.entity.edcr.River;
 import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.infra.utils.StringUtils;
 import org.springframework.stereotype.Service;
@@ -64,12 +69,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class RiverDistance extends FeatureProcess {
 
-	private static final Logger LOG = Logger.getLogger(RiverDistance.class);
 	private static final String RULE_22 = "22";
 	public static final String RIVER_GANGA_DESCRIPTION = "Distance from ganga river";
 	public static final String RIVER_NON_GANGA_DESCRIPTION = "Distance from non ganga river";
 	public static final String PROTECTION_WALL_GANGA_DESCRIPTION = "Distance from protection wall ganga";
 	public static final String EMBANKMENT_GANGA_DESCRIPTION = "Distance from embankment ganga";
+	public static final String NO_DISTANCT_MENTIONED = "No distance is provided from protection wall ganga/embankment/river ganga edge or non ganga river";
 
 	@Override
 	public Plan validate(Plan pl) {
@@ -92,77 +97,92 @@ public class RiverDistance extends FeatureProcess {
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, RULE_22);
 
-		BigDecimal minDistanceFromProtectionWallGanga = BigDecimal.ZERO;
-		BigDecimal minDistanceFromEmbankmentGanga = BigDecimal.ZERO;
-		BigDecimal minDistanceFromRiverGangaEdge = BigDecimal.ZERO;
-		BigDecimal minDistanceFromRiverNonGanga = BigDecimal.ZERO;
-		List<BigDecimal> distancesFromProtectionWallGanga = pl.getDistancesFromProtectionWallGanga();
-		List<BigDecimal> distancesFromEmbankmentGanga = pl.getDistancesFromEmbankmentGanga();
-		List<BigDecimal> distancesFromRiverGangaEdge = pl.getDistancesFromRiverGangaEdge();
-		List<BigDecimal> distancesFromRiverNonGanga = pl.getDistancesFromRiverNonGanga();
+		BigDecimal minDistanceFromProtectionWall = BigDecimal.ZERO;
+		BigDecimal minDistanceFromEmbankment = BigDecimal.ZERO;
+		BigDecimal minDistanceFromMainRiverEdge = BigDecimal.ZERO;
+		BigDecimal minDistanceFromSubRiver = BigDecimal.ZERO;
+
+		List<River> mainRiver = new ArrayList<>();
+		List<River> subRiver = new ArrayList<>();
+		List<River> rivers = pl.getDistanceToExternalEntity().getRivers();
+
+		if (!rivers.isEmpty()) {
+			mainRiver = rivers.stream().filter(river -> river.getName().equalsIgnoreCase(MAINRIVER))
+					.collect(Collectors.toList());
+			subRiver = rivers.stream().filter(river -> river.getName().equalsIgnoreCase(SUBRIVER))
+					.collect(Collectors.toList());
+
+		}
+		List<BigDecimal> distancesFromRiverProtectionWall = !mainRiver.isEmpty()
+				? mainRiver.get(0).getDistancesFromProtectionWall() : new ArrayList<>();
+		List<BigDecimal> distancesFromEmbankment = !mainRiver.isEmpty() ? mainRiver.get(0).getDistancesFromEmbankment()
+				: new ArrayList<>();
+		List<BigDecimal> distancesFromMainRiverEdge = !mainRiver.isEmpty()
+				? mainRiver.get(0).getDistancesFromRiverEdge() : new ArrayList<>();
+		List<BigDecimal> distancesFromSubRiver = !subRiver.isEmpty() ? subRiver.get(0).getDistancesFromProtectionWall()
+				: new ArrayList<>();
 
 		if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearToRiver())
 				&& "YES".equalsIgnoreCase(pl.getPlanInformation().getBuildingNearToRiver())) {
-			if (!distancesFromProtectionWallGanga.isEmpty()) {
+			if (distancesFromRiverProtectionWall != null && !distancesFromRiverProtectionWall.isEmpty()) {
 
-				minDistanceFromProtectionWallGanga = distancesFromProtectionWallGanga.stream().reduce(BigDecimal::min)
-						.get();
+				minDistanceFromProtectionWall = distancesFromRiverProtectionWall.stream().reduce(BigDecimal::min).get();
 
-				if (minDistanceFromProtectionWallGanga.compareTo(BigDecimal.valueOf(30)) > 0) {
+				if (minDistanceFromProtectionWall.compareTo(BigDecimal.valueOf(30)) > 0) {
 					details.put(DESCRIPTION, PROTECTION_WALL_GANGA_DESCRIPTION);
 					details.put(PERMITTED, ">30");
-					details.put(PROVIDED, minDistanceFromProtectionWallGanga.toString());
+					details.put(PROVIDED, minDistanceFromProtectionWall.toString());
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
 					details.put(DESCRIPTION, PROTECTION_WALL_GANGA_DESCRIPTION);
 					details.put(PERMITTED, "<=30");
-					details.put(PROVIDED, minDistanceFromProtectionWallGanga.toString());
+					details.put(PROVIDED, minDistanceFromProtectionWall.toString());
 					details.put(STATUS, Result.Not_Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
 				}
-			} else if (!distancesFromEmbankmentGanga.isEmpty()) {
+			} else if (distancesFromRiverProtectionWall != null && !distancesFromEmbankment.isEmpty()) {
 				details = new HashMap<>();
 				details.put(RULE_NO, RULE_22);
 
-				minDistanceFromEmbankmentGanga = distancesFromEmbankmentGanga.stream().reduce(BigDecimal::min).get();
+				minDistanceFromEmbankment = distancesFromEmbankment.stream().reduce(BigDecimal::min).get();
 
-				if (minDistanceFromEmbankmentGanga.compareTo(BigDecimal.valueOf(50)) > 0) {
+				if (minDistanceFromEmbankment.compareTo(BigDecimal.valueOf(50)) > 0) {
 					details.put(DESCRIPTION, EMBANKMENT_GANGA_DESCRIPTION);
 					details.put(PERMITTED, ">50");
-					details.put(PROVIDED, minDistanceFromEmbankmentGanga.toString());
+					details.put(PROVIDED, minDistanceFromEmbankment.toString());
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
 					details.put(DESCRIPTION, EMBANKMENT_GANGA_DESCRIPTION);
 					details.put(PERMITTED, "<=50");
-					details.put(PROVIDED, minDistanceFromEmbankmentGanga.toString());
+					details.put(PROVIDED, minDistanceFromEmbankment.toString());
 					details.put(STATUS, Result.Not_Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
 				}
-			} else if (!distancesFromRiverGangaEdge.isEmpty()) {
+			} else if (distancesFromMainRiverEdge != null && !distancesFromMainRiverEdge.isEmpty()) {
 				details = new HashMap<>();
 				details.put(RULE_NO, RULE_22);
 
-				minDistanceFromRiverGangaEdge = distancesFromRiverGangaEdge.stream().reduce(BigDecimal::min).get();
+				minDistanceFromMainRiverEdge = distancesFromMainRiverEdge.stream().reduce(BigDecimal::min).get();
 
-				if (minDistanceFromRiverGangaEdge.compareTo(BigDecimal.valueOf(200)) > 0) {
+				if (minDistanceFromMainRiverEdge.compareTo(BigDecimal.valueOf(200)) > 0) {
 					details.put(DESCRIPTION, RIVER_GANGA_DESCRIPTION);
 					details.put(PERMITTED, ">200");
-					details.put(PROVIDED, minDistanceFromRiverGangaEdge.toString());
+					details.put(PROVIDED, minDistanceFromMainRiverEdge.toString());
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
 					details.put(DESCRIPTION, RIVER_GANGA_DESCRIPTION);
 					details.put(PERMITTED, "<=200");
-					details.put(PROVIDED, minDistanceFromRiverGangaEdge.toString());
+					details.put(PROVIDED, minDistanceFromMainRiverEdge.toString());
 					details.put(STATUS, Result.Not_Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
@@ -170,23 +190,23 @@ public class RiverDistance extends FeatureProcess {
 				}
 			}
 
-			if (!distancesFromRiverNonGanga.isEmpty()) {
+			if (distancesFromSubRiver != null && !distancesFromSubRiver.isEmpty()) {
 
-				minDistanceFromRiverNonGanga = distancesFromRiverNonGanga.stream().reduce(BigDecimal::min).get();
+				minDistanceFromSubRiver = distancesFromSubRiver.stream().reduce(BigDecimal::min).get();
 				details = new HashMap<>();
 				details.put(RULE_NO, RULE_22);
 
-				if (minDistanceFromRiverNonGanga.compareTo(BigDecimal.valueOf(100)) > 0) {
+				if (minDistanceFromSubRiver.compareTo(BigDecimal.valueOf(100)) > 0) {
 					details.put(DESCRIPTION, RIVER_NON_GANGA_DESCRIPTION);
 					details.put(PERMITTED, ">100");
-					details.put(PROVIDED, minDistanceFromRiverNonGanga.toString());
+					details.put(PROVIDED, minDistanceFromSubRiver.toString());
 					details.put(STATUS, Result.Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 				} else {
 					details.put(DESCRIPTION, RIVER_NON_GANGA_DESCRIPTION);
 					details.put(PERMITTED, "<=100");
-					details.put(PROVIDED, minDistanceFromRiverNonGanga.toString());
+					details.put(PROVIDED, minDistanceFromSubRiver.toString());
 					details.put(STATUS, Result.Not_Accepted.getResultVal());
 					scrutinyDetail.getDetail().add(details);
 					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
@@ -194,10 +214,10 @@ public class RiverDistance extends FeatureProcess {
 				}
 			}
 
-			if (distancesFromProtectionWallGanga.isEmpty() && distancesFromEmbankmentGanga.isEmpty()
-					&& distancesFromRiverGangaEdge.isEmpty() && distancesFromRiverNonGanga.isEmpty()) {
-				errors.put("Distance_From_River",
-						"No distance is provided from protection wall ganga/embankment/river ganga edge or non ganga river");
+			if (distancesFromRiverProtectionWall.isEmpty() && distancesFromEmbankment.isEmpty()
+					&& distancesFromMainRiverEdge.isEmpty() && distancesFromSubRiver.isEmpty()) {
+				errors.put("Distance_From_River", NO_DISTANCT_MENTIONED);
+
 				pl.addErrors(errors);
 			}
 		}

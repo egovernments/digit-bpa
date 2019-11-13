@@ -94,7 +94,7 @@ public class GovtBuildingDistance extends FeatureProcess {
 
 		BigDecimal minDistanceFromGovtBuilding = BigDecimal.ZERO;
 		BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
-		List<BigDecimal> distancesFromGovtBuilding = pl.getDistancesFromGovtBuilding();
+		List<BigDecimal> distancesFromGovtBuilding = pl.getDistanceToExternalEntity().getGovtBuildings();
 		List<Block> blocks = pl.getBlocks();
 
 		if (StringUtils.isNotBlank(pl.getPlanInformation().getBuildingNearGovtBuilding())
