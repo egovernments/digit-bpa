@@ -198,7 +198,7 @@ public class User extends AbstractAuditable {
     @Type(type = "encryptedString")
     private String aadhaarNumber;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.PERSIST, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Address> address = new ArrayList<>();
 
     private boolean active;
