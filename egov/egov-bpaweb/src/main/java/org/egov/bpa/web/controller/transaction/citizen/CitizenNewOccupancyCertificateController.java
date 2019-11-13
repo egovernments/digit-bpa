@@ -235,7 +235,7 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
                 String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
                 NocConfiguration nocConfig = nocConfigurationService.findByDepartmentAndType(code, BpaConstants.OC);
                 if (nocConfig != null
-                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
                         && nocConfig.getIntegrationInitiation()
                                 .equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
                     nocAutoCount++;

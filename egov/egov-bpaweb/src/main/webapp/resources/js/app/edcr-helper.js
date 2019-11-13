@@ -608,7 +608,7 @@ $(document).ready(
                 $.ajax({
                     async: false,
                     crossDomain: true,
-                    url: '/edcr/rest/approved-plan-details/by-edcr-number/' + $('#eDcrNumber').val(),
+                    url: '/edcr/public/approved-plan-details/by-edcr-number/' + $('#eDcrNumber').val(),
                     type: "GET",
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
@@ -730,10 +730,10 @@ $(document).ready(
         //to update noc document is required
         function updateNocRequired(planInformation){
         	if(planInformation.nocIrrigationDept === 'YES'){
-        		$('#APPROVED_NOC_from_Irrigation_Department').attr('disabled',true);
-            	$('#REJECTED_NOC_from_Irrigation_Department').attr('disabled',true);
-                $('span.mandatory._NOC_from_Irrigation_Department').show();
-                if($('button.btn_NOC_from_Irrigation_Department').length==1){
+        		$('#APPROVED_IDA_NOC').attr('disabled',true);
+            	$('#REJECTED_IDA_NOC').attr('disabled',true);
+                $('span.mandatory._IDA_NOC').show();
+                if($('button.btn_IDA_NOC').length==1){
                 	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
                 			($('#isPermitApplFeeReq').val() =="YES" && $('#permitApplFeeCollected').val()=="YES"))){
 	                	$('th.thbtn').show();
@@ -742,10 +742,16 @@ $(document).ready(
                 		$('th.thbtn').hide();
 	                    $('td.tdbtn').hide();
                 	}
-                }else if($('input.hidden_NOC_from_Irrigation_Department').val() != 'initiated' && $('input.autohidden_NOC_from_Irrigation_Department').val() != 'autoinitiate'){
-                	$('div._NOC_from_Irrigation_Department').attr('required','required');
-                	$('div.divfv_NOC_from_Irrigation_Department').show();
+                }else if($('input.hidden_IDA_NOC').val() != 'initiated' && $('input.autohidden_IDA_NOC').val() != 'autoinitiate' && $('input.apphidden_IDA_NOC').val() != 'initiated' ){
+                	$('div._IDA_NOC').attr('required','required');
+                	$('div.divfv_IDA_NOC').show();
                 }
+                
+                if($('input.hidden_IDA_NOC').val() == 'initiate' || $('input.autohidden_IDA_NOC').val() == 'autoinitiate'){
+                    $('span.mandatory._IDA_NOC').hide();
+                }
+                
+            
                 if($('#nocAppl').length > 0)
                 {
                 	$('th.thstatus').show();
@@ -757,10 +763,10 @@ $(document).ready(
                 }
         	}
         	if(planInformation.nocNearMonument === 'YES'){
-        		$('#APPROVED_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('disabled',true);
-            	$('#REJECTED_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('disabled',true);
-                $('span.mandatory._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
-                if($('button.btn_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').length==1){
+        		$('#APPROVED_NMA_NOC').attr('disabled',true);
+            	$('#REJECTED_NMA_NOC').attr('disabled',true);
+                $('span.mandatory._NMA_NOC').show();
+                if($('button.btn_NMA_NOC').length==1){
                 	if($('#nocStatusUpdated').val() == "false" &&  $('#citizenOrBusinessUser').val() == "false" && (($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
                 			($('#isPermitApplFeeReq').val() =="YES" && $('#permitApplFeeCollected').val()=="YES"))){
 	                	$('th.thbtn').show();
@@ -769,10 +775,15 @@ $(document).ready(
                 		$('th.thbtn').hide();
 	                    $('td.tdbtn').hide();
                 	}
-                }else if($('input.hidden_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').val() != 'initiated' && $('input.autohidden_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').val() != 'autoinitiate'){
-                	$('div._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('required','required');
-                	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
+                }else if($('input.hidden_NMA_NOC').val() != 'initiate' && $('input.autohidden_NMA_NOC').val() != 'autoinitiate' && $('input.apphidden_NMA_NOC').val() != 'initiated' ){
+                	$('div._NMA_NOC').attr('required','required');
+                	$('div.divfv_NMA_NOC').show();
                 }
+                
+                if($('input.hidden_NMA_NOC').val() == 'initiate' || $('input.autohidden_NMA_NOC').val() == 'autoinitiate'){
+                    $('span.mandatory._NMA_NOC').hide();
+                }
+                
                 if($('#nocAppl').length > 0)
                 {
                 	$('th.thstatus').show();
@@ -783,11 +794,12 @@ $(document).ready(
                     $('td.tdda').show(); 
                 }
         	}
-            if(planInformation.nocNearAirport === 'YES'){
-            	$('#APPROVED_NOC_from_Airport_Authority').attr('disabled',true);
-            	$('#REJECTED_NOC_from_Airport_Authority').attr('disabled',true);
-                $('span.mandatory._NOC_from_Airport_Authority').show();
-                if($('button.btn_NOC_from_Airport_Authority').length==1){
+        	
+        	if(planInformation.nocStateEnvImpact === 'YES'){
+            	$('#APPROVED_MOEF_NOC').attr('disabled',true);
+            	$('#REJECTED_MOEF_NOC').attr('disabled',true);
+            	$('span.mandatory._MOEF_NOC').show();
+            	if($('button.btn_MOEF_NOC').length==1){
                 	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
                 			($('#isPermitApplFeeReq').val() =="YES" && $('#permitApplFeeCollected').val()=="YES"))){
 	                	$('th.thbtn').show();
@@ -796,10 +808,49 @@ $(document).ready(
                 		$('th.thbtn').hide();
 	                    $('td.tdbtn').hide();
                 	}
-                }else if($('input.hidden_NOC_from_Airport_Authority').val() != 'initiated' && $('input.autohidden_NOC_from_Airport_Authority').val() != 'autoinitiate'){
-                	$('div._NOC_from_Airport_Authority').attr('required','required');
-                	$('div.divfv_NOC_from_Airport_Authority').show();
+                }else if($('input.hidden_MOEF_NOC').val() != 'initiate' && $('input.autohidden_MOEF_NOC').val() != 'autoinitiate' && $('input.apphidden_IDA_NOC').val() != 'initiated' ){
+                	$('div._MOEF_NOC').attr('required','required');
+                	$('div.divfv_MOEF_NOC').show();
                 }
+            	
+            	 if($('input.hidden_MOEF_NOC').val() == 'initiate' || $('input.autohidden_MOEF_NOC').val() == 'autoinitiate'){
+                     $('span.mandatory._MOEF_NOC').hide();
+                 }
+            	
+            
+            	if($('#nocAppl').length > 0)
+                {
+                	$('th.thstatus').show();
+                    $('td.tdstatus').show(); 
+                    $('th.thsla').show();
+                    $('td.tdsla').show();
+                    $('th.thda').show();
+                    $('td.tdda').show(); 
+                }
+            }
+        	
+            if(planInformation.nocNearAirport === 'YES'){
+            	$('#APPROVED_AAI_NOC').attr('disabled',true);
+            	$('#REJECTED_AAI_NOC').attr('disabled',true);
+                $('span.mandatory._AAI_NOC').show();
+                if($('button.btn_AAI_NOC').length==1){
+                	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
+                			($('#isPermitApplFeeReq').val() =="YES" && $('#permitApplFeeCollected').val()=="YES"))){
+	                	$('th.thbtn').show();
+	                    $('td.tdbtn').show();
+                	}else{
+                		$('th.thbtn').hide();
+	                    $('td.tdbtn').hide();
+                	}
+                }else if($('input.hidden_AAI_NOC').val() != 'initiate' && $('input.autohidden_AAI_NOC').val() != 'autoinitiate' && $('input.apphidden_AAI_NOC').val() != 'initiated' ){
+                	$('div._AAI_NOC').attr('required','required');
+                	$('div.divfv_AAI_NOC').show();
+                }
+                
+                if($('input.hidden_AAI_NOC').val() == 'initiate' || $('input.autohidden_AAI_NOC').val() == 'autoinitiate'){
+                    $('span.mandatory _AAI_NOC').hide();
+                }
+                
                 if($('#nocAppl').length > 0)
                 {
                 	$('th.thstatus').show();
@@ -811,11 +862,11 @@ $(document).ready(
                 }
             }
             if(planInformation.nocFireDept === 'YES'){
-            	$('#APPROVED_NOC_from_Fire_Authority').attr('disabled',true);
-            	$('#REJECTED_NOC_from_Fire_Authority').attr('disabled',true);
+            	$('#APPROVED_FIRE_NOC').attr('disabled',true);
+            	$('#REJECTED_FIRE_NOC').attr('disabled',true);
 
-                $('span.mandatory._NOC_from_Fire_Authority').show();
-                if($('button.btn_NOC_from_Fire_Authority').length==1){
+                $('span.mandatory._FIRE_NOC').show();
+                if($('button.btn_FIRE_NOC').length==1){
                 	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
                 			($('#isPermitApplFeeReq').val() =="YES" && $('#permitApplFeeCollected').val()=="YES"))){
 	                	$('th.thbtn').show();
@@ -824,44 +875,20 @@ $(document).ready(
                 		$('th.thbtn').hide();
 	                    $('td.tdbtn').hide();
                 	}
-                }else if($('input.hidden_NOC_from_Fire_Authority').val() != 'initiated' && $('input.autohidden_NOC_from_Fire_Authority').val() != 'autoinitiate'){
-                	$('div._NOC_from_Fire_Authority').attr('required','required');
-                	$('div.divfv_NOC_from_Fire_Authority').show();
+                }else if($('input.hidden_FIRE_NOC').val() != 'initiate' && $('input.autohidden_FIRE_NOC').val() != 'autoinitiate' && $('input.apphidden_FIRE_NOC').val() != 'initiated'){
+                	$('div._FIRE_NOC').attr('required','required');
+                	$('div.divfv_FIRE_NOC').show();
                 }
                 
+                if($('input.hidden_FIRE_NOC').val() == 'initiate' || $('input.autohidden_FIRE_NOC').val() == 'autoinitiate'){
+                    $('span.mandatory._FIRE_NOC').hide();
+                }
                 if($('#nocAppl').length > 0)
                 {
                 	$('th.thstatus').show();
                     $('td.tdstatus').show();  
                     $('th.thsla').show();
                     $('td.tdsla').show(); 
-                    $('th.thda').show();
-                    $('td.tdda').show(); 
-                }
-            }
-            if(planInformation.nocStateEnvImpact === 'YES'){
-            	$('#APPROVED_MOEF_environment_clearance').attr('disabled',true);
-            	$('#REJECTED_MOEF_environment_clearance').attr('disabled',true);
-            	$('span.mandatory._MOEF_environment_clearance').show();
-            	if($('button.btn_MOEF_environment_clearance').length==1){
-                	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isPermitApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
-                			($('#isPermitApplFeeReq').val() =="YES" && $('#permitApplFeeCollected').val()=="YES"))){
-	                	$('th.thbtn').show();
-	                    $('td.tdbtn').show();
-                	}else{
-                		$('th.thbtn').hide();
-	                    $('td.tdbtn').hide();
-                	}
-                }else if($('input.hidden_MOEF_environment_clearance').val() != 'initiated' && $('input.autohidden_MOEF_environment_clearance').val() != 'autoinitiate'){
-                	$('div._MOEF_environment_clearance').attr('required','required');
-                	$('div.divfv_MOEF_environment_clearance').show();
-                }
-            	if($('#nocAppl').length > 0)
-                {
-                	$('th.thstatus').show();
-                    $('td.tdstatus').show(); 
-                    $('th.thsla').show();
-                    $('td.tdsla').show();
                     $('th.thda').show();
                     $('td.tdda').show(); 
                 }

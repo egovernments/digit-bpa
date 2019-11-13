@@ -60,6 +60,15 @@ public class ResponseInfo {
     private String msgId;
 
     private String status;
+    
+    public ResponseInfo(String apiId, String ver, String ts, String resMsgId, String msgId, String status) {
+        this.apiId = apiId;
+        this.ver = ver;
+        this.ts = ts;
+        this.resMsgId = resMsgId;
+        this.msgId = msgId;
+        this.status = status;
+    }
 
     public String getApiId() {
         return apiId;

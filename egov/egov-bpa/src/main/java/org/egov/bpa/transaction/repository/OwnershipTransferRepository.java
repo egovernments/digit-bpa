@@ -50,21 +50,21 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
-
-
 @Repository
-public interface OwnershipTransferRepository extends JpaRepository<OwnershipTransfer, Long>, JpaSpecificationExecutor<OwnershipTransfer>  {
-	
+public interface OwnershipTransferRepository
+        extends JpaRepository<OwnershipTransfer, Long>, JpaSpecificationExecutor<OwnershipTransfer> {
     List<OwnershipTransfer> findByParentPlanPermissionNumberOrderByIdDesc(String permitNumber);
-    
-	List<OwnershipTransfer> findByParentOrderByIdDesc(BpaApplication bpaApplication);
-	
-	List<OwnershipTransfer> findByParentAndCreatedDateLessThanOrderByIdDesc(BpaApplication bpaApplication, Date createdDate);
-	
-	OwnershipTransfer findByApplicationNumber(String applicationNumber);
 
-	OwnershipTransfer findByDemand(EgDemand demand);
-	
-	OwnershipTransfer findByOwnershipNumberAndIsActiveTrue(String ownershipNumber);
+    List<OwnershipTransfer> findByParentOrderByIdDesc(BpaApplication bpaApplication);
+
+    List<OwnershipTransfer> findByParentAndCreatedDateLessThanOrderByIdDesc(BpaApplication bpaApplication, Date createdDate);
+
+    OwnershipTransfer findByApplicationNumber(String applicationNumber);
+
+    OwnershipTransfer findByDemand(EgDemand demand);
+
+    OwnershipTransfer findByOwnershipNumberAndIsActiveTrue(String ownershipNumber);
+
+    List<OwnershipTransfer> findByOwnershipNumberOrderByIdDesc(String ownershipNumber);
 
 }

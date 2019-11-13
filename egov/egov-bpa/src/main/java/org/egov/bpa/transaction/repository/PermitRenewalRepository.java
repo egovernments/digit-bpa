@@ -57,10 +57,9 @@ public interface PermitRenewalRepository extends JpaRepository<PermitRenewal, Lo
 
     List<PermitRenewal> findByParentPlanPermissionNumberOrderByIdDesc(String permitNumber);
 
-    PermitRenewal findByRenewalNumber(String renewalNumber);
+    List<PermitRenewal> findByRenewalNumber(String renewalNumber);
 
     PermitRenewal findByApplicationNumber(String applicationNumber);
 
     PermitRenewal findByDemand(EgDemand demand);
-
-}
+ }

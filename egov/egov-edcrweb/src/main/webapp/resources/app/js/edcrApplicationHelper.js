@@ -205,7 +205,8 @@ $(document)
             });
             
             $('#planPermitNumber').blur(function() {
-                getPermitApplicationByPermitNo($('#planPermitNumber').val());
+            	getBpaApplicationByPermitNo($('#planPermitNumber').val());
+                getActiveOwnershipRenewalAppByPermitNo($('#planPermitNumber').val());
             });
 
      });
@@ -218,7 +219,7 @@ function getPermitApplicationByPermitNo(permitNumber) {
         async: false,
         dataType: "json",
         success: function (response) {
-            if(Object.keys(response).length > 0) {
+            if(Object.keys(response).length > 0 ) {
             	if(response.isOcRequire === false) {
             		bootbox.alert("Sorry for inconvienence, for the service type of entered plan permission number occupancy certificate is not applicable.");
             		$('.resetValues').val('');
@@ -240,7 +241,7 @@ function getPermitApplicationByPermitNo(permitNumber) {
             		$('.resetValues').val('');
             		return false;
             	}
-            	
+
                 $('#occupancy').val(response.occupancy);
                 if (response.applicantName.indexOf(",") > -1) { 
                 	var applicant = response.applicantName.split(",") ;
@@ -253,14 +254,108 @@ function getPermitApplicationByPermitNo(permitNumber) {
                 $('#permitApplicationDate').val(response.applicationDate);
                 $('#serviceType').val(response.serviceTypeDesc);
                 $('#stakeholderId').val(response.stakeholderId);
-                
+                                
                 // If entered permit number is valid, then need to validate is using permit number
                 // any other dcr plan application is submitted.
                 //validatePermitNoIsUsedWithOtherDcrAppln(permitNumber);
-            } else {
+            }
+            else {
                 $('.resetValues').val('');
                 bootbox.alert("Please check plan permission number is valid, with entered plan permission number data is not found.");
             }
+        },
+        error: function (response) {
+            $('.resetValues').val('');
+            console.log("Error occurred, when retrieving information for given details."+permitNumber);
+        }
+    });
+}
+
+function getBpaApplicationByPermitNo(permitNumber) {
+	$.ajax({
+        url : '/bpa/application/findby-permit-number?permitNumber='+permitNumber,
+        type: "GET",
+        cache: false,
+        async: false,
+        dataType: "json",
+        success: function (response) {
+            if(Object.keys(response).length > 0 ) {
+            	if(response.isOcRequire === false) {
+            		bootbox.alert("Sorry for inconvienence, for the service type of entered plan permission number occupancy certificate is not applicable.");
+            		$('.resetValues').val('');
+            		return false;
+            	} else if(response.ocExists === 'true') {
+            		bootbox.alert(response.ocExistsMessage);
+            		$('.resetValues').val('');
+            		return false;
+            	} else if($('#isCitizen').val() === 'true' && !response.isSingleFamily) {
+            		bootbox.alert("Dear Citizen, you are not allowed to submit plan, as per permit application do not comply these conditions such as a single family residential and floor area is less then or equal to 150 m² and Maximum Ground+1 floors can be submitted.");
+            		$('.resetValues').val('');
+            		return false;
+            	} else if(response.applicationWF != true) {
+            		bootbox.alert("Building permit application "+permitNumber+" still under process, you are not allowed to submit plan. ");
+            		$('.resetValues').val('');
+            		return false;
+            	}else if(response.applicationRevoke == true){
+            		bootbox.alert("Building permit application "+permitNumber+" is revocated, you cannot proceed further with this permit.");
+            		$('.resetValues').val('');
+            		return false;
+            	}
+
+                $('#occupancy').val(response.occupancy);
+                $('#applicantName').val(response.applicantName);
+                $('#permitApplicationDate').val(response.applicationDate);
+                $('#serviceType').val(response.serviceTypeDesc);
+                $('#stakeholderId').val(response.stakeholderId);
+                                
+                // If entered permit number is valid, then need to validate is using permit number
+                // any other dcr plan application is submitted.
+                //validatePermitNoIsUsedWithOtherDcrAppln(permitNumber);
+            }
+        },
+        error: function (response) {
+            $('.resetValues').val('');
+            console.log("Error occurred, when retrieving information for given details."+permitNumber);
+        }
+    });
+}
+
+
+function getActiveOwnershipRenewalAppByPermitNo(permitNumber) {
+	$.ajax({
+        url : '/bpa/application/getownerrenewalapplication?permitNumber='+permitNumber,
+        type: "GET",
+        cache: false,
+        async: false,
+        dataType: "json",
+        success: function (response) {
+            if(Object.keys(response).length > 0) {
+                if(response.ownershipNumber != null && response.ownershipNumber != permitNumber){
+            		$('.resetValues').val('');
+        			bootbox.alert('For the entered plan permission number ownership is changed. Please enter '+response.ownershipNumber+
+        					' to proceed');
+        			return false;
+            	} else if(response.isRenewal && response.inProgress){
+            		$('.resetValues').val('');
+        			bootbox.alert('For the entered plan permission number renewal workflow is in progress. Hence cannot proceed.'); 
+        			return false;
+        		} 
+            	else if(response.inProgress) {
+            		$('.resetValues').val('');
+        			bootbox.alert('For the entered plan permission number ownership transfer workflow is in progress. Hence cannot proceed.'); 
+                    return false;
+            	} 
+            	else if(response.isRenewal === false && response.inProgress === false){
+                    $('#applicantName').val(response.applicantName);
+                    $('#permitApplicationDate').val(response.planPermissionDate);
+                    $('#serviceType').val(response.serviceTypeDesc);
+                    $('#applicationNumber').val(response.applicationNumber);
+            	}
+            	else if(!response.applicationExists){
+                        $('.resetValues').val('');
+                        bootbox.alert("Please check plan permission number is valid, with entered plan permission number data is not found.");
+            	}
+            } 
         },
         error: function (response) {
             $('.resetValues').val('');

@@ -158,11 +158,12 @@
 					</td>
 					</c:if> --%>
 					<c:forTokens var="splittedString"
-							items="${nocdoc.nocDocument.serviceChecklist.checklist.description}"
+							items="${nocdoc.nocDocument.serviceChecklist.checklist.code}"
 							delims="\ ()" varStatus="stat">
 							<c:set var="checklistName"
 								value="${stat.first ? '' : checklistName}_${splittedString}" />
-						</c:forTokens>
+						</c:forTokens>						
+						
 						<c:if test="${not empty nocConfigMap}">
 						<td class="tdbtn" style="display:none" >
 							<div class="text-right">
@@ -171,15 +172,19 @@
 								<c:set var="nocbtn" value="${nocConfigMap[noccode]}" />
 								<c:set var="nocapp" value="${nocTypeApplMap[noccode]}" />
 								<input type="hidden" id="nocchkcode" value="${noccode}"/>
+							
 								<c:if test="${nocbtn eq 'initiate' && nocapp ne 'initiated'}">
 								<c:out value="${nocapp}"/>
-								<button type="button" id="btninitiatenoc" value="/bpa/nocapplication/create/${noccode}"  class="btn btn-secondary btn${checklistName}">
+								<button type="button" id="btninitiatenoc" value="/bpa/nocapplication/create/${nocdoc.nocDocument.serviceChecklist.checklist.code}"  class="btn btn-secondary btn${checklistName}">
 										<spring:message code="lbl.initiate.noc" />
 								</button>
 								</c:if>
+					
 							</div>
 						</td>
-					</c:if>	
+					</c:if>								
+			
+					
 					<c:if test="${not empty nocApplication}">								  			
 						<td class="view-content tdstatus" style="font-size: 97%;">												
 							  <fmt:formatDate value="${nocdoc.permitNoc.bpaNocApplication.lastModifiedDate}"
@@ -201,7 +206,9 @@
 							  <fmt:formatDate value="${nocdoc.permitNoc.bpaNocApplication.deemedApprovedDate}"
 								pattern="dd/MM/yyyy" var="dadate" />
 								<span style="font-weight:bold">${dadate}<br /> </span>		
-						</td></c:if>				
+						</td></c:if>	
+						
+							
 				</tr>
 			</c:forEach>
 		</tbody>

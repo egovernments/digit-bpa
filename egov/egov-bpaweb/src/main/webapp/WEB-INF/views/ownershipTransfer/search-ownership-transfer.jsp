@@ -163,12 +163,12 @@
 			id="search_bpa_application_table">
 			<thead>
 				<tr>
+				    <th><spring:message code="lbl.applctn.type" /></th>
 					<th><spring:message code="lbl.applicant.name" /></th>
 					<th><spring:message code="lbl.application.no" /></th>
 					<th><spring:message code="lbl.appln.date" /></th>
 					<th><spring:message code="lbl.service.type" /></th>
 					<th><spring:message code="lbl.occupancy" /></th>
-					<th><spring:message code="lbl.election.ward" /></th>
 					<th><spring:message code="lbl.status" /></th>
 					<th><spring:message code="lbl.current.owner" /></th>
 					<th><spring:message code="lbl.pending.actions" /></th>

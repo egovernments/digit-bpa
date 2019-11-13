@@ -68,6 +68,7 @@ import org.egov.bpa.transaction.entity.PermitInspectionApplication;
 import org.egov.bpa.transaction.entity.PermitNocApplication;
 import org.egov.bpa.transaction.entity.PermitNocDocument;
 import org.egov.bpa.transaction.entity.dto.SearchBpaApplicationForm;
+import org.egov.bpa.transaction.entity.oc.OccupancyCertificate;
 import org.egov.bpa.transaction.service.BpaDcrService;
 import org.egov.bpa.transaction.service.InConstructionInspectionService;
 import org.egov.bpa.transaction.service.InspectionApplicationService;
@@ -75,6 +76,7 @@ import org.egov.bpa.transaction.service.InspectionService;
 import org.egov.bpa.transaction.service.LettertoPartyService;
 import org.egov.bpa.transaction.service.PermitNocApplicationService;
 import org.egov.bpa.transaction.service.SearchBpaApplicationService;
+import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.web.controller.adaptor.SearchBpaApplicationAdaptor;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.Jurisdiction;
@@ -125,6 +127,8 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
     private InspectionApplicationService inspectionAppService;
     @Autowired
     private InConstructionInspectionService inspectionConstService;
+    @Autowired
+    private OccupancyCertificateService occupancyCertificateService;
 
     @GetMapping("/search")
     public String showSearchApprovedforFee(final Model model) {
@@ -252,6 +256,8 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
                                 REVENUE_HIERARCHY_TYPE, WARD, revenue.getId()));
             }
         }
+        model.addAttribute(SEARCH_BPA_APPLICATION_FORM, new SearchBpaApplicationForm());
+
         model.addAttribute("employeeMappedZone", employeeMappedZone);
         model.addAttribute("mappedRevenueBoundries", revWards);
         model.addAttribute("mappedElectionBoundries", electionWards);
@@ -263,7 +269,6 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
 
         model.addAttribute("applicationTypes", applicationTypes);
         model.addAttribute("isUnattendedCancelled", isUnattendedCancelled);
-        model.addAttribute(SEARCH_BPA_APPLICATION_FORM, searchBpaApplicationForm);
     }
 
     @PostMapping(value = "/bpadocumentscrutiny", produces = MediaType.TEXT_PLAIN_VALUE)
@@ -325,6 +330,43 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
         return new DataTable<>(searchBpaApplicationService.searchForRevocation(searchBpaApplicationForm, userIds),
                 searchBpaApplicationForm.draw())
                         .toJson(SearchBpaApplicationAdaptor.class);
+    }
+
+    @GetMapping("/view/details/by-dcr-number/{dcrNumber}")
+    public String viewApplicationByDCRNumber(final Model model, @PathVariable final String dcrNumber) {
+        List<BpaApplication> applications = applicationBpaService.findApplicationByEDCRNumber(dcrNumber);
+        if (applications.isEmpty()) {
+            List<OccupancyCertificate> occupancyCertificates = occupancyCertificateService.findByEdcrNumber(dcrNumber);
+            if (occupancyCertificates.isEmpty()) {
+                model.addAttribute("message", "The selected plan not used yet with any application.");
+            } else {
+                OccupancyCertificate oc = occupancyCertificates.get(0);
+                BpaApplication parent = oc.getParent();
+                model.addAttribute("applicationNumber", oc.getApplicationNumber());
+                model.addAttribute("approvalNumber", oc.getOccupancyCertificateNumber());
+                model.addAttribute("stakeholderType",
+                        parent.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getName());
+                model.addAttribute("stakeholderName", parent.getStakeHolder().get(0).getStakeHolder().getName());
+                model.addAttribute("approvalDate", oc.getApprovalDate());
+                model.addAttribute("applicationType", oc.getApplicationType());
+                model.addAttribute("applicationSubType", parent.getApplicationType().getName());
+                model.addAttribute("serviceType", parent.getServiceType().getDescription());
+                model.addAttribute("occupancyType", parent.getOccupanciesName());
+            }
+        } else {
+            BpaApplication application = applications.get(0);
+            model.addAttribute("applicationNumber", application.getApplicationNumber());
+            model.addAttribute("approvalNumber", application.getPlanPermissionNumber());
+            model.addAttribute("stakeholderType",
+                    application.getStakeHolder().get(0).getStakeHolder().getStakeHolderType().getName());
+            model.addAttribute("stakeholderName", application.getStakeHolder().get(0).getStakeHolder().getName());
+            model.addAttribute("approvalDate", application.getPlanPermissionDate());
+            model.addAttribute("applicationType", "Permit");
+            model.addAttribute("applicationSubType", application.getApplicationType().getName());
+            model.addAttribute("serviceType", application.getServiceType().getDescription());
+            model.addAttribute("occupancyType", application.getOccupanciesName());
+        }
+        return "viewappln-details-bydcrno";
     }
 
 }

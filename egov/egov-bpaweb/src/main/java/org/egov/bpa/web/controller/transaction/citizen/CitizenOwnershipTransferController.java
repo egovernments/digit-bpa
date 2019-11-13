@@ -132,6 +132,9 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
         ownershipTransfer.setApplicationDate(new Date());
         ownershipTransfer.setSource(Source.CITIZENPORTAL);
         model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
+        String enableOrDisablePayOnline = bpaUtils.getAppconfigValueByKeyName(BpaConstants.ENABLEONLINEPAYMENT);
+        model.addAttribute("onlinePaymentEnable",
+                (enableOrDisablePayOnline.equalsIgnoreCase("YES") ? Boolean.TRUE : Boolean.FALSE));
         return OWNERSHIP_CITIZEN_NEW;
     }
 
@@ -140,7 +143,7 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
             final BindingResult errors, final Model model, final HttpServletRequest request,
             final RedirectAttributes redirectAttributes) {
         ownershipTransferService.validateDocs(ownershipTransfer, errors);
-        ownershipTransferService.validateOwnershipTransfer(ownershipTransfer,errors);
+        ownershipTransferService.validateOwnershipTransfer(ownershipTransfer, errors);
         if (errors.hasErrors()) {
             model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
             return OWNERSHIP_CITIZEN_NEW;
@@ -225,6 +228,7 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
             model.addAttribute("applicantAddress",
                     ownershipTransfers.get(ownershipTransfers.size() - 1).getOwner().getAddress());
         }
+
         model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
         loadFormData(ownershipTransfer, model);
         if (APPLICATION_STATUS_CREATED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode()))

@@ -40,6 +40,7 @@
 
 $(document).ready(
     function ($) {
+    	$('#ownpermitno').html('Building Plan Permission No');
 
         String.prototype.compose = (function (){
             var re = /\{{(.+?)\}}/g;
@@ -489,12 +490,14 @@ $(document).ready(
                 $.ajax({
                     async: false,
                     crossDomain: true,
-                    url: '/edcr/rest/approved-plan-details/by-edcr-number/' + $('#ocEDcrNumber').val(),
+                    url: '/edcr/public/approved-plan-details/by-edcr-number/' + $('#ocEDcrNumber').val(),
                     type: "GET",
                     contentType: 'application/json; charset=utf-8',
                     success: function (response) {
                     	if($('#mode').val() === 'new') {
+                    		var ocdcrNo = $('#ocEDcrNumber').val();
                     		getApplicationByPermitNo(response.planPermitNumber);
+                    	    getOwnershipByPermitNo(response.planPermitNumber, ocdcrNo);
                     		var zone= $('#zone').val();
                     		var wrd = $('#revenueWard').val();
                     		$('#circle').html(zone);
@@ -605,14 +608,15 @@ $(document).ready(
                     }
                 });
             }
-            
+           
+    
           //to update noc document is required
             function updateNocRequired(planInformation){
             	if(planInformation.nocIrrigationDept === 'YES'){
-            		$('#APPROVED_NOC_from_Irrigation_Department').attr('disabled',true);
-                	$('#REJECTED_NOC_from_Irrigation_Department').attr('disabled',true);
-                    $('span.mandatory._NOC_from_Irrigation_Department').show();
-                    if($('button.btn_NOC_from_Irrigation_Department').length==1){
+            		$('#APPROVED_IDA_OCNOC').attr('disabled',true);
+                	$('#REJECTED_IDA_OCNOC').attr('disabled',true);
+                    $('span.mandatory._IDA_OCNOC').show();
+                    if($('button.btn_IDA_OCNOC').length==1){
                     	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isOcApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
                     			($('#isOcApplFeeReq').val() =="YES" && $('#ocApplFeeCollected').val()=="YES"))){ 
                     		$('th.thbtn').show();
@@ -621,9 +625,9 @@ $(document).ready(
                     		$('th.thbtn').hide();
     	                    $('td.tdbtn').hide();
                     	}
-                    }else if($('input.hidden_NOC_from_Irrigation_Department').val() != 'initiated'){
-                    	$('div._NOC_from_Irrigation_Department').attr('required','required');
-                    	$('div.divfv_NOC_from_Irrigation_Department').show();
+                    }else if($('input.hidden_IDA_OCNOC').val() != 'initiated'){
+                    	$('div._IDA_OCNOC').attr('required','required');
+                    	$('div.divfv_IDA_OCNOC').show();
                     }
                     if($('#nocAppl').length > 0)
                     {
@@ -636,10 +640,10 @@ $(document).ready(
                     }
             	}
             	if(planInformation.nocNearMonument === 'YES'){
-            		$('#APPROVED_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('disabled',true);
-                	$('#REJECTED_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('disabled',true);
-                    $('span.mandatory._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
-                    if($('button.btn_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').length==1){
+            		$('#APPROVED_NMA_OCNOC').attr('disabled',true);
+                	$('#REJECTED_NMA_OCNOC').attr('disabled',true);
+                    $('span.mandatory._NMA_OCNOC').show();
+                    if($('button.btn_NMA_OCNOC').length==1){
                     	if($('#nocStatusUpdated').val() == "false" &&  $('#citizenOrBusinessUser').val() == "false" && (($('#isOcApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
                     			($('#isOcApplFeeReq').val() =="YES" && $('#ocApplFeeCollected').val()=="YES"))){
                     		$('th.thbtn').show();
@@ -648,9 +652,9 @@ $(document).ready(
                     		$('th.thbtn').hide();
     	                    $('td.tdbtn').hide();
                     	}
-                    }else if($('input.hidden_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').val() != 'initiated'){
-                    	$('div._NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').attr('required','required');
-                    	$('div.divfv_NOC_from_Heritage_Conservation_Committee_National_Monuments_Authority').show();
+                    }else if($('input.hidden_NMA_OCNOC').val() != 'initiated'){
+                    	$('div._NMA_OCNOC').attr('required','required');
+                    	$('div.divfv_NMA_OCNOC').show();
                     }
                     if($('#nocAppl').length > 0)
                     {
@@ -663,10 +667,10 @@ $(document).ready(
                     }
             	}
                 if(planInformation.nocNearAirport === 'YES'){
-                	$('#APPROVED_NOC_from_Airport_Authority').attr('disabled',true);
-                	$('#REJECTED_NOC_from_Airport_Authority').attr('disabled',true);
-                    $('span.mandatory._NOC_from_Airport_Authority').show();
-                    if($('button.btn_NOC_from_Airport_Authority').length==1){
+                	$('#APPROVED_AAI_OCNOC').attr('disabled',true);
+                	$('#REJECTED_AAI_OCNOC').attr('disabled',true);
+                    $('span.mandatory._AAI_OCNOC').show();
+                    if($('button.btn_AAI_OCNOC').length==1){
                     	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isOcApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
                     			($('#isOcApplFeeReq').val() =="YES" && $('#ocApplFeeCollected').val()=="YES"))){
                     		$('th.thbtn').show();
@@ -675,9 +679,9 @@ $(document).ready(
                     		$('th.thbtn').hide();
     	                    $('td.tdbtn').hide();
                     	}
-                    }else if($('input.hidden_NOC_from_Airport_Authority').val() != 'initiated'){
-                    	$('div._NOC_from_Airport_Authority').attr('required','required');
-                    	$('div.divfv_NOC_from_Airport_Authority').show();
+                    }else if($('input.hidden_AAI_OCNOC').val() != 'initiated'){
+                    	$('div._AAI_OCNOC').attr('required','required');
+                    	$('div.divfv_AAI_OCNOC').show();
                     }
                     if($('#nocAppl').length > 0)
                     {
@@ -690,11 +694,11 @@ $(document).ready(
                     }
                 }
                 if(planInformation.nocFireDept === 'YES'){
-                	$('#APPROVED_NOC_from_Fire_Authority').attr('disabled',true);
-                	$('#REJECTED_NOC_from_Fire_Authority').attr('disabled',true);
+                	$('#APPROVED_FIRE_OCNOC').attr('disabled',true);
+                	$('#REJECTED_FIRE_OCNOC').attr('disabled',true);
 
-                    $('span.mandatory._NOC_from_Fire_Authority').show();
-                    if($('button.btn_NOC_from_Fire_Authority').length==1){
+                    $('span.mandatory._FIRE_OCNOC').show();
+                    if($('button.btn_FIRE_OCNOC').length==1){
                     	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isOcApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
                     			($('#isOcApplFeeReq').val() =="YES" && $('#ocApplFeeCollected').val()=="YES"))){
                     		$('th.thbtn').show();
@@ -703,9 +707,9 @@ $(document).ready(
                     		$('th.thbtn').hide();
     	                    $('td.tdbtn').hide();
                     	}
-                    }else if($('input.hidden_NOC_from_Fire_Authority').val() != 'initiated'){
-                    	$('div._NOC_from_Fire_Authority').attr('required','required');
-                    	$('div.divfv_NOC_from_Fire_Authority').show();
+                    }else if($('input.hidden_FIRE_OCNOC').val() != 'initiated'){
+                    	$('div._FIRE_OCNOC').attr('required','required');
+                    	$('div.divfv_FIRE_OCNOC').show();
                     }
                     
                     if($('#nocAppl').length > 0)
@@ -719,10 +723,10 @@ $(document).ready(
                     }
                 }
                 if(planInformation.nocStateEnvImpact === 'YES'){
-                	$('#APPROVED_MOEF_environment_clearance').attr('disabled',true);
-                	$('#REJECTED_MOEF_environment_clearance').attr('disabled',true);
-                	$('span.mandatory._MOEF_environment_clearance').show();
-                	if($('button.btn_MOEF_environment_clearance').length==1){
+                	$('#APPROVED_MOEF_OCNOC').attr('disabled',true);
+                	$('#REJECTED_MOEF_OCNOC').attr('disabled',true);
+                	$('span.mandatory._MOEF_OCNOC').show();
+                	if($('button.btn_MOEF_OCNOC').length==1){
                     	if($('#nocStatusUpdated').val() == "false" && $('#citizenOrBusinessUser').val() == "false" && (($('#isOcApplFeeReq').val() =="NO" && $('#applicationNo').val()!="")||
                     			($('#isOcApplFeeReq').val() =="YES" && $('#ocApplFeeCollected').val()=="YES"))){
                     		$('th.thbtn').show();
@@ -731,9 +735,9 @@ $(document).ready(
                     		$('th.thbtn').hide();
     	                    $('td.tdbtn').hide();
                     	}
-                    }else if($('input.hidden_MOEF_environment_clearance').val() != 'initiated'){
-                    	$('div._MOEF_environment_clearance').attr('required','required');
-                    	$('div.divfv_MOEF_environment_clearance').show();
+                    }else if($('input.hidden_MOEF_OCNOC').val() != 'initiated'){
+                    	$('div._MOEF_OCNOC').attr('required','required');
+                    	$('div.divfv_MOEF_OCNOC').show();
                     }
                 	if($('#nocAppl').length > 0)
                     {
@@ -819,6 +823,49 @@ $(document).ready(
                     $("#extentinsqmtshdn").val(convertExtendOfLandToSqmts(extentOfLand, $("#unitOfMeasurement").val()));
                 }
             }
+            
+
+
+            function getOwnershipByPermitNo(permitNo, ocdcrNo) {
+            	$.ajax({
+                    url: "/bpa/application/getactiveownershipapplication",
+                    type: "GET",
+                    data: {
+                        permitNumber : permitNo
+                    },
+                    cache : false,
+                    async: false,
+                    dataType: "json",
+                    success: function (response) {
+                    	if(Object.keys(response).length > 0 ) {                    		
+                        	$('#ocEDcrNumber').val(ocdcrNo);
+    		                $('#serviceType').val(response.serviceTypeId);
+                            $('#serviceTypeDesc').val(response.serviceTypeDesc);
+                            $('.applicantName').val(response.applicantName);
+                            $('#address').val(response.applicantAddress);
+                            $('#bpaApplicationId').val(response.applicationId);
+                            $('#applicationNumber').val(response.applicationNumber);       		                
+                            $('#planPermissionDate').val(response.planPermissionDate);
+                            $('#extentInSqmts').val(response.plotArea);
+        	                $('#occupancy').val(response.occupancy);  
+        	                loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCDCRDOCUMENTS');
+        	            	loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCGENERALDOCUMENTS');
+        	                loadDocumentsByServiceTypeAndChecklistType(response.serviceTypeId, 'OCNOC');
+        	                if(response.ownershipNumber != null){
+    		                	$('#ownpermitno').html('Ownership Number');
+    			                $('#planPermissionNumber').val(response.ownershipNumber);
+    		                }else{
+    		                	$('#ownpermitno').html('Building Plan Permission No');
+    		                    $('#planPermissionNumber').val(response.planPermissionNumber);
+    		                }                            
+                          }
+                        },
+                    error: function (response) {
+                        console.log("Error occurred while retrieving application details!!!!!!!");
+                    }
+                });
+            }
+
     });
 
         // This code require when edit facility enabled for auto populated floor details
@@ -1002,6 +1049,5 @@ function checkDCRIsUsedWithAnyOccupancyCertificateAppln() {
     });
     return isExist;
 }
-
 
 

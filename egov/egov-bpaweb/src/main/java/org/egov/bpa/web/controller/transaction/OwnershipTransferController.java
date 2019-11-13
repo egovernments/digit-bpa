@@ -151,6 +151,7 @@ public class OwnershipTransferController extends BpaGenericApplicationController
             model.addAttribute("applicants", ownershipTransfers.get(ownershipTransfers.size() - 1).getOwner().getName());
             model.addAttribute("applicantAddress", ownershipTransfers.get(ownershipTransfers.size() - 1).getOwner().getAddress());
         }
+
         loadFormData(ownershipTransfer, model);
         model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
         model.addAttribute("citizenOrBusinessUser", bpaUtils.logedInuseCitizenOrBusinessUser());
@@ -177,6 +178,16 @@ public class OwnershipTransferController extends BpaGenericApplicationController
         wfBean.setApproverComments(request.getParameter(APPROVAL_COMENT));
         wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
         wfBean.setAmountRule(amountRule);
+        if (isNotBlank(wfBean.getWorkFlowAction())
+                && BpaConstants.WF_GENERATE_OWNERSHIP_ORDER.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
+            ownershipTransfer.setIsActive(true);
+            List<OwnershipTransfer> ownerTransfers = ownershipTransferService
+                    .findByBpaApplicationAndDate(ownershipTransfer.getParent(), ownershipTransfer.getCreatedDate());
+            if (!ownerTransfers.isEmpty()) {
+                ownerTransfers.get(0).setIsActive(false);
+                ownershipTransferService.saveOwnership(ownerTransfers.get(0));
+            }
+        }
         OwnershipTransfer ownershipres = ownershipTransferService.update(ownershipTransfer, wfBean);
         pushBpaApplicationToPortal.updatePortalUserinbox(ownershipTransfer, null);
         List<Assignment> assignments;
@@ -246,7 +257,9 @@ public class OwnershipTransferController extends BpaGenericApplicationController
             model.addAttribute("ownershipNumber", ownerTransfers.get(0).getApplicationNumber());
             model.addAttribute("applicants", ownerTransfers.get(0).getOwner().getName());
             model.addAttribute("applicantAddress", ownerTransfers.get(0).getOwner().getAddress());
+
         }
+
         model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
         loadFormData(ownershipTransfer, model);
         model.addAttribute(APPLICATION_HISTORY,

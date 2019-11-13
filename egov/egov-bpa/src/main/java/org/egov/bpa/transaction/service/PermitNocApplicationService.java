@@ -139,39 +139,50 @@ public class PermitNocApplicationService {
     public void initiateNoc(BpaApplication application) {
         Map<String, String> edcrNocMandatory = getEdcrNocMandatory(application.geteDcrNumber());
         for (PermitNocDocument nocDocument : application.getPermitNocDocuments()) {
-            PermitNocApplication permitNoc = new PermitNocApplication();
-            BpaNocApplication nocApplication = new BpaNocApplication();
-
-            List<User> nocUser = new ArrayList<>();
-            List<User> userList = new ArrayList<>();
-            NocConfiguration nocConfig = nocConfigurationService
-                    .findByDepartmentAndType(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode(),
-                            BpaConstants.PERMIT);
-            if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
-                    && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
-                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
-                    && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
-                List<User> nocUsers = new ArrayList<User>(
-                        userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
-                userList = nocUsers.stream()
-                        .filter(usr -> usr.getRoles().stream()
-                                .anyMatch(usrrl -> usrrl.getName()
-                                        .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
-                        .collect(Collectors.toList());
-                if (userList.isEmpty()) {
-                    nocUsers = userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationConstant.STATE_TENANTID);
-                    userList = nocUsers.stream()
-                            .filter(usr -> usr.getRoles().stream()
-                                    .anyMatch(usrrl -> usrrl.getName()
-                                            .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
-                            .collect(Collectors.toList());
-                }
-                nocUser.add(userList.get(0));
-                permitNoc.setBpaApplication(application);
-                permitNoc.setBpaNocApplication(nocApplication);
-                permitNoc = createNocApplication(permitNoc, nocConfig);
-                bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
-            }
+        	if(nocDocument.getNocDocument().getNocSupportDocs().isEmpty()) {
+	            PermitNocApplication permitNoc = new PermitNocApplication();
+	            BpaNocApplication nocApplication = new BpaNocApplication();
+	
+	            List<User> nocUser = new ArrayList<>();
+	            List<User> userList = new ArrayList<>();
+	            NocConfiguration nocConfig = nocConfigurationService
+	                    .findByDepartmentAndType(nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode(),
+	                            BpaConstants.PERMIT);
+	            if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
+	                    && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
+	                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
+	                    && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
+	                List<User> nocUsers = new ArrayList<User>(
+	                        userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
+	                userList = nocUsers.stream()
+	                        .filter(usr -> usr.getRoles().stream()
+	                                .anyMatch(usrrl -> usrrl.getName()
+	                                        .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+	                        .collect(Collectors.toList());
+	                if (userList.isEmpty()) {
+	                    nocUsers = userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationConstant.STATE_TENANTID);
+	                    userList = nocUsers.stream()
+	                            .filter(usr -> usr.getRoles().stream()
+	                                    .anyMatch(usrrl -> usrrl.getName()
+	                                            .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+	                            .collect(Collectors.toList());
+	                }
+	                nocUser.add(userList.get(0));
+	                permitNoc.setBpaApplication(application);
+	                permitNoc.setBpaNocApplication(nocApplication);
+	                permitNoc = createNocApplication(permitNoc, nocConfig);
+	                bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
+	            }else if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
+	                    && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.THIRD_PARTY.toString())
+	                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
+	                    && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
+	                permitNoc.setBpaApplication(application);
+	                permitNoc.setBpaNocApplication(nocApplication);
+	                permitNoc = createNocApplication(permitNoc, nocConfig);
+	                nocUser.add(permitNoc.getBpaApplication().getOwner().getUser());
+	                bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
+	            }
+	        }
         }
     }
 
@@ -183,7 +194,7 @@ public class PermitNocApplicationService {
         NocConfiguration nocConfig = nocConfigurationService
                 .findByDepartmentAndType(nocType, BpaConstants.PERMIT);
         if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
-                && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
                 && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) {
             List<User> nocUsers = new ArrayList<User>(
                     userService.getUsersByTypeAndTenantId(UserType.BUSINESS, ApplicationThreadLocals.getTenantID()));
@@ -205,6 +216,15 @@ public class PermitNocApplicationService {
             permitNoc = createNocApplication(permitNoc, nocConfig);
 
             permitNoc.getBpaNocApplication().setOwnerUser(nocUser.get(0));
+
+            bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
+        }else if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
+                && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.THIRD_PARTY.toString())
+                && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())) {
+        	nocUser.add(application.getOwner().getUser());
+            permitNoc.setBpaApplication(application);
+            permitNoc.setBpaNocApplication(nocApplication);
+            permitNoc = createNocApplication(permitNoc, nocConfig);
 
             bpaUtils.createNocPortalUserinbox(permitNoc, nocUser, permitNoc.getBpaNocApplication().getStatus().getCode());
         }

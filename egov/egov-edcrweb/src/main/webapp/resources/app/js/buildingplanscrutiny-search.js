@@ -100,8 +100,17 @@ $(document)
                                     "sClass": "text-left"
                                 },
                                 {
-                                    "data": "buildingPlanScrutinyNumber",
-                                    "sClass": "text-left"
+                                    "data": null,
+                                    "sClass": "text-left",
+                                    "render": function (
+                                            data, type,
+                                            row, meta) {
+                                            return row.buildingPlanScrutinyNumber ==='N/A' ? row.buildingPlanScrutinyNumber : '<a onclick="openPopup(\'/bpa/application/view/details/by-dcr-number/'
+                                                + row.buildingPlanScrutinyNumber
+                                                + '\')" href="javascript:void(0);">'
+                                                + row.buildingPlanScrutinyNumber
+                                                + '</a>';
+                                        }
                                 },
 
                                 {
@@ -147,78 +156,8 @@ $(document)
                                     "sClass": "text-left"
                                 },
                                 {
-                                    "data": "buildingLicenceeType",
-                                    "sClass": "text-left"
-                                },
-                                {
                                     "data": "buildingLicenceeName",
                                     "sClass": "text-left"
-                                },
-                                {
-                                    "data": "bpaApplicationNumber",
-                                    "sClass": "text-left",
-                                    /*  "render": function (
-                                          data, type,
-                                          row, meta) {
-                                          var applicationNumber;
-                                          if (row.buildingPlanScrutinyNumber != 'N/A') {
-                                              $.ajax({
-                                                  async: false,
-                                                  crossDomain: true,
-                                                  url: '/bpa/rest/getbpaApplicationByEdcrNumber/' + row.buildingPlanScrutinyNumber,
-                                                  type: "GET",
-                                                  contentType: 'application/json; charset=utf-8',
-                                                  success: function (response) {
-                                                      console.log("success" + response);
-                                                      if (response.isAppNoPresent)
-                                                          applicationNumber = response.applicationNumber;
-                                                      else {
-                                                          applicationNumber = "N/A";
-                                                      }
-                                                  },
-                                                  error: function (response) {
-                                                      bootbox.alert("Json Failed");
-                                                  }
-                                              });
-                                          }
-                                          else {
-                                              applicationNumber = "N/A";
-                                          }
-                                          return applicationNumber;
-                                      }*/
-                                },
-                                {
-                                    "data": "permitNumber",
-                                    "sClass": "text-left",
-                                    /* "render": function (
-                                         data, type,
-                                         row, meta) {
-                                         var permitNumber;
-                                         if (row.buildingPlanScrutinyNumber != 'N/A') {
-                                             $.ajax({
-                                                 async: false,
-                                                 crossDomain: true,
-                                                 url: '/bpa/rest/getbpaApplicationByEdcrNumber/' + row.buildingPlanScrutinyNumber,
-                                                 type: "GET",
-                                                 contentType: 'application/json; charset=utf-8',
-                                                 success: function (response) {
-                                                     console.log("success" + response);
-                                                     if (response.isPermitNoPresent)
-                                                         permitNumber = response.permitNumber;
-                                                     else {
-                                                         permitNumber = "N/A";
-                                                     }
-                                                 },
-                                                 error: function (response) {
-                                                     bootbox.alert("Json Failed");
-                                                 }
-                                             });
-                                         }
-                                         else {
-                                             permitNumber = "N/A";
-                                         }
-                                         return permitNumber;
-                                     }*/
                                 }
                             ]
                         });
@@ -254,6 +193,10 @@ $(document)
             }
 
         });
+
+function openPopup(url) {
+    window.open(url, 'window', 'scrollbars=yes,resizable=yes,height=700,width=800,status=yes');
+}
 
 function getFormData($form) {
     var unindexed_array = $form.serializeArray();

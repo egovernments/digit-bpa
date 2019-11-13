@@ -116,8 +116,6 @@ ALTER TABLE egbpa_oc_appointment_schedule ADD CONSTRAINT fk_egbpa_oc_appmnt_schd
 ALTER TABLE egbpa_oc_appointment_schedule ADD CONSTRAINT fk_egbpa_oc_appmnt_schdle_mdfdby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_oc_building ADD CONSTRAINT fk_egbpa_oc_bldg_crtby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_oc_building ADD CONSTRAINT fk_egbpa_oc_bldg_mdfdby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
-ALTER TABLE egbpa_occupancy ADD CONSTRAINT fk_eg_occupancy_crtby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
-ALTER TABLE egbpa_occupancy ADD CONSTRAINT fk_eg_occupancy_mdfdby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_occupancy_certificate ADD CONSTRAINT fk_egbpa_oc_crtby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_occupancy_certificate ADD CONSTRAINT fk_egbpa_oc_mdfdby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_occupancy_fee ADD CONSTRAINT fk_egbpa_occupancy_fee_crtby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
@@ -162,14 +160,10 @@ ALTER TABLE egbpa_slotdetail ADD CONSTRAINT fk_egbpa_slotdetail_crtby FOREIGN KE
 ALTER TABLE egbpa_slotdetail ADD CONSTRAINT fk_egbpa_slotdetail_mdfdby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_status ADD CONSTRAINT fk_egbpa_status_crtby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_status ADD CONSTRAINT fk_egbpa_status_mdfdby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
-ALTER TABLE egbpa_sub_occupancy ADD CONSTRAINT fk_eg_sub_occupancy_crtby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
-ALTER TABLE egbpa_sub_occupancy ADD CONSTRAINT fk_eg_sub_occupancy_mdfdby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_unconsider ADD CONSTRAINT fk_egbpa_unconsider_crtby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_unconsider ADD CONSTRAINT fk_egbpa_unconsider_mdfdby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_unconsider_checklist ADD CONSTRAINT fk_egbpa_unconsider_chklist_crtby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_unconsider_checklist ADD CONSTRAINT fk_egbpa_unconsider_chklist_mdfdby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
-ALTER TABLE egbpa_usage ADD CONSTRAINT fk_egbpa_usage_crtby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
-ALTER TABLE egbpa_usage ADD CONSTRAINT fk_egbpa_usage_mdfdby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_permit_documents ADD CONSTRAINT fk_egbpa_permit_doc_crtby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_permit_documents ADD CONSTRAINT fk_egbpa_permit_doc_mdfdby FOREIGN KEY (lastmodifiedby) REFERENCES state.eg_user(id);
 ALTER TABLE egbpa_permit_noc_document ADD CONSTRAINT fk_egbpa_permit_noc_document_crtby FOREIGN KEY (createdby) REFERENCES state.eg_user(id);

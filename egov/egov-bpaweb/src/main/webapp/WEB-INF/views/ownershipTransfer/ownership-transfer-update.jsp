@@ -90,7 +90,7 @@
 				   value="${citizenOrBusinessUser}"/>
 			<form:hidden path="" id="wfstate" value="${ownershipTransfer.state.id}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
-			<input type="hidden" id="serviceTypeCode" value="${ownershipTransfer.parent.serviceType.code}" />
+			<input type="hidden" id="serviceTypeCode" value="${ownershipTransfer.application.serviceType.code}" />
 			<form:hidden path="" id="wfstateDesc"
 						 value="${ownershipTransfer.state.value}" />
 			<form:hidden path="" id="collectFeeValidate" value="${collectFeeValidate}" />

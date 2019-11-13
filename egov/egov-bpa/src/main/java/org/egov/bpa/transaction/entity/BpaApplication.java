@@ -69,6 +69,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
@@ -225,7 +226,10 @@ public class BpaApplication extends StateAware<Position> {
     private String schedulerFailedRemarks;
     private Boolean authorizedToSubmitPlan = false;
     private Boolean mailPwdRequired = false;
-
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name="nocListId")
+    private NocList nocList;
+   
     @Enumerated(EnumType.STRING)
     @Column(name = "typeOfLand")
     private OneDayPermitLandType typeOfLand;// Garden Land or Wet Land
@@ -1236,5 +1240,14 @@ public class BpaApplication extends StateAware<Position> {
     public void setPermitRenewals(List<PermitRenewal> permitRenewals) {
         this.permitRenewals = permitRenewals;
     }
+ 
+
+	public void setNocList(NocList nocList) {
+		this.nocList = nocList;
+	}
+
+	public NocList getNocList() {
+		return nocList;
+	}
 
 }

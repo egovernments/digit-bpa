@@ -60,6 +60,10 @@ public class EdcrApplicationDetailService {
 	public EdcrApplicationDetail findByDcrNumber(final String dcrNumber) {
 		return edcrApplicationDetailRepository.findByDcrNumber(dcrNumber);
 	}
+	
+	public EdcrApplicationDetail findByDcrAndTransactionNumber(final String dcrNumber, final String transactionNumber) {
+		return edcrApplicationDetailRepository.findByDcrNumberAndApplication_TransactionNumber(dcrNumber, transactionNumber);
+	}
 
 	public void buildBuildingDetailForApprovedPlans(EdcrApplicationDetail edcrApplicationDetail, EdcrApplicationInfo applicationInfo) {
 		final Map<String, Long> params = new HashMap<>();

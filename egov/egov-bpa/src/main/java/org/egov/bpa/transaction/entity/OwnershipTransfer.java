@@ -75,12 +75,12 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.commons.entity.Source;
 import org.egov.dcb.bean.Receipt;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateAware;
@@ -140,6 +140,14 @@ public class OwnershipTransfer extends StateAware<Position> {
     @JoinColumn(name = "status")
     private BpaStatus status;
 
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "approverPosition")
+    private Position approverPosition;
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "approverUser")
+    private User approverUser;
+    
     @SafeHtml
     @Length(min = 1, max = 128)
     private String remarks;
@@ -484,4 +492,19 @@ public class OwnershipTransfer extends StateAware<Position> {
         this.admissionfeeAmount = admissionfeeAmount;
     }
 
+    public Position getApproverPosition() {
+        return approverPosition;
+    }
+
+    public void setApproverPosition(Position approverPosition) {
+        this.approverPosition = approverPosition;
+    }
+
+    public User getApproverUser() {
+        return approverUser;
+    }
+
+    public void setApproverUser(User approverUser) {
+        this.approverUser = approverUser;
+    }
 }

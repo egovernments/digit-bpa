@@ -61,10 +61,12 @@ import org.egov.edcr.utility.DcrConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
+@RequestMapping("/public")
 public class EdcrRestController {
 
     @Autowired
@@ -72,7 +74,7 @@ public class EdcrRestController {
     @Autowired
     private EdcrApplicationDetailService edcrApplicationDetailService;
 
-    @GetMapping(value = "/rest/approved-plan-details/by-edcr-number/{dcrNumber}", produces = APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/approved-plan-details/by-edcr-number/{dcrNumber}", produces = APPLICATION_JSON_VALUE)
     public EdcrApplicationInfo validateEdcrPlanFile(@PathVariable final String dcrNumber) {
         EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber);
         if (applicationDetail == null) {
@@ -86,48 +88,42 @@ public class EdcrRestController {
             return edcrExternalService.loadEdcrApplicationDetails(dcrNumber);
     }
 
-    @GetMapping(value = "/rest/approved-report-ouput/by-edcr-number/{dcrNumber}")
+    @GetMapping(value = "/approved-report-ouput/by-edcr-number/{dcrNumber}")
     @ResponseBody
     public String getDcrReport(@PathVariable final String dcrNumber) {
         EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber);
         return applicationDetail.getReportOutputId().getFileStoreId();
     }
 
-
-    @GetMapping("/rest/converted-pdf/by-edcr-number/{dcrNumber}")
+    @GetMapping("/converted-pdf/by-edcr-number/{dcrNumber}")
     @ResponseBody
     public String getConvertedPdfs(@PathVariable final String dcrNumber) {
-       /* EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber);
-        List<EdcrPdfDetail> edcrPdfDetails = applicationDetail.getEdcrPdfDetails();
-        if (edcrPdfDetails.size() > 0) {
-            StringBuffer fileStoreIds = new StringBuffer();
-            for (EdcrPdfDetail edcrPdfDetail : edcrPdfDetails) {
-                if (edcrPdfDetail.getConvertedPdf() != null) {
-                    fileStoreIds.append(edcrPdfDetail.getConvertedPdf().getFileStoreId()).append(",");
-                }
-            }
-            return !StringUtils.isBlank(fileStoreIds.toString()) ? fileStoreIds.toString().substring(0, fileStoreIds.length() - 1) : StringUtils.EMPTY;
-        } else {
-            return StringUtils.EMPTY;
-        }*/
-    	return null;
+        /*
+         * EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber); List<EdcrPdfDetail>
+         * edcrPdfDetails = applicationDetail.getEdcrPdfDetails(); if (edcrPdfDetails.size() > 0) { StringBuffer fileStoreIds =
+         * new StringBuffer(); for (EdcrPdfDetail edcrPdfDetail : edcrPdfDetails) { if (edcrPdfDetail.getConvertedPdf() != null) {
+         * fileStoreIds.append(edcrPdfDetail.getConvertedPdf().getFileStoreId()).append(","); } } return
+         * !StringUtils.isBlank(fileStoreIds.toString()) ? fileStoreIds.toString().substring(0, fileStoreIds.length() - 1) :
+         * StringUtils.EMPTY; } else { return StringUtils.EMPTY; }
+         */
+        return null;
     }
-    
-    @GetMapping(value = "/rest/created-date/of-edcr-number/{dcrNumber}")
+
+    @GetMapping(value = "/created-date/of-edcr-number/{dcrNumber}")
     @ResponseBody
-	public Date getCreatedDateOfDCR(@PathVariable final String dcrNumber) {
-		EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber);
-		if (applicationDetail != null && applicationDetail.getCreatedDate()!=null)
-			return applicationDetail.getCreatedDate();
-		return null;
-	}
-    
-    @GetMapping(value = "/rest/plan-permission-no/by-edcr-number/{dcrNumber}")
+    public Date getCreatedDateOfDCR(@PathVariable final String dcrNumber) {
+        EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber);
+        if (applicationDetail != null && applicationDetail.getCreatedDate() != null)
+            return applicationDetail.getCreatedDate();
+        return null;
+    }
+
+    @GetMapping(value = "/plan-permission-no/by-edcr-number/{dcrNumber}")
     @ResponseBody
     public String getEdcrPlanPermissionNo(@PathVariable final String dcrNumber) {
-    	EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber);
-    	if(applicationDetail != null)
-    		return applicationDetail.getApplication().getPlanPermitNumber();
-    	return null;
+        EdcrApplicationDetail applicationDetail = edcrApplicationDetailService.findByDcrNumber(dcrNumber);
+        if (applicationDetail != null)
+            return applicationDetail.getApplication().getPlanPermitNumber();
+        return null;
     }
 }

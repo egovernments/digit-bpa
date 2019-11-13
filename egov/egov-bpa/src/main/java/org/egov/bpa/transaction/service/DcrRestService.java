@@ -13,7 +13,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class DcrRestService {
 
-    private static final String EDCR_REPORT_RESTURL = "%s/edcr/rest/approved-report-ouput/by-edcr-number/{dcrNumber}";
+    private static final String EDCR_REPORT_RESTURL = "%s/edcr/public/approved-report-ouput/by-edcr-number/{dcrNumber}";
 
     public String getDcrReport(final String dcrNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
@@ -22,7 +22,7 @@ public class DcrRestService {
         return restTemplate.getForObject(url, String.class, dcrNumber);
     }
     
-    private static final String EDCR_PLANIFO_RESTURL = "%s/edcr/rest/approved-plan-details/by-edcr-number/{dcrNumber}";
+    private static final String EDCR_PLANIFO_RESTURL = "%s/edcr/public/approved-plan-details/by-edcr-number/{dcrNumber}";
 
     public  EdcrApplicationInfo getDcrPlanInfo(final String dcrNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
@@ -32,7 +32,7 @@ public class DcrRestService {
         return restTemplate.getForObject(url, EdcrApplicationInfo.class, dcrNumber);
    }
     
-    private static final String EDCR_CONVERTED_PDF_RESTURL = "%s/edcr/rest/converted-pdf/by-edcr-number/{dcrNumber}";
+    private static final String EDCR_CONVERTED_PDF_RESTURL = "%s/public/rest/converted-pdf/by-edcr-number/{dcrNumber}";
 
     public String getConvertedPdfs(final String dcrNumber, final HttpServletRequest request) {
         final RestTemplate restTemplate = new RestTemplate();
@@ -50,7 +50,7 @@ public class DcrRestService {
         return restTemplate.getForObject(url, String.class, dcrNumber);
     }
     
-    private static final String EDCR_CREATED_DATE = "%s/edcr/rest/created-date/of-edcr-number/{dcrNumber}";
+    private static final String EDCR_CREATED_DATE = "%s/edcr/public/created-date/of-edcr-number/{dcrNumber}";
     
     
     public Date getDcrCreatedDate(final String dcrNumber, final HttpServletRequest request) {
@@ -61,7 +61,7 @@ public class DcrRestService {
         return restTemplate.getForObject(url, Date.class, dcrNumber);
     }
     
-    private static final String EDCR_PPNO = "%s/edcr/rest/plan-permission-no/by-edcr-number/{dcrNumber}";
+    private static final String EDCR_PPNO = "%s/edcr/public/plan-permission-no/by-edcr-number/{dcrNumber}";
     public String getEdcrPlanPermissionNo(@PathVariable final String dcrNumber, final HttpServletRequest request){
     	 final RestTemplate restTemplate = new RestTemplate();
 

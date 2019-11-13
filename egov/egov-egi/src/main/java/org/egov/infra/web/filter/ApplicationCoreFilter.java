@@ -59,8 +59,10 @@ import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 
+import javax.annotation.Resource;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -71,14 +73,17 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.entity.CityPreferences;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.User;
 
 public class ApplicationCoreFilter implements Filter {
 
@@ -90,12 +95,16 @@ public class ApplicationCoreFilter implements Filter {
 
     @Value("${cdn.domain.url}")
     private String cdnURL;
+    
+    @Resource(name = "cities")
+    private transient List<String> cities;
 
     @Value("${client.id}")
     private String clientId;
 
     @Value("${app.version}_${app.build.no}")
     private String applicationRelease;
+    private static final Logger LOG = LoggerFactory.getLogger(ApplicationCoreFilter.class);
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain chain) throws IOException, ServletException {
@@ -104,9 +113,20 @@ public class ApplicationCoreFilter implements Filter {
         try {
             prepareUserSession(session);
             prepareApplicationThreadLocal(session);
+            prepareRestService(request, session);
+
             chain.doFilter(request, resp);
         } finally {
             ApplicationThreadLocals.clearValues();
+        }
+    }
+
+    private void prepareRestService(HttpServletRequest req, HttpSession session) {
+
+        if (req.getRequestURL().toString().contains(ApplicationTenantResolverFilter.tenants.get("state"))
+                && (req.getRequestURL().toString().contains("/rest/") || req.getRequestURL().toString().contains("/oauth/"))) {
+            prepareThreadLocal(ApplicationThreadLocals.getTenantID());
+
         }
     }
 
@@ -145,6 +165,31 @@ public class ApplicationCoreFilter implements Filter {
             }
         }
 
+    }
+
+    private void prepareThreadLocal(String tenant) {
+        ApplicationThreadLocals.setTenantID(tenant);
+        // ApplicationThreadLocals.setUserId(this.userService.getUserByUsername(this.userName).getId());
+
+        // TODO: get the city by tenant
+        City city = this.cityService.findAll().get(0);
+        if (city != null) {
+            ApplicationThreadLocals.setCityCode(city.getCode());
+            ApplicationThreadLocals.setCityName(city.getName());
+            ApplicationThreadLocals.setDistrictCode(city.getDistrictCode());
+            ApplicationThreadLocals.setDistrictName(city.getDistrictName());
+            ApplicationThreadLocals.setStateName(clientId);
+            ApplicationThreadLocals.setGrade(city.getGrade());
+            ApplicationThreadLocals.setDomainName(city.getDomainURL());
+            // ApplicationThreadLocals.setDomainURL("https://"+city.getDomainURL());
+        } else {
+            LOG.warn("Unable to find the city");
+        }
+        CityPreferences cityPreferences = city.getPreferences();
+        if (cityPreferences != null)
+            ApplicationThreadLocals.setMunicipalityName(cityPreferences.getMunicipalityName());
+        else
+            LOG.warn("City preferences not set for {}", city.getName());
     }
 
     @Override

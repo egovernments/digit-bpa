@@ -25,6 +25,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.egov.common.entity.edcr.PlanInformation;
@@ -52,6 +53,7 @@ public class EdcrApplication extends AbstractAuditable {
     private ApplicationType applicationType;
 
     @SafeHtml
+    @NotNull
     @Length(min = 1, max = 128)
     private String applicationNumber;
 
@@ -77,6 +79,10 @@ public class EdcrApplication extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "buildingLicensee")
     private User buildingLicensee;
+
+    @SafeHtml
+    @Length(min = 1, max = 128)
+    private String transactionNumber;
 
     private transient MultipartFile dxfFile; // File to be process.
 
@@ -189,6 +195,14 @@ public class EdcrApplication extends AbstractAuditable {
 
     public void setBuildingLicensee(User buildingLicensee) {
         this.buildingLicensee = buildingLicensee;
+    }
+
+    public String getTransactionNumber() {
+        return transactionNumber;
+    }
+
+    public void setTransactionNumber(String transactionNumber) {
+        this.transactionNumber = transactionNumber;
     }
 
     public File getSavedDxfFile() {

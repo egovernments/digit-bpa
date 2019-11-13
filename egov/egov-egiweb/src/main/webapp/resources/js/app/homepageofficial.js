@@ -594,7 +594,7 @@ function drafts() {
             "dataSrc": ""
         },
         "createdRow": function (row, data) {
-            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FA8072");
         },
         "deferRender": true,
         "columns": [
@@ -616,7 +616,10 @@ function drafts() {
                 },
                 "targets": 4
             }
-        ]
+        ],
+        "createdRow": function (row, data) {
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FA8072");
+        },
     });
 }
 
@@ -645,7 +648,7 @@ function worklistwrtnow(json) {
         "autoWidth": false,
         "data": json,
         "createdRow": function (row, data) {
-            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FEB9B9");
+            $(row).css('background-color', data.withinSla ? "#FFFFFF" : "#FA8072");
         },
         "columns": [
             {"data": "date", "width": "15%"},

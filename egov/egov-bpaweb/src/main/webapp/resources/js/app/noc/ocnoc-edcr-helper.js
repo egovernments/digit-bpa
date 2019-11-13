@@ -50,7 +50,7 @@ $(document).ready(
             $.ajax({
                 async: false,
                 crossDomain: true,
-                url: '/edcr/rest/approved-plan-details/by-edcr-number/' + $('#ocEDcrNumber').val(),
+                url: '/edcr/public/approved-plan-details/by-edcr-number/' + $('#ocEDcrNumber').val(),
                 type: "GET",
                 contentType: 'application/json; charset=utf-8',
                 success: function (response) {

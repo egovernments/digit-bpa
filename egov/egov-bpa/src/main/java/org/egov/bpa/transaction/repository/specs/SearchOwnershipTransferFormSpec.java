@@ -75,6 +75,7 @@ public final class SearchOwnershipTransferFormSpec {
 
     private static void commonSpec(SearchBpaApplicationForm requestForm, Root<OwnershipTransfer> root, CriteriaBuilder builder,
             Predicate predicate) {
+
         Join<OwnershipTransfer, BpaApplication> bpaApplication = root.join("parent");
 
         if (requestForm.getApplicantName() != null)

@@ -255,6 +255,7 @@ public class LetterToPartyController extends BpaGenericApplicationController {
         }
         processAndStoreLetterToPartyDocuments(lettertoparty);
         lettertoPartyService.save(lettertoparty, lettertoparty.getApplication().getState().getOwnerPosition().getId());
+        bpaSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(lettertoparty.getApplication());
         redirectAttributes.addFlashAttribute(MESSAGE,
                 messageSource.getMessage(MSG_LETTERTOPARTY_UPDATE_SUCCESS, null, null));
         return REDIRECT_LETTERTOPARTY_RESULT + lettertoparty.getId();

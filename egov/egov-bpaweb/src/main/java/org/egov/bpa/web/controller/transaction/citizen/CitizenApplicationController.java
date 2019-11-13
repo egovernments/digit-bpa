@@ -256,12 +256,12 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                         .findByApplicationNumberAndType(bpaApplication.getApplicationNumber(), code) != null)
                     nocTypeApplMap.put(code, "initiated");
                 if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
-                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
                         && nocConfig.getIntegrationInitiation()
                                 .equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
                     nocConfigMap.put(nocConfig.getDepartment(), "initiate");
                 if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
-                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.SEMI_AUTO.toString())
+                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
                         && nocConfig.getIntegrationInitiation()
                                 .equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString()))
                     nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");

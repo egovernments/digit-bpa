@@ -128,7 +128,7 @@ public class OCLetterToPartyService {
             ocLetterToParty.getLetterToParty().setLpNumber(generateLetterToPartyNumber());
             bpaUtils.redirectToBpaWorkFlowForOC(ocLetterToParty.getOc(),
                     getWorkflowBean(approvalPosition, BpaConstants.LETTERTOPARTYINITIATE, LETTER_TO_PARTY_INITIATE));
-            ocSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(ocLetterToParty.getOc());
+           /* ocSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(ocLetterToParty.getOc());*/
         }
 
         if (ocLetterToParty.getLetterToParty().getReplyDate() != null) {

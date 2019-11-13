@@ -63,6 +63,7 @@ import org.egov.bpa.transaction.notice.impl.OccupancyLetterToPartyFormatImpl;
 import org.egov.bpa.transaction.notice.impl.OccupancyLetterToPartyReplyFormatImpl;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.transaction.service.WorkflowHistoryService;
+import org.egov.bpa.transaction.service.messaging.oc.OcSmsAndEmailService;
 import org.egov.bpa.transaction.service.oc.OCLetterToPartyService;
 import org.egov.bpa.transaction.service.oc.OccupancyCertificateService;
 import org.egov.bpa.transaction.workflow.BpaWorkFlowService;
@@ -142,6 +143,8 @@ public class OccupancyCertificateLetterToPartyController {
     private CustomImplProvider specificNoticeService;
     @Autowired
     private BpaApplicationSettings bpaApplicationSettings;
+    @Autowired
+    private OcSmsAndEmailService ocSmsAndEmailService;
 
     @ModelAttribute(name = "lpReasonList")
     public List<LpReason> getLpReasonList() {
@@ -259,6 +262,7 @@ public class OccupancyCertificateLetterToPartyController {
         processAndStoreLetterToPartyDocuments(ocLetterToParty);
         OCLetterToParty ocLtpRes = ocLetterToPartyService.save(ocLetterToParty,
                 ocLetterToParty.getOc().getState().getOwnerPosition().getId());
+         ocSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(ocLetterToParty.getOc());
         redirectAttributes.addFlashAttribute(MESSAGE,
                 messageSource.getMessage(MSG_LP_UPDATE_SUCCESS, null, null));
         return REDIRECT_LETTER_TO_PARTY_RESULT + applicationNumber + "/" + ocLtpRes.getLetterToParty().getLpNumber();

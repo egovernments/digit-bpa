@@ -56,6 +56,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -68,16 +69,15 @@ import org.egov.bpa.master.service.StakeholderTypeService;
 import org.egov.bpa.transaction.entity.BpaApplication;
 import org.egov.bpa.transaction.service.ApplicationBpaService;
 import org.egov.bpa.utils.BpaConstants;
+import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -85,24 +85,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/rest")
 public class BpaRestController {
 
+    private static final String IS_PERMIT_NO_PRESENT = "isPermitNoPresent";
+
+    private static final String IS_APP_NO_PRESENT = "isAppNoPresent";
+
     @Autowired
     private StakeHolderService stakeHolderService;
 
     @Autowired
     private ServiceTypeService serviceTypeService;
-    
+
     @Autowired
     private ApplicationBpaService applicationBpaService;
 
     @Autowired
     private AppConfigValueService appConfigValueService;
-    
+
     @Autowired
     private UserService userService;
-    
+
     @Autowired
     private StakeholderTypeService stakeholderTypeService;
-
 
     @GetMapping(value = "/getstakeholder/{id}", produces = APPLICATION_JSON_VALUE)
     public StakeHolder getStakeHolderById(@PathVariable final String id) {
@@ -118,83 +121,93 @@ public class BpaRestController {
     public List<ServiceType> getAllActiveMainServiceTypes() {
         return serviceTypeService.getAllActiveMainServiceTypes();
     }
-    
-	@GetMapping(value = "/stakeholder/type", produces = APPLICATION_JSON_VALUE)
-	public List<String> getAllStakeHolderTypes() {
-		List<String> stkHldrTypes = new ArrayList<>();
-		List<StakeHolderType> stkhldrtypes = stakeholderTypeService.findAllIsActive();
-		for (StakeHolderType stkHldrType : stkhldrtypes) {
-			stkHldrTypes.add(stkHldrType.getName());
-		}
-		return stkHldrTypes;
-	}
-    
-	@GetMapping(value = "/getbpaApplicationByEdcrNumber/{edcrNumber}", produces = APPLICATION_JSON_VALUE)
-	public Map<String, Object> getBpaApplicationByEdcrNumber(@PathVariable final String edcrNumber) {
-		Map<String, Object> appNoPrmsnNoMap = new ConcurrentHashMap<>();
-		List<BpaApplication> bpaAppsList = applicationBpaService.findApplicationByEDCRNumber(edcrNumber);
-		if (bpaAppsList.size() > 0) {
-			if (bpaAppsList.get(0).getApplicationNumber() != null) {
-				appNoPrmsnNoMap.put("applicationNumber", bpaAppsList.get(0).getApplicationNumber());
-				appNoPrmsnNoMap.put("isAppNoPresent", true);
-			} else {
-				appNoPrmsnNoMap.put("isAppNoPresent", false);
-			}
-			if (bpaAppsList.get(0).getPlanPermissionNumber() != null) {
-				appNoPrmsnNoMap.put("permitNumber", bpaAppsList.get(0).getPlanPermissionNumber());
-				appNoPrmsnNoMap.put("isPermitNoPresent", true);
-			} else {
-				appNoPrmsnNoMap.put("isPermitNoPresent", false);
-			}
-		} else {
-			appNoPrmsnNoMap.put("isAppNoPresent", false);
-			appNoPrmsnNoMap.put("isPermitNoPresent", false);
-		}
-		return appNoPrmsnNoMap;
-	}
-    
-	@GetMapping(value = "/getStakeHolderNameAndIdByType/{type}", produces = APPLICATION_JSON_VALUE)
-	public List<Map<String, Object>> getStakeHolderNameAndIdByType(@PathVariable final String type) {
-		List<Map<String, Object>> stkHldrDataList = new ArrayList<>();
-		StakeHolderType stkHldrType = null;
-		List<StakeHolderType> stakeholderTypeList = stakeholderTypeService.findAllIsActive();
-		for (StakeHolderType stkType :stakeholderTypeList ) {
-			if ((stkType.getName()).equals(type)) {
-				stkHldrType = stkType;
-				break;
-			}
-		}
-		List<StakeHolder> stakeHolderList = stakeHolderService.getStakeHoldersByType(stkHldrType);
-		for (StakeHolder stakeHolder : stakeHolderList) {
-			Map<String, Object> mapOfIdAndName = new HashMap<>();
-			mapOfIdAndName.put("id", stakeHolder.getId());
-			mapOfIdAndName.put("name", stakeHolder.getName());
-			stkHldrDataList.add(mapOfIdAndName);
-		}
-		return stkHldrDataList;
-	}
-	
-	@RequestMapping(value = "/stakeholder/check/demand-pending/{userId}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ResponseBody
-	public Map<String, Boolean> isDemandPending(@PathVariable final Long userId , HttpServletResponse response) {
-		User user = userService.getUserById(userId);
-		Map<String, Boolean> isDemandPending = new HashMap<String, Boolean>(); 
-		isDemandPending.put("pending",false);
-		StakeHolder stkHldr = stakeHolderService.findById(userId);
 
-		
-		if (user.getType().equals(BUSINESS) && stkHldr.getDemand() != null) {
-			List<AppConfigValues> appConfigValueList = appConfigValueService
-					.getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
-			if ((appConfigValueList.isEmpty() ? "" : appConfigValueList.get(0).getValue()).equalsIgnoreCase("YES")) {
-					if(BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().toString())){
-					 isDemandPending.put("pending",true);
-					 return isDemandPending;
-			}
-		}
-	}
-		return isDemandPending;
-	
-}
-}
+    @GetMapping(value = "/fetch/servicetype/edcr-required", produces = APPLICATION_JSON_VALUE)
+    public List<String> getEdcrRequiredServiceTypes() {
+        return serviceTypeService.getEDcrRequiredServiceTypes().stream().map(ServiceType::getDescription)
+                .collect(Collectors.toList());
+    }
 
+    @GetMapping(value = "/stakeholder/type", produces = APPLICATION_JSON_VALUE)
+    public List<String> getAllStakeHolderTypes() {
+        List<String> stkHldrTypes = new ArrayList<>();
+        List<StakeHolderType> stkhldrtypes = stakeholderTypeService.findAllIsActive();
+        for (StakeHolderType stkHldrType : stkhldrtypes) {
+            stkHldrTypes.add(stkHldrType.getName());
+        }
+        return stkHldrTypes;
+    }
+
+    @GetMapping(value = "/getbpaApplicationByEdcrNumber/{edcrNumber}", produces = APPLICATION_JSON_VALUE)
+    public Map<String, Object> getBpaApplicationByEdcrNumber(@PathVariable final String edcrNumber) {
+        Map<String, Object> appNoPrmsnNoMap = new ConcurrentHashMap<>();
+        List<BpaApplication> bpaAppsList = applicationBpaService.findApplicationByEDCRNumber(edcrNumber);
+        if (bpaAppsList.isEmpty()) {
+            appNoPrmsnNoMap.put(IS_APP_NO_PRESENT, false);
+            appNoPrmsnNoMap.put(IS_PERMIT_NO_PRESENT, false);
+        } else {
+            if (bpaAppsList.get(0).getApplicationNumber() != null) {
+                appNoPrmsnNoMap.put("applicationNumber", bpaAppsList.get(0).getApplicationNumber());
+                appNoPrmsnNoMap.put(IS_APP_NO_PRESENT, true);
+            } else {
+                appNoPrmsnNoMap.put(IS_APP_NO_PRESENT, false);
+            }
+            if (bpaAppsList.get(0).getPlanPermissionNumber() != null) {
+                appNoPrmsnNoMap.put("permitNumber", bpaAppsList.get(0).getPlanPermissionNumber());
+                appNoPrmsnNoMap.put(IS_PERMIT_NO_PRESENT, true);
+            } else {
+                appNoPrmsnNoMap.put(IS_PERMIT_NO_PRESENT, false);
+            }
+        }
+        return appNoPrmsnNoMap;
+    }
+
+    @GetMapping(value = "/getStakeHolderNameAndIdByType/{type}", produces = APPLICATION_JSON_VALUE)
+    public List<Map<String, Object>> getStakeHolderNameAndIdByType(@PathVariable final String type) {
+        List<Map<String, Object>> stkHldrDataList = new ArrayList<>();
+        StakeHolderType stkHldrType = null;
+        List<StakeHolderType> stakeholderTypeList = stakeholderTypeService.findAllIsActive();
+        for (StakeHolderType stkType : stakeholderTypeList) {
+            if ((stkType.getName()).equals(type)) {
+                stkHldrType = stkType;
+                break;
+            }
+        }
+        List<StakeHolder> stakeHolderList = stakeHolderService.getStakeHoldersByType(stkHldrType);
+        for (StakeHolder stakeHolder : stakeHolderList) {
+            Map<String, Object> mapOfIdAndName = new HashMap<>();
+            mapOfIdAndName.put("id", stakeHolder.getId());
+            mapOfIdAndName.put("name", stakeHolder.getName());
+            stkHldrDataList.add(mapOfIdAndName);
+        }
+        return stkHldrDataList;
+    }
+
+    @GetMapping(value = "/stakeholder/check/demand-pending/{userId}", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Map<String, Boolean> isDemandPending(@PathVariable final Long userId, HttpServletResponse response) {
+        User user = userService.getUserById(userId);
+        Map<String, Boolean> isDemandPending = new ConcurrentHashMap<>();
+        isDemandPending.put("pending", false);
+        StakeHolder stkHldr = stakeHolderService.findById(userId);
+
+        if (user.getType().equals(BUSINESS) && stkHldr.getDemand() != null) {
+            List<AppConfigValues> appConfigValueList = appConfigValueService
+                    .getConfigValuesByModuleAndKey(APPLICATION_MODULE_TYPE, "BUILDING_LICENSEE_REG_FEE_REQUIRED");
+            if (!appConfigValueList.isEmpty() && appConfigValueList.get(0).getValue().equalsIgnoreCase("YES")
+                    && BpaConstants.APPLICATION_STATUS_PENDNING.equalsIgnoreCase(stkHldr.getStatus().name())) {
+                isDemandPending.put("pending", true);
+                return isDemandPending;
+            }
+        }
+        return isDemandPending;
+    }
+
+    @GetMapping(value = "/validate/stakeholder/{userId}", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ErrorDetail validateStakeholder(@PathVariable final Long userId, HttpServletResponse response) {
+        StakeHolder stakeHolder = stakeHolderService.findById(userId);
+        return stakeHolderService.validateStakeholder(stakeHolder);
+    }
+
+}

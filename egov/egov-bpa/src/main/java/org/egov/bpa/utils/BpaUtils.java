@@ -107,7 +107,6 @@ import org.springframework.web.multipart.MultipartFile;
 import eu.medsea.mimeutil.MimeException;
 import eu.medsea.mimeutil.MimeUtil;
 
-
 @Service
 @Transactional(readOnly = true)
 public class BpaUtils {
@@ -1040,5 +1039,6 @@ public class BpaUtils {
                     }
                 }
             }
+
     }
 }

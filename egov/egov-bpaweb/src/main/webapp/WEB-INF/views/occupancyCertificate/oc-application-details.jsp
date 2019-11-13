@@ -78,8 +78,7 @@
 	</div>
 
 	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"><spring:message
-				code="lbl.plan.permission.no" /> </label>
+		<label class="col-sm-3 control-label text-right" id="ownpermitno"> </label>
 		<div class="col-sm-3 add-margin">
 			<input type="text" name="planPermissionNumber"
 				id="planPermissionNumber"

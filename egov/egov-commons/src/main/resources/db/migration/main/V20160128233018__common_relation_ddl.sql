@@ -24,5 +24,3 @@ Create table supplier(
 ALTER TABLE Supplier ADD CONSTRAINT supplier_code_unq UNIQUE (code);
 ALTER TABLE accountdetailtype ADD CONSTRAINT accoountdetailtype_name_unq UNIQUE (name);
 update accountdetailtype set tablename='Supplier' where name='Supplier';
-
-

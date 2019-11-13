@@ -88,7 +88,7 @@
 				value="${ownershipTransfer.state.id}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
 			<input type="hidden" id="serviceTypeCode"
-				value="${ownershipTransfer.parent.serviceType.code}" />
+				value="${ownershipTransfer.application.serviceType.code}" />
 			<form:hidden path="" id="wfstateDesc"
 				value="${ownershipTransfer.state.value}" />
 			<form:hidden path="" id="collectFeeValidate"
@@ -137,11 +137,7 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="../application/applicationhistory-view.jsp"></jsp:include>
 					</div>
-					<c:if test="${showRejectionReasons}">
-						<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="../application/rejection-reasons.jsp"></jsp:include>
-						</div>
-					</c:if>
+					
 				</div>
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
@@ -160,6 +156,14 @@
 								code='lbl.btn.pay.fee.online' />
 					</a>&nbsp;</td>
 				</c:if>
+				<c:if test="${ownershipTransfer.status.code eq 'Rejected'}">
+			<td><a
+				href="/bpa/application/permitrenewal/rejectionnotice/${ownershipTransfer.applicationNumber}"
+				target="popup" class="btn btn-primary"
+				onclick="window.open('/bpa/application/ownership/transfer/rejectionnotice/${ownershipTransfer.applicationNumber}','popup','width=1100,height=700'); return false;">
+					<spring:message code='lbl.btn.print.rejection.notice' />
+			</a>&nbsp;</td>
+		</c:if>
 				<input type="button" name="button2" value="Close"
 					class="btn btn-default" onclick="window.close();" />
 			</div>

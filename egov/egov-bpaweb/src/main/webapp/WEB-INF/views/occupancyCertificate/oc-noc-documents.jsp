@@ -90,7 +90,7 @@
 						<tr>
 							<td><c:out value="${status.index+1}"></c:out></td>
 							<c:forTokens var="splittedString"
-							items="${doc.nocDocument.serviceChecklist.checklist.description}"
+							items="${doc.nocDocument.serviceChecklist.checklist.code}"
 							delims="\ ()" varStatus="stat">
 							<c:set var="checklistName"
 								value="${stat.first ? '' : checklistName}_${splittedString}" />

@@ -40,5 +40,5 @@
 package org.egov.bpa.transaction.entity.enums;
 
 public enum NocIntegrationTypeEnum {
-	MANUAL, SEMI_AUTO, AUTO     
+	MANUAL, INTERNAL, THIRD_PARTY     
 }

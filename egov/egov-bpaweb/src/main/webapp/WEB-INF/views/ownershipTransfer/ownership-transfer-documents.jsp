@@ -76,7 +76,7 @@
 		</label>
 	</div>
 <c:choose>
-	<c:when test="${ownershipTransfer.parent.serviceType ne null}">
+	<c:when test="${ownershipTransfer.application.serviceType ne null}">
 		<c:forEach var="docs" items="${applicationDocumentList}"
 			varStatus="status">
 			<div class="row">

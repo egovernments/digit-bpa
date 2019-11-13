@@ -61,11 +61,15 @@
     <context:component-scan base-package="org.egov.edcr.web">
         <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller"/>
     </context:component-scan>
+    
+    <context:component-scan base-package="org.egov.edcr.web.controller.rest">
+        <context:exclude-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController"/>
+    </context:component-scan>
 
     <bean id="multipartResolver" class="org.springframework.web.multipart.support.StandardServletMultipartResolver"/>
 
     <bean name="edcrBpaRestService" class="org.egov.edcr.service.EdcrBpaRestService"></bean>
-    <bean name="genericBillGeneratorService" class="org.egov.bpa.transaction.service.collection.GenericBillGeneratorService"></bean>
+    <!-- <bean name="genericBillGeneratorService" class="org.egov.bpa.transaction.service.collection.GenericBillGeneratorService"></bean> -->
 
 
 </beans>

@@ -60,7 +60,7 @@ import org.egov.portal.entity.PortalInbox;
 import org.egov.portal.entity.PortalInboxHelper;
 import org.egov.portal.entity.PortalInboxUser;
 import org.egov.portal.service.PortalInboxUserService;
-import org.egov.portal.util.PortalUtils;
+import org.egov.portal.utils.PortalUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;

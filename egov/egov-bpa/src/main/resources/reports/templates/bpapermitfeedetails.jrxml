@@ -5,6 +5,7 @@
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<import value="org.egov.infra.reporting.util.*"/>
+	<parameter name="feeTitle" class="java.lang.String"/>
 	<field name="feeDescription" class="java.lang.String"/>
 	<field name="amount" class="java.math.BigDecimal"/>
 	<variable name="totalAmount" class="java.math.BigDecimal" calculation="Sum">

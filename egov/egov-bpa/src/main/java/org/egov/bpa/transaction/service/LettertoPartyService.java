@@ -90,7 +90,7 @@ public class LettertoPartyService {
             permitLTP.getLetterToParty().setLpNumber(generateLettertpPartyNumber());
             bpaUtils.redirectToBpaWorkFlow(approverPosition, permitLTP.getApplication(), BpaConstants.LETTERTOPARTYINITIATE,
                     LETTER_TO_PARTY_INITIATE, BpaConstants.LETTERTOPARTYINITIATE, null);
-            bpaSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(permitLTP.getApplication());
+           /* bpaSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(permitLTP.getApplication());*/
         }
 
         if (permitLTP.getLetterToParty().getReplyDate() != null) {

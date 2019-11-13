@@ -115,5 +115,51 @@ public class EdcrIndexService {
 	        
 	    }
 
-}
+	 }
+	 
+	 public void updateEdcrRestIndexes(final EdcrApplication edcrApplication, String applctnType) {
+		   ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(edcrApplication
+	                .getApplicationNumber());
+	        if (applicationIndex != null && edcrApplication.getId() != null){
+	        	ApprovalStatus status = null;
+	        	if(edcrApplication.getStatus().equals("Accepted")){
+	        		status = ApprovalStatus.APPROVED;
+	        	}
+	        	else if(edcrApplication.getStatus().equals("Not Accepted")
+						|| edcrApplication.getStatus().equals("Aborted")) {
+					status = ApprovalStatus.REJECTED;
+				}
+	        	applicationIndex.setStatus(edcrApplication.getStatus());
+	        	applicationIndex.setApproved(status);
+	        	applicationIndex.setApplicationType(applctnType);
+	            applicationIndexService.updateApplicationIndex(applicationIndex);
+	            createEdcrIndex(edcrApplication);
+	        }
+	        else {
+	        	ApprovalStatus status = null;
+	        	if(edcrApplication.getStatus().equals("Accepted")){
+	        		status = ApprovalStatus.APPROVED;
+	        	}
+	        	else if(edcrApplication.getStatus().equals("Not Accepted")
+						|| edcrApplication.getStatus().equals("Aborted")){
+	        		status = ApprovalStatus.REJECTED;
+	        	}
+	            applicationIndex = ApplicationIndex.builder().withModuleName(DcrConstants.APPLICATION_MODULE_TYPE)
+	                    .withApplicationNumber(edcrApplication.getApplicationNumber())
+	                    .withApplicationDate(edcrApplication.getApplicationDate())
+	                    .withApplicantName(edcrApplication.getApplicantName())
+	                    .withStatus(edcrApplication.getStatus())	                  
+	                    .withConsumerCode(edcrApplication.getApplicationNumber())
+	                    .withClosed(ClosureStatus.YES)
+	                    .withApproved(status)
+	                    .withUrl(String.format(url, edcrApplication.getApplicationNumber()))
+	                    .withChannel(Source.THIRDPARTY.name())
+	                    .withApplicationType(applctnType)
+	                    .build();
+	            applicationIndexService.createApplicationIndex(applicationIndex);
+	            createEdcrIndex(edcrApplication);
+	        
+	    }
+
+	 }
 }

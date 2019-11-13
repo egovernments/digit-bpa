@@ -112,8 +112,7 @@
 					<form:option value="">
 						<spring:message code="lbl.select" />
 					</form:option>
-					<form:options items="${serviceTypeList}" itemValue="description"
-						itemLabel="description" />
+					<form:options items="${serviceTypeList}"/>
 				</form:select>
 				<form:errors path="serviceType" cssClass="add-margin error-msg" />
 			</div>

@@ -56,7 +56,6 @@
 			modelAttribute="ownershipTransfer" id="ownershipTransferForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" name="parent" id="bpaApplicationId" />
 			<form:hidden path="" id="onlinePaymentEnable" name="onlinePaymentEnable" value="${onlinePaymentEnable}" />
 			<input type="hidden" name="serviceType" id="serviceType"
 				class="serviceType" />
@@ -90,12 +89,12 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.plan.permission.no" /> <span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control patternvalidation resetValues"
-								maxlength="20" id="planPermissionNumber"
+							<input type="text" class="form-control patternvalidation resetValues"
+								maxlength="20" id="planPermitNumber"
 								placeholder="Enter plan permission number"
-								path="parent.planPermissionNumber"
-								value="${ownershipTransfer.parent.planPermissionNumber}"
+								value="${ownershipTransfer.application.planPermissionNumber}"
 								required="required" />
+							<form:hidden path="application" id="application" />
 							<form:hidden path="parent" id="parent" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
@@ -117,7 +116,7 @@
 							<input type="text" name="planPermissionDate"
 								id="planPermissionDate"
 								class="form-control planPermissionDate resetValues"
-								value="${ownershipTransfer.parent.planPermissionDate}"
+								value="${ownershipTransfer.application.planPermissionDate}"
 								readonly="readonly">
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
@@ -125,7 +124,7 @@
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="serviceTypeDesc" id="serviceTypeDesc"
 								class="form-control resetValues serviceType" readonly="readonly"
-								value="${ownershipTransfer.parent.serviceType.description}">
+								value="${ownershipTransfer.application.serviceType.description}">
 						</div>
 					</div>
 					<div class="form-group">
@@ -134,14 +133,14 @@
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="applicantName" id="applicantName"
 								class="form-control applicantName resetValues"
-								value="${ownershipTransfer.parent.owner.name}" readonly="readonly">
+								value="${ownershipTransfer.application.owner.name}" readonly="readonly">
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.owner.address" /> </label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="" id="address"
 								class="form-control occupancy resetValues"
-								value="${ownershipTransfer.parent.owner.address}"
+								value="${ownershipTransfer.application.owner.address}"
 								readonly="readonly">
 						</div>
 						
@@ -153,7 +152,7 @@
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="" id="extentInSqmts"
 								class="form-control extentInSqmts resetValues decimalfixed"
-								value="${ownershipTransfer.parent.siteDetail[0].extentinsqmts}"
+								value="${ownershipTransfer.application.siteDetail[0].extentinsqmts}"
 								readonly="readonly">
 						</div>	
 						<label class="col-sm-2 control-label text-right"><spring:message
@@ -161,17 +160,16 @@
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="" id="occupancy"
 								class="form-control occupancy resetValues"
-								value="${ownershipTransfer.parent.occupanciesName}"
+								value="${ownershipTransfer.application.occupanciesName}"
 								readonly="readonly">
 						</div>					
 					</div>
 					
 					<div class="form-group">					
-						<label class="col-sm-3 control-label text-left">
-				            <spring:message code="lbl.edcr.appln.no"/>
+						<label class="col-sm-3 control-label text-left" id="ownpermitno">
 				        </label>
 				        <div class="col-sm-2 add-margin view-content">
-				            <div class="text-center" id="edcrApplicationNumber"></div>
+				            <div class="text" id="edcrApplicationNumber"></div>
 				        </div>				
 					</div>
 				</div>
@@ -254,4 +252,3 @@
 	src="<cdn:url value='/resources/js/app/ownershipTransfer/citizen-ownership-transfer-helper.js?rnd=${app_release_no}'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/applicant-helper.js?rnd=${app_release_no}'/>"></script>
-	

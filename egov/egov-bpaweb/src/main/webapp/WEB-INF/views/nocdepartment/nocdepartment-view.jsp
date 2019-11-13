@@ -29,8 +29,7 @@
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.nocconfigs" />
 						</div>
-						<div class="col-sm-3 add-margin view-content">
-							${nocDepartment.nocConfigs}</div>
+						<%-- <%@ include file="../nocconfig/nocconfig-formtable.jsp"%> --%>
 					</div>
 				</div>
 			</div>

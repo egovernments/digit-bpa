@@ -1,0 +1,8 @@
+{
+	"resources": [
+		{
+			"url": "/rest/dcr/scrutinizeplan/**",
+			"roles": "hasAnyRole('Third Party Operator')"
+		}
+	]
+}

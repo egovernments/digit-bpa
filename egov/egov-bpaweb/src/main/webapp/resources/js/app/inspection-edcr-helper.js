@@ -116,7 +116,7 @@ $(document).ready(
                  $.ajax({
                      async: false,
                      crossDomain: true,
-                     url: '/edcr/rest/approved-plan-details/by-edcr-number/' + $('#eDcrNumber').val(),
+                     url: '/edcr/public/approved-plan-details/by-edcr-number/' + $('#eDcrNumber').val(),
                      type: "GET",
                      contentType: 'application/json; charset=utf-8',
                      success: function (response) {
@@ -246,13 +246,7 @@ $(document).ready(
 	        async: false,
 	        dataType: "json",
 	        success: function (response) {
-	            if(response) {
-	            	 if(response.notExistPermissionNo){
-                         bootbox.alert('Invalid Building Plan Permission No.');
-                         resetDCRPopulatedValues();
-                  	   $('#planPermissionNumber').val('');
-                         return false;
-	            	 }
+	        	if(Object.keys(response).length > 0 ) {
                     $('#bpaApplicationNumber').val(response.applicationNumber);
 
                     $('#permissionNumber').html('<a onclick="openPopup(\'/bpa/application/details-view/by-permit-number/' + $('#planPermissionNumber').val() + '\')" href="javascript:void(0);">' + $('#planPermissionNumber').val()  + '</a>');
@@ -270,7 +264,7 @@ $(document).ready(
 	            	$.ajax({
 	                    async: false,
 	                    crossDomain: true,
-	                    url: '/edcr/rest/approved-plan-details/by-edcr-number/' + response.dcrNumber,
+	                    url: '/edcr/public/approved-plan-details/by-edcr-number/' + response.dcrNumber,
 	                    type: "GET",
 	                    contentType: 'application/json; charset=utf-8',
 	                    success: function (response) {
