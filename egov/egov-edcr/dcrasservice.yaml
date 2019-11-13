@@ -191,7 +191,7 @@ components:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
         dxfFile:
           type: string
-          format: application/dxf
+          x-mimetype: application/dxf
           description: The builing plan drawing file, in .dxf format, which needs to be scrutinized.
       example:
         tenantId: sonpur
