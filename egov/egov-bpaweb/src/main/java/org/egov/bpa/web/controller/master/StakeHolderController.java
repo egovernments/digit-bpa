@@ -385,8 +385,8 @@ public class StakeHolderController extends GenericWorkFlowController {
     }
 
     @PostMapping("/update")
-    public String updateStakeholder(@ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder, final Model model,
-            final HttpServletRequest request, final BindingResult errors, final RedirectAttributes redirectAttributes) {
+    public String updateStakeholder(@Valid @ModelAttribute(STAKE_HOLDER) final StakeHolder stakeHolder, final BindingResult errors,
+           final HttpServletRequest request,  final Model model,final RedirectAttributes redirectAttributes) {
         stakeHolderService.validateDocs(stakeHolder, errors);
         if (errors.hasErrors()) {
             preapreUpdateModel(stakeHolder, model);

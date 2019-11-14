@@ -53,7 +53,6 @@ public class EdcrApplication extends AbstractAuditable {
     private ApplicationType applicationType;
 
     @SafeHtml
-    @NotNull
     @Length(min = 1, max = 128)
     private String applicationNumber;
 

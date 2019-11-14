@@ -167,6 +167,7 @@ public class StakeHolder extends User {
     private String cinNumber;
 
     @SafeHtml
+    @Length(max=1024)
     @Audited
     private String comments;
 

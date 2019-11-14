@@ -94,6 +94,7 @@
 							<div class="col-sm-9 add-margin">
 								<form:textarea class="form-control" rows="3" path="comments" id="comments"
 											   maxlength="1024"/>
+								<form:errors path="comments" cssClass="error-msg" />		   
 							</div>
 						</div>
 					</div>
