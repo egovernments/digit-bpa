@@ -127,6 +127,8 @@ public class Plan implements Serializable {
     @JsonIgnore
     private List<EdcrPdfDetail> edcrPdfDetails;
     private FarDetails farDetails;
+    
+    private DrawingPreference drawingPreference=new DrawingPreference();
 
     private transient List<BigDecimal> distancesFromMonument = new ArrayList<>();
     private transient List<BigDecimal> distancesFromGovtBuilding = new ArrayList<>();
@@ -143,6 +145,11 @@ public class Plan implements Serializable {
     private transient List<Measurement> locationPlans;
     private transient List<Measurement> surrenderRoads = new ArrayList<>();
     private transient BigDecimal surrenderRoadArea = BigDecimal.ZERO;
+    private transient BigDecimal totalSurrenderRoadArea = BigDecimal.ZERO;
+
+    private DistanceToExternalEntity distanceToExternalEntity = new DistanceToExternalEntity();
+
+    private List<String> nocDeptCodes = new ArrayList<String>();
 
     public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
         return canopyDistanceFromPlotBoundary;
@@ -340,12 +347,12 @@ public class Plan implements Serializable {
         this.building = building;
     }
 
-    public Utility getUtility() {
-        return utility;
-    }
-
     public void setUtility(Utility utility) {
         this.utility = utility;
+    }
+
+    public Utility getUtility() {
+        return utility;
     }
 
     public Basement getBasement() {
@@ -356,12 +363,12 @@ public class Plan implements Serializable {
         this.basement = basement;
     }
 
-    public BigDecimal getCoverage() {
-        return coverage;
-    }
-
     public void setCoverage(BigDecimal coverage) {
         this.coverage = coverage;
+    }
+
+    public BigDecimal getCoverage() {
+        return coverage;
     }
 
     public BigDecimal getFar() {
@@ -454,12 +461,12 @@ public class Plan implements Serializable {
         this.lengthFactor = lengthFactor;
     }
 
-    public StringBuffer getAdditionsToDxf() {
-        return additionsToDxf;
-    }
-
     public void addToAdditionsToDxf(String s) {
         additionsToDxf.append(s);
+    }
+
+    public StringBuffer getAdditionsToDxf() {
+        return additionsToDxf;
     }
 
     public void setAdditionsToDxf(StringBuffer additionsToDxf) {
@@ -522,12 +529,12 @@ public class Plan implements Serializable {
         this.distancesFromGovtBuilding = distancesFromGovtBuilding;
     }
 
-    public List<SepticTank> getSepticTanks() {
-        return septicTanks;
-    }
-
     public void setSepticTanks(List<SepticTank> septicTanks) {
         this.septicTanks = septicTanks;
+    }
+
+    public List<SepticTank> getSepticTanks() {
+        return septicTanks;
     }
 
     public List<BigDecimal> getDistancesFromRiverGangaEdge() {
@@ -562,12 +569,12 @@ public class Plan implements Serializable {
         this.distancesFromEmbankmentGanga = distancesFromEmbankmentGanga;
     }
 
-    public Plantation getPlantation() {
-        return plantation;
-    }
-
     public void setPlantation(Plantation plantation) {
         this.plantation = plantation;
+    }
+
+    public Plantation getPlantation() {
+        return plantation;
     }
 
     public GuardRoom getGuardRoom() {
@@ -602,8 +609,16 @@ public class Plan implements Serializable {
         this.northDirection = northDirection;
     }
 
+    public DrawingPreference getDrawingPreference() {
+        return drawingPreference;
+    }
+
     public List<Measurement> getLocationPlans() {
         return locationPlans;
+    }
+
+    public void setDrawingPreference(DrawingPreference drawingPreference) {
+        this.drawingPreference = drawingPreference;
     }
 
     public void setLocationPlans(List<Measurement> locationPlans) {
@@ -622,8 +637,24 @@ public class Plan implements Serializable {
         return surrenderRoadArea;
     }
 
+    public BigDecimal getTotalSurrenderRoadArea() {
+        return totalSurrenderRoadArea;
+    }
+
     public void setSurrenderRoadArea(BigDecimal surrenderRoadArea) {
         this.surrenderRoadArea = surrenderRoadArea;
+    }
+
+    public void setTotalSurrenderRoadArea(BigDecimal surrenderRoadArea) {
+        this.totalSurrenderRoadArea = surrenderRoadArea;
+    }
+
+    public DistanceToExternalEntity getDistanceToExternalEntity() {
+        return distanceToExternalEntity;
+    }
+
+    public void setDistanceToExternalEntity(DistanceToExternalEntity distanceToExternalEntity) {
+        this.distanceToExternalEntity = distanceToExternalEntity;
     }
 
 }

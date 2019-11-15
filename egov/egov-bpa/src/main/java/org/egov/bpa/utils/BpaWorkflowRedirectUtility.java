@@ -192,13 +192,13 @@ public class BpaWorkflowRedirectUtility {
     @Transactional
     public void redirectToBpaWorkFlow(final OwnershipTransfer ownershipTransfer, final WorkflowBean wfBean) {
         final WorkFlowMatrix wfMatrix = getWfMatrixByCurrentState(ownershipTransfer.getStateType(), wfBean.getCurrentState(),
-        		ownershipTransfer.getParent().getApplicationType().getName());
+        		ownershipTransfer.getApplication().getApplicationType().getName());
         final OwnershipTransferWorkflowCustomDefaultImpl ownershipTransferWorkflowImpl = getInitialisedWorkFlowBeanOfOwnershipTransfer();
         Long approvalPositionId = wfBean.getApproverPositionId();
         if (wfBean.getApproverPositionId() == null)
             approvalPositionId = getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                    getBoundaryForWorkflow(ownershipTransfer.getParent().getSiteDetail().get(0)).getId());
-        wfBean.setAdditionalRule(ownershipTransfer.getParent().getApplicationType().getName());
+                    getBoundaryForWorkflow(ownershipTransfer.getApplication().getSiteDetail().get(0)).getId());
+        wfBean.setAdditionalRule(ownershipTransfer.getApplication().getApplicationType().getName());
         wfBean.setApproverPositionId(approvalPositionId);
         if (ownershipTransferWorkflowImpl != null)
             if (BpaConstants.WF_OWNERSHIP_FEE_PENDING.equals(wfBean.getCurrentState())) {

@@ -612,7 +612,7 @@ public class PlanReportService {
         valuesMap.put("electricLineVoltage", voltages);
         valuesMap.put("blockCount",
                 plan.getBlocks() != null && !plan.getBlocks().isEmpty() ? plan.getBlocks().size() : 0);
-        valuesMap.put("surrenderRoadArea", plan.getSurrenderRoadArea());
+        valuesMap.put("surrenderRoadArea", plan.getTotalSurrenderRoadArea());
         String imageURL = reportUtil.getImageURL("/egi/resources/global/images/egov_logo_brown.png");
         valuesMap.put("egovLogo", imageURL);
         valuesMap.put("cityLogo", cityService.getCityLogoURL());

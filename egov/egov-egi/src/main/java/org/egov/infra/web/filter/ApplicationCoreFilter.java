@@ -104,6 +104,7 @@ public class ApplicationCoreFilter implements Filter {
 
     @Value("${app.version}_${app.build.no}")
     private String applicationRelease;
+    
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationCoreFilter.class);
 
     @Override
@@ -114,7 +115,6 @@ public class ApplicationCoreFilter implements Filter {
             prepareUserSession(session);
             prepareApplicationThreadLocal(session);
             prepareRestService(request, session);
-
             chain.doFilter(request, resp);
         } finally {
             ApplicationThreadLocals.clearValues();

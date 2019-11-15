@@ -124,8 +124,7 @@ public class PushBpaApplicationToPortalUtil {
         final PortalInbox portalInbox = portalInboxBuilder.build();
         portalInboxService.pushInboxMessage(portalInbox);
     }
-    
-    
+
     @Transactional
     public void updatePortalUserinbox(final OwnershipTransfer ownershipTransfer, final User additionalPortalInboxUser) {
         Module module = moduleService.getModuleByName(EGMODULE_NAME);
@@ -147,7 +146,6 @@ public class PushBpaApplicationToPortalUtil {
                     status, isResolved, new Date(), ownershipTransfer.getState(),
                     additionalPortalInboxUser, ownershipTransfer.getOwnershipNumber(), url);
     }
- 
 
     @Transactional
     public void createPortalUserinbox(final OwnershipTransfer ownershipTransfer, final List<User> portalInboxUser,
@@ -165,8 +163,11 @@ public class PushBpaApplicationToPortalUtil {
         Module module = moduleService.getModuleByName(EGMODULE_NAME);
         boolean isResolved = false;
         String url = "/bpa/citizen/application/ownership/transfer/update/" + ownershipTransfer.getApplicationNumber();
-        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module, ownershipTransfer.getParent() == null ? ownershipTransfer.getOwner().getName() : ownershipTransfer.getParent().getOwner().getName(),
-        		OWNERSHIPTRANSFER.concat(ownershipTransfer.getParent().getServiceType().getDescription()), ownershipTransfer.getApplicationNumber(),
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
+                ownershipTransfer.getParent() == null ? ownershipTransfer.getOwner().getName()
+                        : ownershipTransfer.getParent().getOwner().getName(),
+                OWNERSHIPTRANSFER.concat(ownershipTransfer.getApplication().getServiceType().getDescription()),
+                ownershipTransfer.getApplicationNumber(),
                 ownershipTransfer.getOwnershipNumber(), ownershipTransfer.getId(), SUCCESS, SUCCESS, url, isResolved,
                 status, new Date(), ownershipTransfer.getState(), portalInboxUser);
 

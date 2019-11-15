@@ -175,7 +175,7 @@ public class OwnershipTransferBillService extends BillServiceInterface {
         final Installment installment = installmentDao.getInsatllmentByModuleForGivenDateAndInstallmentType(
                 moduleService.getModuleByName(BpaConstants.EGMODULE_NAME), new Date(), BpaConstants.YEARLY);
     	BigDecimal otAdmissionFee = BigDecimal.ZERO ;
-            Criteria feeCrit = getBpaFeeCriteria(ownershipTransfer.getParent().getServiceType().getId(), BpaConstants.BPA_APP_FEE, FeeSubType.APPLICATION_FEE);
+            Criteria feeCrit = getBpaFeeCriteria(ownershipTransfer.getApplication().getServiceType().getId(), BpaConstants.BPA_APP_FEE, FeeSubType.APPLICATION_FEE);
             List<BpaFeeMapping> bpaFeeMap = feeCrit.list();
             for (final BpaFeeMapping feeMap : bpaFeeMap) {
             	 otAdmissionFee = BigDecimal.valueOf(feeMap.getAmount());

@@ -56,9 +56,9 @@ public class StairLanding extends Measurement {
 
     private String number;
 
-    private transient List<Measurement> landingPolylines;
+    private transient List<Measurement> landings;
 
-    private Boolean landingPolyLineClosed = false;
+    private Boolean landingClosed = false;
 
     private List<BigDecimal> lengths;
 
@@ -72,23 +72,23 @@ public class StairLanding extends Measurement {
         this.number = number;
     }
 
-    public List<Measurement> getLandingPolylines() {
-        return landingPolylines;
-    }
+    public List<Measurement> getLandings() {
+		return landings;
+	}
 
-    public void setLandingPolylines(List<Measurement> landingPolylines) {
-        this.landingPolylines = landingPolylines;
-    }
+	public void setLandings(List<Measurement> landings) {
+		this.landings = landings;
+	}
 
-    public Boolean getLandingPolyLineClosed() {
-        return landingPolyLineClosed;
-    }
+	public Boolean getLandingClosed() {
+		return landingClosed;
+	}
 
-    public void setLandingPolyLineClosed(Boolean landingPolyLineClosed) {
-        this.landingPolyLineClosed = landingPolyLineClosed;
-    }
+	public void setLandingClosed(Boolean landingClosed) {
+		this.landingClosed = landingClosed;
+	}
 
-    public List<BigDecimal> getLengths() {
+	public List<BigDecimal> getLengths() {
         return lengths;
     }
 

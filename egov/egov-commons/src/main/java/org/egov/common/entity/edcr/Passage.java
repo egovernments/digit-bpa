@@ -18,6 +18,10 @@ public class Passage extends Measurement {
         return passageDimensions;
     }
 
+    public List<BigDecimal> getPassageStairDimensions() {
+        return passageStairDimensions;
+    }
+
     public void setPassagePolyLines(List<BigDecimal> passagePolyLines) {
         passageDimensions = passagePolyLines;
     }
@@ -28,6 +32,18 @@ public class Passage extends Measurement {
 
     public void setPassageStairPolyLines(List<BigDecimal> passageStairPolyLines) {
         passageStairDimensions = passageStairPolyLines;
+    }
+
+    public void setPassageStairDimensions(List<BigDecimal> passageStairDimensions) {
+        this.passageStairDimensions = passageStairDimensions;
+    }
+
+    public List<BigDecimal> getPassageDimensions() {
+        return passageDimensions;
+    }
+
+    public void setPassageDimensions(List<BigDecimal> passageDimensions) {
+        this.passageDimensions = passageDimensions;
     }
 
 }

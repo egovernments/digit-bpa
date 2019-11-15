@@ -270,26 +270,26 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
         Map<String, String> edcrNocMandatory = ocNocService.getEdcrNocMandatory(oc.geteDcrNumber());
         for (OCNocDocuments nocDocument : oc.getNocDocuments()) {
             String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
-            NocConfiguration nocConfig = nocConfigurationService.findByDepartmentAndType(code, BpaConstants.OC);
+            NocConfiguration nocConfig = nocConfigurationService
+                    .findByDepartmentAndType(code, BpaConstants.OC);
 
             if (ocNocService.findByApplicationNumberAndType(oc.getApplicationNumber(), code) != null)
                 nocTypeApplMap.put(code, "initiated");
             if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.OC)
                     && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
-                    && nocConfig.getIntegrationInitiation()
-                            .equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())
+                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString())
                     && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
                 nocConfigMap.put(nocConfig.getDepartment(), "initiate");
             }
-            if (nocConfig != null
-                    && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
-                    && nocConfig.getIntegrationInitiation()
-                            .equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
+            if (nocConfig != null && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
+                    && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())
                     && edcrNocMandatory.get(nocConfig.getDepartment()).equalsIgnoreCase("YES")) {
                 nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
                 nocAutoCount++;
-                List<User> userList = nocUsers.stream().filter(usr -> usr.getRoles().stream().anyMatch(
-                        usrrl -> usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+                List<User> userList = nocUsers.stream()
+                        .filter(usr -> usr.getRoles().stream()
+                                .anyMatch(usrrl -> usrrl.getName()
+                                        .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
                         .collect(Collectors.toList());
                 if (!userList.isEmpty())
                     nocAutoUsers.add(userList.get(0));
@@ -303,7 +303,10 @@ public class CitizenUpdateOccupancyCertificateController extends BpaGenericAppli
                     nocDocument.setOcNoc(ona);
                 }
             }
-            model.addAttribute("nocUserExists", nocAutoUsers.size() == nocAutoCount);
+            if (nocAutoUsers.size() == nocAutoCount)
+                model.addAttribute("nocUserExists", true);
+            else
+                model.addAttribute("nocUserExists", false);
         }
         prepareDocumentsAllowedExtAndSize(model);
     }

@@ -774,27 +774,6 @@ public class StakeHolderService {
 
     }
 
-    public List<StakeHolder> getStakeHoldersByType(StakeHolderType stkHldrType) {
-        return stakeHolderRepository.findActiveByType(stkHldrType);
-    }
-
-    public void validateDocs(final StakeHolder stakeHolder, final BindingResult errors) {
-        List<String> stkhrAllowedExtenstions = new ArrayList<>(
-                Arrays.asList(bpaApplicationSettings.getValue("bpa.stakeholer.docs.allowed.extenstions").split(",")));
-
-        List<String> stkhrMimeTypes = new ArrayList<>(
-                Arrays.asList(bpaApplicationSettings.getValue("bpa.stakeholer.docs.allowed.mime.types").split(",")));
-
-        Integer i = 0;
-        for (StakeHolderDocument document : stakeHolder.getStakeHolderDocument()) {
-            bpaUtils.validateFiles(errors, stkhrAllowedExtenstions, stkhrMimeTypes, document.getFiles(),
-                    "stakeHolderDocument[" + i + "].files",
-                    bpaApplicationSettings.getValue("bpa.stakeholer.docs.max.size"));
-            i++;
-        }
-
-    }
-
     public ErrorDetail validateStakeholder(StakeHolder stakeHolder) {
         ErrorDetail error = new ErrorDetail();
         if (stakeHolder != null && StakeHolderStatus.BLOCKED.equals(stakeHolder.getStatus())) {
@@ -815,6 +794,27 @@ public class StakeHolderService {
         }
 
         return error;
+    }
+
+    public List<StakeHolder> getStakeHoldersByType(StakeHolderType stkHldrType) {
+        return stakeHolderRepository.findActiveByType(stkHldrType);
+    }
+
+    public void validateDocs(final StakeHolder stakeHolder, final BindingResult errors) {
+        List<String> stkhrAllowedExtenstions = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.stakeholer.docs.allowed.extenstions").split(",")));
+
+        List<String> stkhrMimeTypes = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.stakeholer.docs.allowed.mime.types").split(",")));
+
+        Integer i = 0;
+        for (StakeHolderDocument document : stakeHolder.getStakeHolderDocument()) {
+            bpaUtils.validateFiles(errors, stkhrAllowedExtenstions, stkhrMimeTypes, document.getFiles(),
+                    "stakeHolderDocument[" + i + "].files",
+                    bpaApplicationSettings.getValue("bpa.stakeholer.docs.max.size"));
+            i++;
+        }
+
     }
 
 }

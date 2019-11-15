@@ -89,7 +89,7 @@
 				   value="${citizenOrBusinessUser}"/>
 			<form:hidden path="" id="wfstate" value="${ownershipTransfer.state.id}" />
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
-			<input type="hidden" id="serviceTypeCode" value="${ownershipTransfer.parent.serviceType.code}" />
+			<input type="hidden" id="serviceTypeCode" value="${ownershipTransfer.application.serviceType.code}" />
 			<form:hidden path="" id="wfstateDesc"
 						 value="${ownershipTransfer.state.value}" />
 			<form:hidden path="" id="collectFeeValidate" value="${collectFeeValidate}" />
@@ -130,11 +130,6 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<jsp:include page="../application/applicationhistory-view.jsp"></jsp:include>
 					</div>
-					<c:if test="${showRejectionReasons}">
-						<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="../application/rejection-reasons.jsp"></jsp:include>
-						</div>
-					</c:if>
 				</div>
 				<div id="document-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">

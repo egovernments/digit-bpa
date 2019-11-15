@@ -1201,6 +1201,7 @@
 			value="title.ownership.change" cascade="true" />
 		<put-attribute name="body"
 			value="/WEB-INF/views/ownershipTransfer/ownership-transfer-citizen-new.jsp" />
+
 	</definition>
 	<definition name="ownership-transfer-citizen-view"
 		extends="base_layout">
@@ -1230,13 +1231,7 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/ownershipTransfer/ownership-transfer-update.jsp" />
 	</definition>
-	<definition name="search-ownership-transfer"
-		extends="base_layout">
-		<put-attribute name="page-title"
-			value="title.search.ownership.appln" cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/ownershipTransfer/search-ownership-transfer.jsp" />
-	</definition>
+
 	<definition name="search-ownership-transfer"
 		extends="base_layout">
 		<put-attribute name="page-title"
@@ -1324,4 +1319,5 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/application/viewappln-details-bydcrno.jsp" />
 	</definition>
+
 </tiles-definitions>

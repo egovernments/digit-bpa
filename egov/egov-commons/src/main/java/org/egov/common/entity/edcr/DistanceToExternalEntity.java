@@ -44,64 +44,54 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
 package org.egov.common.entity.edcr;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Ramp extends Measurement {
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-    private static final long serialVersionUID = 30L;
+/**
+ * 
+ * @author pradeep
+ *
+ *         PoJo used to keep distance from the external entities like monuments,
+ *         government building, river etc
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class DistanceToExternalEntity implements Serializable {
 
-    private Integer number;
+	private static final long serialVersionUID = -4379805246519538610L;
+	private List<BigDecimal> monuments = new ArrayList<>();
+	private List<BigDecimal> govtBuildings = new ArrayList<>();
+	private List<River> rivers = new ArrayList<River>();
 
-    private BigDecimal slope;
-
-    private transient List<Measurement> ramps;  
-
-    private Boolean rampClosed = false;  
-
-    private BigDecimal floorHeight;
-
-    public BigDecimal getFloorHeight() {
-        return floorHeight;
-    }
-
-    public void setFloorHeight(BigDecimal floorHeight) {
-        this.floorHeight = floorHeight;
-    }
-   
-    public List<Measurement> getRamps() {
-		return ramps;
+	public List<BigDecimal> getMonuments() {
+		return monuments;
 	}
 
-	public void setRamps(List<Measurement> ramps) {
-		this.ramps = ramps;
+	public void setMonuments(List<BigDecimal> monuments) {
+		this.monuments = monuments;
 	}
 
-	public Boolean getRampClosed() {
-		return rampClosed;
+	public List<BigDecimal> getGovtBuildings() {
+		return govtBuildings;
 	}
 
-	public void setRampClosed(Boolean rampClosed) {
-		this.rampClosed = rampClosed;
+	public void setGovtBuildings(List<BigDecimal> govtBuildings) {
+		this.govtBuildings = govtBuildings;
 	}
 
-	public BigDecimal getSlope() {
-        return slope;
-    }
-
-    public void setSlope(BigDecimal slope) {
-        this.slope = slope;
-    }
-
-    public Integer getNumber() {
-        return number;
-    }
-
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
+	public List<River> getRivers() {
+		return rivers;
+	}
+	public void addRivers(River river) {
+		this.getRivers().add(river) ;
+	}
+	public void setRivers(List<River> rivers) {
+		this.rivers = rivers;
+	}
 
 }

@@ -86,19 +86,19 @@ public class NorthDirection extends FeatureProcess {
 		Map<String, String> details = new HashMap<>();
 		details.put(RULE_NO, RULE_5_4_I_I);
 		details.put(DESCRIPTION, NORTH_DIRECTION_DESCRIPTION);
-		if (pl.getNorthDirection() == null) {
+		if (pl.getDrawingPreference().getNorthDirection() == null) {
 			errors.put("NORTH_DIRECTION", "NORTH_DIRECTION layer is not provided");
 			pl.addErrors(errors);
-		} else if (pl.getNorthDirection().getDirections() != null && !pl.getNorthDirection().getDirections().isEmpty()
-				&& StringUtils.isNotBlank(pl.getNorthDirection().getDirection())
-				&& pl.getNorthDirection().getDirection().contains("N")) {
+		} else if (pl.getDrawingPreference().getNorthDirection().getDirections() != null && !pl.getDrawingPreference().getNorthDirection().getDirections().isEmpty()
+				&& StringUtils.isNotBlank(pl.getDrawingPreference().getNorthDirection().getDirection())
+				&& pl.getDrawingPreference().getNorthDirection().getDirection().contains("N")) {
 			details.put(PROVIDED, "North directions provided");
 			details.put(STATUS, Result.Accepted.getResultVal());
 			scrutinyDetail.getDetail().add(details);
 			pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 		} else {
-			if (StringUtils.isBlank(pl.getNorthDirection().getDirection())
-					|| !pl.getNorthDirection().getDirection().contains("N"))
+			if (StringUtils.isBlank(pl.getDrawingPreference().getNorthDirection().getDirection())
+					|| !pl.getDrawingPreference().getNorthDirection().getDirection().contains("N"))
 				details.put(PROVIDED, "Mtext in NORTH_DIRECTION layer does not contains 'N' character");
 			else
 				details.put(PROVIDED, "PolyLine is not defined in NORTH_DIRECTION layer");

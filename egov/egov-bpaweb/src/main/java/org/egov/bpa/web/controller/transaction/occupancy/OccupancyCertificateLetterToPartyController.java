@@ -262,7 +262,7 @@ public class OccupancyCertificateLetterToPartyController {
         processAndStoreLetterToPartyDocuments(ocLetterToParty);
         OCLetterToParty ocLtpRes = ocLetterToPartyService.save(ocLetterToParty,
                 ocLetterToParty.getOc().getState().getOwnerPosition().getId());
-         ocSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(ocLetterToParty.getOc());
+        ocSmsAndEmailService.sendSMSAndEmailToApplicantForLettertoparty(ocLetterToParty.getOc());
         redirectAttributes.addFlashAttribute(MESSAGE,
                 messageSource.getMessage(MSG_LP_UPDATE_SUCCESS, null, null));
         return REDIRECT_LETTER_TO_PARTY_RESULT + applicationNumber + "/" + ocLtpRes.getLetterToParty().getLpNumber();

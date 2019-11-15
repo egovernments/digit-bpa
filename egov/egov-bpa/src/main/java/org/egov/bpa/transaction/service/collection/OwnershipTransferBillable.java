@@ -130,9 +130,9 @@ public class OwnershipTransferBillable extends AbstractBillable implements Billa
 
     @Override
     public Long getBoundaryNum() {
-        return ownershipTransfer.getParent().getSiteDetail().get(0) != null
-                && ownershipTransfer.getParent().getSiteDetail().get(0).getAdminBoundary() == null ? 0l
-                        : ownershipTransfer.getParent().getSiteDetail().get(0)
+        return ownershipTransfer.getApplication().getSiteDetail().get(0) != null
+                && ownershipTransfer.getApplication().getSiteDetail().get(0).getAdminBoundary() == null ? 0l
+                        : ownershipTransfer.getApplication().getSiteDetail().get(0)
                                 .getAdminBoundary().getBoundaryNum();
     }
 
@@ -246,7 +246,7 @@ public class OwnershipTransferBillable extends AbstractBillable implements Billa
 
     @Override
     public String getConsumerType() {
-        return ownershipTransfer.getParent().getServiceType().getCode();
+        return ownershipTransfer.getApplication().getServiceType().getCode();
     }
 
     @Override

@@ -81,6 +81,7 @@ import org.egov.bpa.master.entity.NocConfiguration;
 import org.egov.bpa.master.entity.StakeHolder;
 import org.egov.bpa.master.entity.enums.StakeHolderStatus;
 import org.egov.bpa.master.service.NocConfigurationService;
+import org.egov.bpa.service.noc.NocIntegrationService;
 import org.egov.bpa.transaction.entity.ApplicationFloorDetail;
 import org.egov.bpa.transaction.entity.ApplicationStakeHolder;
 import org.egov.bpa.transaction.entity.BpaApplication;
@@ -164,6 +165,9 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
     private NocConfigurationService nocConfigurationService;
     @Autowired
     private PermitNocApplicationService permitNocService;
+
+    @Autowired
+    private NocIntegrationService nocIntegrationService;
 
     @GetMapping("/newconstruction-form")
     public String showNewApplicationForm(@ModelAttribute final BpaApplication bpaApplication, final Model model,
@@ -256,14 +260,14 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                         .findByApplicationNumberAndType(bpaApplication.getApplicationNumber(), code) != null)
                     nocTypeApplMap.put(code, "initiated");
                 if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
-                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
-                        && nocConfig.getIntegrationInitiation()
-                                .equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
+                        && (nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString()) ||
+                                (nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.THIRD_PARTY.toString())))
+                        && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.MANUAL.toString()))
                     nocConfigMap.put(nocConfig.getDepartment(), "initiate");
                 if (nocConfig != null && nocConfig.getApplicationType().trim().equalsIgnoreCase(BpaConstants.PERMIT)
-                        && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
-                        && nocConfig.getIntegrationInitiation()
-                                .equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString()))
+                        && (nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString()) ||
+                                (nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.THIRD_PARTY.toString())))
+                        && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString()))
                     nocAutoMap.put(nocConfig.getDepartment(), "autoinitiate");
 
             }
@@ -523,6 +527,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         else
             bpaApplication.setAdmissionfeeAmount(BigDecimal.valueOf(0));
 
+        nocIntegrationService.pushNocRequest(bpaApplication);
+
         applicationBpaService.persistOrUpdateApplicationDocument(bpaApplication);
         if (bpaApplication.getOwner().getUser() != null && bpaApplication.getOwner().getUser().getId() == null)
             applicationBpaService.buildOwnerDetails(bpaApplication);
@@ -557,6 +563,8 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
             String remarks = null;
             if (bpaApplication.getAuthorizedToSubmitPlan())
                 remarks = AUTH_TO_SUBMIT_PLAN;
+            if (isEdcrIntegrationRequire)
+                permitNocService.initiateNoc(bpaApplication);
             bpaUtils.redirectToBpaWorkFlow(approvalPosition, bpaApplication, WF_NEW_STATE,
                     remarks == null ? bpaApplication.getApprovalComent() : remarks, null, null);
             bpaUtils.sendSmsEmailOnCitizenSubmit(bpaApplication);

@@ -214,11 +214,11 @@ public class GeneralStair extends FeatureProcess {
             Floor floor, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair) {
         if (!generalStair.getFlights().isEmpty()) {
             for (Flight flight : generalStair.getFlights()) {
-                List<Measurement> flightPolyLines = flight.getFlightPolyLines();
+                List<Measurement> flightPolyLines = flight.getFlights();
                 List<BigDecimal> flightLengths = flight.getLengthOfFlights();
                 List<BigDecimal> flightWidths = flight.getWidthOfFlights();
                 BigDecimal noOfRises = flight.getNoOfRises();
-                Boolean flightPolyLineClosed = flight.getFlightPolyLineClosed();
+                Boolean flightPolyLineClosed = flight.getFlightClosed();
 
                 BigDecimal minTread = BigDecimal.ZERO;
                 BigDecimal minFlightWidth = BigDecimal.ZERO;

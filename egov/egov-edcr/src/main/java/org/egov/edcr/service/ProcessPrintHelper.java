@@ -72,7 +72,7 @@ public class ProcessPrintHelper {
             LOG.debug("Side Yard2 \n " + pl.getPlot().getSideYard2());
             LOG.debug("Rear Yard \n " + pl.getPlot().getRearYard());
             LOG.debug(pl.getElectricLine());
-            LOG.debug(pl.getBuilding());
+          //  LOG.debug(pl.getBuilding());
             print(pl.getErrors());
         }
     }

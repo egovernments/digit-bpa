@@ -44,64 +44,68 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
 package org.egov.common.entity.edcr;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Ramp extends Measurement {
+import javax.persistence.Transient;
 
-    private static final long serialVersionUID = 30L;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-    private Integer number;
+/**
+ * 
+ * @author pradeep
+ *
+ *         PoJo used to keep water source details.
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
 
-    private BigDecimal slope;
+public class River implements Serializable {
 
-    private transient List<Measurement> ramps;  
+	private static final long serialVersionUID = 5131449150804243780L;
+	private String name;
+	
+	/**
+	 * This field will be used to capture distance from river as default value.
+	 */
+	
+	private List<BigDecimal> distancesFromRiverEdge = new ArrayList<>();
+	private List<BigDecimal> distancesFromProtectionWall = new ArrayList<>();
+	private List<BigDecimal> distancesFromEmbankment = new ArrayList<>();
 
-    private Boolean rampClosed = false;  
-
-    private BigDecimal floorHeight;
-
-    public BigDecimal getFloorHeight() {
-        return floorHeight;
-    }
-
-    public void setFloorHeight(BigDecimal floorHeight) {
-        this.floorHeight = floorHeight;
-    }
-   
-    public List<Measurement> getRamps() {
-		return ramps;
+	public String getName() {
+		return name;
 	}
 
-	public void setRamps(List<Measurement> ramps) {
-		this.ramps = ramps;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public Boolean getRampClosed() {
-		return rampClosed;
+	public List<BigDecimal> getDistancesFromRiverEdge() {
+		return distancesFromRiverEdge;
 	}
 
-	public void setRampClosed(Boolean rampClosed) {
-		this.rampClosed = rampClosed;
+	public void setDistancesFromRiverEdge(List<BigDecimal> distancesFromRiverEdge) {
+		this.distancesFromRiverEdge = distancesFromRiverEdge;
 	}
 
-	public BigDecimal getSlope() {
-        return slope;
-    }
+	public List<BigDecimal> getDistancesFromProtectionWall() {
+		return distancesFromProtectionWall;
+	}
 
-    public void setSlope(BigDecimal slope) {
-        this.slope = slope;
-    }
+	public void setDistancesFromProtectionWall(List<BigDecimal> distancesFromProtectionWall) {
+		this.distancesFromProtectionWall = distancesFromProtectionWall;
+	}
 
-    public Integer getNumber() {
-        return number;
-    }
+	public List<BigDecimal> getDistancesFromEmbankment() {
+		return distancesFromEmbankment;
+	}
 
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
+	public void setDistancesFromEmbankment(List<BigDecimal> distancesFromEmbankment) {
+		this.distancesFromEmbankment = distancesFromEmbankment;
+	}
 
 }

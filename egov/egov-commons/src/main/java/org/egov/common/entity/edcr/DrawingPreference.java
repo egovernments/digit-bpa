@@ -47,61 +47,67 @@
 
 package org.egov.common.entity.edcr;
 
-import java.math.BigDecimal;
+import java.io.Serializable;
 import java.util.List;
 
-public class Ramp extends Measurement {
+import javax.persistence.Transient;
 
-    private static final long serialVersionUID = 30L;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-    private Integer number;
+/**
+ * 
+ * @author pradeep
+ * 
+ *         Drawing preference Pojo used to verify drawing parameters.Drawing
+ *         preferences are the first one to be validate in each plan scrutiny.
+ *         Eg: Expecting all the plan to be submit in meter.
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class DrawingPreference implements Serializable {
 
-    private BigDecimal slope;
+	private static final long serialVersionUID = 5705288339053140008L;
 
-    private transient List<Measurement> ramps;  
+	@Transient
+	@JsonIgnore
+	private Boolean inMeters = true;
 
-    private Boolean rampClosed = false;  
+	@Transient
+	private Boolean lengthFactor = true;
 
-    private BigDecimal floorHeight;
+	private transient NorthDirection northDirection;
+	private transient List<Measurement> locationPlans;
 
-    public BigDecimal getFloorHeight() {
-        return floorHeight;
-    }
-
-    public void setFloorHeight(BigDecimal floorHeight) {
-        this.floorHeight = floorHeight;
-    }
-   
-    public List<Measurement> getRamps() {
-		return ramps;
+	public Boolean getInMeters() {
+		return inMeters;
 	}
 
-	public void setRamps(List<Measurement> ramps) {
-		this.ramps = ramps;
+	public void setInMeters(Boolean inMeters) {
+		this.inMeters = inMeters;
 	}
 
-	public Boolean getRampClosed() {
-		return rampClosed;
+	public Boolean getLengthFactor() {
+		return lengthFactor;
 	}
 
-	public void setRampClosed(Boolean rampClosed) {
-		this.rampClosed = rampClosed;
+	public void setLengthFactor(Boolean lengthFactor) {
+		this.lengthFactor = lengthFactor;
 	}
 
-	public BigDecimal getSlope() {
-        return slope;
-    }
+	public NorthDirection getNorthDirection() {
+		return northDirection;
+	}
 
-    public void setSlope(BigDecimal slope) {
-        this.slope = slope;
-    }
+	public void setNorthDirection(NorthDirection northDirection) {
+		this.northDirection = northDirection;
+	}
 
-    public Integer getNumber() {
-        return number;
-    }
+	public List<Measurement> getLocationPlans() {
+		return locationPlans;
+	}
 
-    public void setNumber(Integer number) {
-        this.number = number;
-    }
+	public void setLocationPlans(List<Measurement> locationPlans) {
+		this.locationPlans = locationPlans;
+	}
 
 }

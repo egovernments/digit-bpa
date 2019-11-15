@@ -52,66 +52,66 @@ import java.util.List;
 
 public class Flight extends Measurement {
 
-    private static final long serialVersionUID = 57L;
+	private static final long serialVersionUID = 57L;
 
-    private String number;
+	private String number;
 
-    private BigDecimal noOfRises;
+	private BigDecimal noOfRises;
 
-    private transient List<Measurement> flightPolyLines;
+	private transient List<Measurement> flights;
 
-    private Boolean flightPolyLineClosed = false;
+	private Boolean flightClosed = false;
 
-    private List<BigDecimal> lengthOfFlights;
+	private List<BigDecimal> lengthOfFlights;
 
-    private List<BigDecimal> widthOfFlights;
+	private List<BigDecimal> widthOfFlights;
 
-    public String getNumber() {
-        return number;
-    }
+	public String getNumber() {
+		return number;
+	}
 
-    public void setNumber(String number) {
-        this.number = number;
-    }
+	public void setNumber(String number) {
+		this.number = number;
+	}
 
-    public List<Measurement> getFlightPolyLines() {
-        return flightPolyLines;
-    }
+	public List<Measurement> getFlights() {
+		return flights;
+	}
 
-    public void setFlightPolyLines(List<Measurement> flightPolyLines) {
-        this.flightPolyLines = flightPolyLines;
-    }
+	public void setFlights(List<Measurement> flights) {
+		this.flights = flights;
+	}
 
-    public Boolean getFlightPolyLineClosed() {
-        return flightPolyLineClosed;
-    }
+	public Boolean getFlightClosed() {
+		return flightClosed;
+	}
 
-    public void setFlightPolyLineClosed(Boolean flightPolyLineClosed) {
-        this.flightPolyLineClosed = flightPolyLineClosed;
-    }
+	public void setFlightClosed(Boolean flightClosed) {
+		this.flightClosed = flightClosed;
+	}
 
-    public List<BigDecimal> getLengthOfFlights() {
-        return lengthOfFlights;
-    }
+	public List<BigDecimal> getLengthOfFlights() {
+		return lengthOfFlights;
+	}
 
-    public void setLengthOfFlights(List<BigDecimal> lengthOfFlights) {
-        this.lengthOfFlights = lengthOfFlights;
-    }
+	public void setLengthOfFlights(List<BigDecimal> lengthOfFlights) {
+		this.lengthOfFlights = lengthOfFlights;
+	}
 
-    public List<BigDecimal> getWidthOfFlights() {
-        return widthOfFlights;
-    }
+	public List<BigDecimal> getWidthOfFlights() {
+		return widthOfFlights;
+	}
 
-    public void setWidthOfFlights(List<BigDecimal> widthOfFlights) {
-        this.widthOfFlights = widthOfFlights;
-    }
+	public void setWidthOfFlights(List<BigDecimal> widthOfFlights) {
+		this.widthOfFlights = widthOfFlights;
+	}
 
-    public BigDecimal getNoOfRises() {
-        return noOfRises;
-    }
+	public BigDecimal getNoOfRises() {
+		return noOfRises;
+	}
 
-    public void setNoOfRises(BigDecimal noOfRises) {
-        this.noOfRises = noOfRises;
-    }
+	public void setNoOfRises(BigDecimal noOfRises) {
+		this.noOfRises = noOfRises;
+	}
 
 }

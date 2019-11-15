@@ -1039,6 +1039,5 @@ public class BpaUtils {
                     }
                 }
             }
-
     }
 }

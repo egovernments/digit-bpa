@@ -175,7 +175,7 @@ public class SearchBpaApplicationController extends BpaGenericApplicationControl
                 workflowHistoryService.getHistory(application.getAppointmentSchedule(), application.getCurrentState(),
                         application.getStateHistory()));
         model.addAttribute("inspectionList", inspectionService.findByBpaApplicationOrderByIdAsc(application));
-        List<InConstructionInspection> inConstInspections = new ArrayList<>();
+        List<InConstructionInspection> inConstInspections = new ArrayList<InConstructionInspection>();
         final List<PermitInspectionApplication> permitInspections = inspectionAppService
                 .findByApplicationNumber(application.getApplicationNumber());
 

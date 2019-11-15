@@ -55,9 +55,9 @@ public class Lift extends Measurement {
 
     private Integer number;
 
-    private transient List<Measurement> liftPolyLines;
+    private transient List<Measurement> lifts;
 
-    private Boolean liftPolyLineClosed = false;
+    private Boolean liftClosed = false;
 
     public Integer getNumber() {
         return number;
@@ -67,19 +67,20 @@ public class Lift extends Measurement {
         this.number = number;
     }
 
-    public List<Measurement> getLiftPolyLines() {
-        return liftPolyLines;
+    public List<Measurement> getLifts() {
+        return lifts;
     }
 
-    public void setLiftPolyLines(List<Measurement> liftPolyLines) {
-        this.liftPolyLines = liftPolyLines;
+    public void setLifts(List<Measurement> lifts) {
+        this.lifts = lifts;
     }
 
-    public Boolean getLiftPolyLineClosed() {
-        return liftPolyLineClosed;
+    public Boolean getLiftClosed() {
+        return liftClosed;
     }
 
-    public void setLiftPolyLineClosed(Boolean rampPolyLineClosed) {
-        liftPolyLineClosed = rampPolyLineClosed;
+    public void setLiftClosed(Boolean liftClosed) {
+        this.liftClosed = liftClosed;
     }
+
 }

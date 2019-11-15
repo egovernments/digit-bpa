@@ -276,25 +276,23 @@ public class SearchBpaApplicationForm extends DataTableSearchRequest {
         setFeeCollected(isFeeCollected);
         setFeeCollector(feeCollector);
     }
-
-    public SearchBpaApplicationForm(OwnershipTransfer ownershipTransfer, String currentOwner, String pendingAction,
-            Boolean feeCollector, Boolean isFeeCollected) {
+    
+    public SearchBpaApplicationForm(OwnershipTransfer ownershipTransfer, String currentOwner, String pendingAction, Boolean feeCollector,
+            Boolean isFeeCollected) {
         setId(ownershipTransfer.getId());
         setApplicationNumber(ownershipTransfer.getApplicationNumber());
-        setApplicantName(ownershipTransfer.getParent().getApplicantName());
+        setApplicantName(ownershipTransfer.getApplicantName());
         setApplicationDate(ownershipTransfer.getApplicationDate());
-        setAddress(ownershipTransfer.getParent().getOwner().getAddress());
-        setApplicationType(ownershipTransfer.getParent().getApplicationType() != null
-                ? ownershipTransfer.getParent().getApplicationType().getName()
-                : "");
-        setOccupancy(ownershipTransfer.getParent().getOccupanciesName());
-        setServiceType(ownershipTransfer.getParent().getServiceType().getDescription());
-        setServiceCode(ownershipTransfer.getParent().getServiceType().getCode());
-        setPlanPermissionNumber(ownershipTransfer.getParent().getPlanPermissionNumber());
-        setPlanPermissionDate(ownershipTransfer.getParent().getPlanPermissionDate());
-        setStakeHolderName(ownershipTransfer.getParent().getStakeHolder().get(0).getStakeHolder().getName());
-        if (!ownershipTransfer.getParent().getSiteDetail().isEmpty()) {
-            SiteDetail site = ownershipTransfer.getParent().getSiteDetail().get(0);
+        setAddress(ownershipTransfer.getOwner().getAddress());
+        setApplicationType(ownershipTransfer.getApplication().getApplicationType() != null ? ownershipTransfer.getApplication().getApplicationType().getName() : "");
+        setOccupancy(ownershipTransfer.getApplication().getOccupanciesName());
+        setServiceType(ownershipTransfer.getApplication().getServiceType().getDescription());
+        setServiceCode(ownershipTransfer.getApplication().getServiceType().getCode());
+        setPlanPermissionNumber(ownershipTransfer.getApplication().getPlanPermissionNumber());
+        setPlanPermissionDate(ownershipTransfer.getApplication().getPlanPermissionDate());
+        setStakeHolderName(ownershipTransfer.getApplication().getStakeHolder().get(0).getStakeHolder().getName());
+        if (!ownershipTransfer.getApplication().getSiteDetail().isEmpty()) {
+            SiteDetail site = ownershipTransfer.getApplication().getSiteDetail().get(0);
             setReSurveyNumber(site.getReSurveyNumber());
             setZone(site.getAdminBoundary() == null ? "" : site.getAdminBoundary().getParent().getName());
             setWard(site.getAdminBoundary() == null ? "" : site.getAdminBoundary().getName());

@@ -94,7 +94,7 @@ public class MonumentDistance extends FeatureProcess {
 
 		BigDecimal minDistanceFromMonument = BigDecimal.ZERO;
 		BigDecimal maxHeightOfBuilding = BigDecimal.ZERO;
-		List<BigDecimal> distancesFromMonument = pl.getDistancesFromMonument();
+		List<BigDecimal> distancesFromMonument = pl.getDistanceToExternalEntity().getMonuments();
 		List<Block> blocks = pl.getBlocks();
 		Block maxBuildingHeightBlock = new Block();
 

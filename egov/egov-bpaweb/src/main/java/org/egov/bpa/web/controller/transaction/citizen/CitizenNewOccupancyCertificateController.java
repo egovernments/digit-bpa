@@ -233,14 +233,16 @@ public class CitizenNewOccupancyCertificateController extends BpaGenericApplicat
 
             for (OCNocDocuments nocDocument : occupancyCertificate.getNocDocuments()) {
                 String code = nocDocument.getNocDocument().getServiceChecklist().getChecklist().getCode();
-                NocConfiguration nocConfig = nocConfigurationService.findByDepartmentAndType(code, BpaConstants.OC);
+                NocConfiguration nocConfig = nocConfigurationService
+                        .findByDepartmentAndType(code, BpaConstants.OC);
                 if (nocConfig != null
                         && nocConfig.getIntegrationType().equalsIgnoreCase(NocIntegrationTypeEnum.INTERNAL.toString())
-                        && nocConfig.getIntegrationInitiation()
-                                .equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
+                        && nocConfig.getIntegrationInitiation().equalsIgnoreCase(NocIntegrationInitiationEnum.AUTO.toString())) {
                     nocAutoCount++;
-                    List<User> userList = nocUsers.stream().filter(usr -> usr.getRoles().stream().anyMatch(
-                            usrrl -> usrrl.getName().equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
+                    List<User> userList = nocUsers.stream()
+                            .filter(usr -> usr.getRoles().stream()
+                                    .anyMatch(usrrl -> usrrl.getName()
+                                            .equals(BpaConstants.getNocRole().get(nocConfig.getDepartment()))))
                             .collect(Collectors.toList());
                     if (!userList.isEmpty())
                         nocAutoUsers.add(userList.get(0));

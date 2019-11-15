@@ -105,7 +105,7 @@ public class RampService extends FeatureProcess {
                     List<Ramp> ramps = floor.getRamps();
                     if (ramps != null && !ramps.isEmpty()) {
                         for (Ramp ramp : ramps) {
-                            List<Measurement> rampPolyLines = ramp.getRampPolyLines();
+                            List<Measurement> rampPolyLines = ramp.getRamps();
                             if (rampPolyLines != null && !rampPolyLines.isEmpty()) {
                                 validateDimensions(pl, block.getNumber(), floor.getNumber(), ramp.getNumber().toString(),
                                         rampPolyLines);
@@ -335,10 +335,10 @@ public class RampService extends FeatureProcess {
                                  * String.valueOf(noOfDaRooms), Result.Not_Accepted.getResultVal(), scrutinyDetail3); } } } } } }
                                  */
                                 for (Ramp ramp : floor.getRamps()) {
-                                    if (ramp.getRampPolyLineClosed()) {
+                                    if (ramp.getRampClosed()) {
                                         List<BigDecimal> rampWidths = new ArrayList<>();
                                         List<BigDecimal> rampLengths = new ArrayList<>();
-                                        for (Measurement measurement : ramp.getRampPolyLines()) {
+                                        for (Measurement measurement : ramp.getRamps()) {
                                             rampWidths.add(measurement.getWidth());
                                             rampLengths.add(measurement.getHeight());
                                         }

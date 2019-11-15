@@ -86,7 +86,7 @@ public class LiftService extends FeatureProcess {
 					List<Lift> lifts = floor.getLifts();
 					if (lifts != null && !lifts.isEmpty()) {
 						for (Lift lift : lifts) {
-							List<Measurement> liftPolyLines = lift.getLiftPolyLines();
+							List<Measurement> liftPolyLines = lift.getLifts();
 							if (liftPolyLines != null && !liftPolyLines.isEmpty()) {
 								validateDimensions(plan, block.getNumber(), floor.getNumber(),
 										lift.getNumber().toString(), liftPolyLines);

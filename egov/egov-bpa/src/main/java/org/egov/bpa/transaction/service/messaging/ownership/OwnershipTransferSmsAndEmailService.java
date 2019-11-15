@@ -75,7 +75,7 @@ public class OwnershipTransferSmsAndEmailService {
         String email;
         String applicantName;
         if (isSmsEnabled() || isEmailEnabled()) {
-            ApplicationStakeHolder applnStakeHolder = ownership.getParent().getStakeHolder().get(0);
+            ApplicationStakeHolder applnStakeHolder = ownership.getApplication().getStakeHolder().get(0);
             if (applnStakeHolder.getApplication() != null && applnStakeHolder.getApplication().getOwner() != null) {
                 Applicant applicant = ownership.getOwner(); 
                 applicantName = applicant.getName();        

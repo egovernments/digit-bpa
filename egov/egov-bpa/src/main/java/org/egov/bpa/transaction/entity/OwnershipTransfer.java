@@ -75,6 +75,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
 import org.egov.commons.entity.Source;
@@ -103,13 +104,17 @@ public class OwnershipTransfer extends StateAware<Position> {
     @GeneratedValue(generator = SEQ_OWNERSHIP_TRANSFER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    
+    @NotNull
     @Enumerated(EnumType.STRING)
     private Source source;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "parent", nullable = false)
-    private BpaApplication parent;
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "application", nullable = false)
+    private BpaApplication application;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "parent")
+    private OwnershipTransfer parent;
 
     @Valid
     @ManyToOne(cascade = CascadeType.ALL)
@@ -147,7 +152,7 @@ public class OwnershipTransfer extends StateAware<Position> {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "approverUser")
     private User approverUser;
-    
+
     @SafeHtml
     @Length(min = 1, max = 128)
     private String remarks;
@@ -235,32 +240,40 @@ public class OwnershipTransfer extends StateAware<Position> {
 
     @Override
     public String getStateDetails() {
-        return String.format(
-                "Application Type: %s Applicant Name: %s Application Number %s Dated %s For the service type - %s.",
-                parent.getApplicationType().getName(), parent.getOwner().getName(),
+        return String.format("Application Type: %s Applicant Name: %s Application Number %s Dated %s For the service type - %s.",
+                application.getApplicationType().getName(),
+                owner.getName(),
                 applicationNumber == null ? ownershipNumber : applicationNumber,
                 applicationDate == null ? DateUtils.toDefaultDateFormat(new Date())
                         : DateUtils.toDefaultDateFormat(applicationDate),
-                parent.getServiceType().getDescription());
+                application.getServiceType().getDescription());
     }
 
     public String getApplicantName() {
         StringBuilder nameSB = new StringBuilder();
         nameSB.append(owner == null ? "" : owner.getName());
         if (!coApplicants.isEmpty()) {
-            List<CoApplicant> coApps = coApplicants.stream().map(coapp -> coapp.getCoApplicant())
-                    .collect(Collectors.toList());
-            nameSB.append(",").append(coApps.stream().map(CoApplicant::getName).collect(Collectors.joining(",")));
+            List<CoApplicant> coApps = coApplicants.stream().map(coapp -> coapp.getCoApplicant()).collect(Collectors.toList());
+            nameSB.append(",").append(
+                    coApps.stream().map(CoApplicant::getName).collect(Collectors.joining(",")));
         }
         return nameSB.toString();
     }
 
-    public BpaApplication getParent() {
+    public OwnershipTransfer getParent() {
         return parent;
     }
 
-    public void setParent(BpaApplication parent) {
+    public void setParent(OwnershipTransfer parent) {
         this.parent = parent;
+    }
+
+    public BpaApplication getApplication() {
+        return application;
+    }
+
+    public void setApplication(BpaApplication application) {
+        this.application = application;
     }
 
     public Applicant getOwner() {

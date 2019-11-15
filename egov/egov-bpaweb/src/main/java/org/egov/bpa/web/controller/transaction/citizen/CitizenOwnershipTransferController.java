@@ -154,11 +154,12 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
         WorkflowBean wfBean = new WorkflowBean();
         wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
         if (WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
-            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(false, ownershipTransfer.getStateType(),
-                    WF_NEW_STATE, ownershipTransfer.getParent().getApplicationType().getName());
+            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(
+                    false, ownershipTransfer.getStateType(), WF_NEW_STATE,
+                    ownershipTransfer.getApplication().getApplicationType().getName());
             if (wfMatrix != null)
                 approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                        bpaUtils.getBoundaryForWorkflow(ownershipTransfer.getParent().getSiteDetail().get(0)).getId());
+                        bpaUtils.getBoundaryForWorkflow(ownershipTransfer.getApplication().getSiteDetail().get(0)).getId());
             wfBean.setApproverPositionId(approvalPosition);
         }
         Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
@@ -167,7 +168,7 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
                 .find(OwnershipFeeCalculationService.class, specificNoticeService.getCityDetails());
         if (bpaAppConfigUtil.ownershipApplicationFeeCollectionRequired())
             ownershipTransfer.setAdmissionfeeAmount(
-                    feeCalculation.calculateAdmissionFeeAmount(ownershipTransfer.getParent().getServiceType().getId()));
+                    feeCalculation.calculateAdmissionFeeAmount(ownershipTransfer.getApplication().getServiceType().getId()));
         else
             ownershipTransfer.setAdmissionfeeAmount(BigDecimal.valueOf(0));
         ownershipTransferService.processAndStoreOwnershipDocuments(ownershipTransfer);
@@ -176,14 +177,13 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
 
         OwnershipTransfer ownershipres = ownershipTransferService.createNewApplication(ownershipTransfer, wfBean);
 
-        pushBpaApplicationToPortal
-                .createPortalUserinbox(ownershipres,
-                        Arrays.asList(ownershipres.getParent().getOwner().getUser(),
-                                ownershipres.getParent().getStakeHolder().get(0).getStakeHolder()),
-                        wfBean.getWorkFlowAction());
+        pushBpaApplicationToPortal.createPortalUserinbox(ownershipres,
+                Arrays.asList(ownershipres.getApplication().getOwner().getUser(),
+                        ownershipres.getApplication().getStakeHolder().get(0).getStakeHolder()),
+                wfBean.getWorkFlowAction());
 
-        if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)
-                && onlinePaymentEnable && bpaUtils.checkAnyTaxIsPendingToCollect(ownershipres.getDemand()))
+        if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON) && onlinePaymentEnable
+                && bpaUtils.checkAnyTaxIsPendingToCollect(ownershipres.getDemand()))
             return genericBillGeneratorService.generateBillAndRedirectToCollection(ownershipres, model);
         else if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)
                 && !bpaUtils.checkAnyTaxIsPendingToCollect(ownershipres.getDemand())) {
@@ -221,12 +221,12 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
 
     private String updateFormData(final Model model, OwnershipTransfer ownershipTransfer) {
         List<OwnershipTransfer> ownershipTransfers = ownershipTransferService
-                .findByBpaApplication(ownershipTransfer.getParent());
+                .findByBpaApplication(ownershipTransfer.getApplication());
         if (ownershipTransfers.size() > 1) {
-            model.addAttribute("applicants",
-                    ownershipTransfers.get(ownershipTransfers.size() - 1).getOwner().getName());
-            model.addAttribute("applicantAddress",
-                    ownershipTransfers.get(ownershipTransfers.size() - 1).getOwner().getAddress());
+            model.addAttribute("ownershipNumber", ownershipTransfer.getParent().getOwnershipNumber());
+            model.addAttribute("applicationNo", ownershipTransfer.getParent().getApplicationNumber());
+            model.addAttribute("applicants", ownershipTransfer.getParent().getOwner().getName());
+            model.addAttribute("applicantAddress", ownershipTransfer.getParent().getOwner().getAddress());
         }
 
         model.addAttribute(OWNERSHIP_TRANSFER, ownershipTransfer);
@@ -251,11 +251,12 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
         WorkflowBean wfBean = new WorkflowBean();
         wfBean.setWorkFlowAction(request.getParameter(WORK_FLOW_ACTION));
         if (WF_LBE_SUBMIT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
-            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(false, ownershipTransfer.getStateType(),
-                    WF_NEW_STATE, ownershipTransfer.getParent().getApplicationType().getName());
+            final WorkFlowMatrix wfMatrix = bpaUtils.getWfMatrixByCurrentState(
+                    false, ownershipTransfer.getStateType(), WF_NEW_STATE,
+                    ownershipTransfer.getApplication().getApplicationType().getName());
             if (wfMatrix != null)
                 approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                        bpaUtils.getBoundaryForWorkflow(ownershipTransfer.getParent().getSiteDetail().get(0)).getId());
+                        bpaUtils.getBoundaryForWorkflow(ownershipTransfer.getApplication().getSiteDetail().get(0)).getId());
             wfBean.setApproverPositionId(approvalPosition);
         }
         if (!ownershipTransfer.getOwnershipTransferDocuments().isEmpty())

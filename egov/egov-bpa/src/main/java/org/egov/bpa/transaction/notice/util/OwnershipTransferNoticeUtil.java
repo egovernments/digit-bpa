@@ -86,8 +86,6 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -130,33 +128,40 @@ public class OwnershipTransferNoticeUtil {
     private BpaApplicationReportProperties bpaApplicationReportProperties;
     @Autowired
     private BpaWorkFlowService bpaWorkFlowService;
-   
-    public OwnershipTransferNotice findByOwnershipAndNoticeType(final OwnershipTransfer ownershipTransfer, final String noticeType) {
-        return ownershipNoticeRepository.findByOwnershipAndNoticeType(ownershipTransfer, noticeType);
-    }    
 
-    public ReportOutput getReportOutput(OwnershipTransfer ownershipTransfer, String fileName, OwnershipTransferNotice ownershipNotice,
+    public OwnershipTransferNotice findByOwnershipAndNoticeType(final OwnershipTransfer ownershipTransfer,
+            final String noticeType) {
+        return ownershipNoticeRepository.findByOwnershipAndNoticeType(ownershipTransfer, noticeType);
+    }
+
+    public ReportOutput getReportOutput(OwnershipTransfer ownershipTransfer, String fileName,
+            OwnershipTransferNotice ownershipNotice,
             String rejectionfilename, String rejectionNoticeType, HttpServletRequest request) throws IOException {
         ReportOutput reportOutput = new ReportOutput();
         if (ownershipNotice == null || ownershipNotice.getNoticeCommon().getNoticeFileStore() == null) {
-            final Map<String, Object> reportParams = bpaNoticeUtil.buildParametersForReport(ownershipTransfer.getParent());
+            final Map<String, Object> reportParams = bpaNoticeUtil.buildParametersForReport(ownershipTransfer.getApplication());
             reportParams.putAll(getUlbDetails());
-            reportParams.put("applicantName", ownershipTransfer.getParent() == null ? ownershipTransfer.getParent().getApplicantName() : ownershipTransfer.getParent().getApplicantName());
+            reportParams.put("applicantName",
+                    ownershipTransfer.getParent() == null ? ownershipTransfer.getApplication().getApplicantName()
+                            : ownershipTransfer.getParent().getApplicantName());
             reportParams.put("applicantAddress",
-                    ownershipTransfer.getParent() == null  ? ownershipTransfer.getParent().getOwner().getAddress() : ownershipTransfer.getParent().getOwner().getAddress());
+                    ownershipTransfer.getParent() == null ? ownershipTransfer.getApplication().getOwner().getAddress()
+                            : ownershipTransfer.getParent().getOwner().getAddress());
             reportParams.put("refusalFormat", bpaApplicationReportProperties.getOwnershipRefusalFormat());
             reportParams.put("applicationNumber", ownershipTransfer.getApplicationNumber());
             reportParams.put("rejectionReasons", buildRejectionReasons(ownershipTransfer));
             reportParams.put("approverName", getRejector(ownershipTransfer));
             reportParams.put("permitOrderTitle", "OWNERSHIP TRANSFER ORDER");
             reportParams.put("subHeaderTitle", "Building Permit Ownership Transfer");
-            reportParams.put("ownershipAct",  getMessageFromPropertyFile("msg.ownership.act"));
-            reportParams.put("designation", ownershipTransfer.getApproverPosition() == null ? "" : ownershipTransfer.getApproverPosition().getDeptDesig().getDesignation().getName());
-            reportParams.put("approverName",ownershipTransfer.getApproverUser() == null ? "" : ownershipTransfer.getApproverUser().getName());
+            reportParams.put("ownershipAct", getMessageFromPropertyFile("msg.ownership.act"));
+            reportParams.put("designation", ownershipTransfer.getApproverPosition() == null ? ""
+                    : ownershipTransfer.getApproverPosition().getDeptDesig().getDesignation().getName());
+            reportParams.put("approverName",
+                    ownershipTransfer.getApproverUser() == null ? "" : ownershipTransfer.getApproverUser().getName());
             reportParams.put("ownershipNumber", ownershipTransfer.getOwnershipNumber());
-            reportParams.put("newownerName",ownershipTransfer.getApplicantName());
+            reportParams.put("newownerName", ownershipTransfer.getApplicantName());
             reportParams.put("qrCode", generatePDF417Code(buildQRCodeDetails(ownershipTransfer)));
-            
+
             if (!ownershipTransfer.getOwnershipFee().isEmpty())
                 reportParams.put("ownershipFeeDetails", getOwnershipFeeDetails(ownershipTransfer));
             ReportRequest reportInput = new ReportRequest(rejectionfilename, ownershipTransfer, reportParams);
@@ -169,7 +174,7 @@ public class OwnershipTransferNoticeUtil {
         }
         return reportOutput;
     }
-    
+
     private List<PermitFeeHelper> getOwnershipFeeDetails(final OwnershipTransfer ownershipTransfer) {
         List<PermitFeeHelper> permitFeeDetails = new ArrayList<>();
         for (EgDemandDetails demandDetails : ownershipTransfer.getDemand().getEgDemandDetails()) {
@@ -183,12 +188,13 @@ public class OwnershipTransferNoticeUtil {
         return permitFeeDetails;
     }
 
-    public OwnershipTransferNotice saveOwnershipNotice(OwnershipTransfer ownershipTransfer, String fileName, ReportOutput reportOutput,ReportOutput reportOutputForPermitNote, String noticeType) {
-    	OwnershipTransferNotice ownershipNotice = new OwnershipTransferNotice();
+    public OwnershipTransferNotice saveOwnershipNotice(OwnershipTransfer ownershipTransfer, String fileName,
+            ReportOutput reportOutput, ReportOutput reportOutputForPermitNote, String noticeType) {
+        OwnershipTransferNotice ownershipNotice = new OwnershipTransferNotice();
         final List<InputStream> pdfs = new ArrayList<>();
-    	if (reportOutputForPermitNote != null)
+        if (reportOutputForPermitNote != null)
             pdfs.add(new ByteArrayInputStream(reportOutputForPermitNote.getReportOutputData()));
-    	ownershipNotice.setOwnershipTransfer(ownershipTransfer);
+        ownershipNotice.setOwnershipTransfer(ownershipTransfer);
         NoticeCommon noticeCommon = new NoticeCommon();
         noticeCommon.setNoticeGeneratedDate(new Date());
         noticeCommon.setNoticeType(noticeType);
@@ -209,8 +215,7 @@ public class OwnershipTransferNoticeUtil {
         ulbDetailsReportParams.put("ulbGrade", cityService.getCityGrade());
         ulbDetailsReportParams.put("cityNameLocal", ApplicationThreadLocals.getCityNameLocal());
         return ulbDetailsReportParams;
-    }    
-
+    }
 
     public String buildRejectionReasons(final OwnershipTransfer ownershipTransfer) {
         StringBuilder rejectReasons = new StringBuilder();
@@ -220,7 +225,7 @@ public class OwnershipTransferNoticeUtil {
             int order = buildPredefinedRejectReasons(ownershipTransfer, rejectReasons);
             int additionalOrder = buildAdditionalOwnershipConditionsOrRejectionReason(rejectReasons, additionalRenewalConditions,
                     order);
-            /*StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(ownershipTransfer.getStateHistory());*/
+            /* StateHistory<Position> stateHistory = bpaUtils.getRejectionComments(ownershipTransfer.getStateHistory()); */
             if (isNotBlank(ownershipTransfer.getState().getComments()))
                 rejectReasons.append(additionalOrder + ") "
                         + ownershipTransfer.getState().getComments() + TWO_NEW_LINE);
@@ -232,7 +237,7 @@ public class OwnershipTransferNoticeUtil {
         }
         return rejectReasons.toString();
     }
-    
+
     public String getMessageFromPropertyFile(String key) {
         return bpaMessageSource.getMessage(key, null, null);
     }
@@ -243,7 +248,7 @@ public class OwnershipTransferNoticeUtil {
         for (OwnershipTransferConditions rejectReason : ownershipTransfer.getRejectionReasons()) {
             if (rejectReason.getNoticeCondition().isRequired()
                     && ConditionType.OWNERSHIPREJECTIONREASONS.equals(rejectReason.getNoticeCondition().getType())) {
-            	ownershipConditions
+                ownershipConditions
                         .append(order + ") "
                                 + rejectReason.getNoticeCondition().getChecklistServicetype().getChecklist().getDescription()
                                 + TWO_NEW_LINE);
@@ -252,7 +257,7 @@ public class OwnershipTransferNoticeUtil {
         }
         return order;
     }
-    
+
     private int buildAdditionalOwnershipConditionsOrRejectionReason(StringBuilder ownershipConditions,
             List<OwnershipTransferConditions> additionalConditions, int order) {
         int additionalOrder = order;
@@ -260,7 +265,7 @@ public class OwnershipTransferNoticeUtil {
                 && isNotBlank(additionalConditions.get(0).getNoticeCondition().getAdditionalCondition())) {
             for (OwnershipTransferConditions addnlNoticeCondition : additionalConditions) {
                 if (isNotBlank(addnlNoticeCondition.getNoticeCondition().getAdditionalCondition())) {
-                	ownershipConditions.append(
+                    ownershipConditions.append(
                             String.valueOf(additionalOrder) + ") "
                                     + addnlNoticeCondition.getNoticeCondition().getAdditionalCondition()
                                     + TWO_NEW_LINE);
@@ -270,11 +275,12 @@ public class OwnershipTransferNoticeUtil {
         }
         return additionalOrder;
     }
-    
+
     private String getRejector(final OwnershipTransfer ownershipTransfer) {
-        return bpaWorkFlowService.getApproverAssignmentByDate(ownershipTransfer.getState().getOwnerPosition(), ownershipTransfer.getState().getLastModifiedDate()).getEmployee().getName();
+        return bpaWorkFlowService.getApproverAssignmentByDate(ownershipTransfer.getState().getOwnerPosition(),
+                ownershipTransfer.getState().getLastModifiedDate()).getEmployee().getName();
     }
-    
+
     public String buildQRCodeDetails(final OwnershipTransfer ownershipTransfer) {
         StringBuilder qrCodeValue = new StringBuilder();
         qrCodeValue = isBlank(ApplicationThreadLocals.getMunicipalityName()) ? qrCodeValue.append("")
@@ -284,25 +290,32 @@ public class OwnershipTransferNoticeUtil {
                 : qrCodeValue.append("Applicant Name : ").append(ownershipTransfer.getOwner().getName()).append(ONE_NEW_LINE);
         qrCodeValue = isBlank(ownershipTransfer.getApplicationNumber())
                 ? qrCodeValue.append("Application number : ").append(N_A).append(ONE_NEW_LINE)
-                : qrCodeValue.append("Application number : ").append(ownershipTransfer.getApplicationNumber()).append(ONE_NEW_LINE);
-        if (!isBlank(ownershipTransfer.getParent().geteDcrNumber())) {
-            qrCodeValue = qrCodeValue.append("Edcr number : ").append(ownershipTransfer.getParent().geteDcrNumber()).append(ONE_NEW_LINE);
+                : qrCodeValue.append("Application number : ").append(ownershipTransfer.getApplicationNumber())
+                        .append(ONE_NEW_LINE);
+        if (!isBlank(ownershipTransfer.getApplication().geteDcrNumber())) {
+            qrCodeValue = qrCodeValue.append("Edcr number : ").append(ownershipTransfer.getApplication().geteDcrNumber())
+                    .append(ONE_NEW_LINE);
         }
-        qrCodeValue = isBlank(ownershipTransfer.getParent().getPlanPermissionNumber())
+        qrCodeValue = isBlank(ownershipTransfer.getApplication().getPlanPermissionNumber())
                 ? qrCodeValue.append("Permit number : ").append(N_A).append(ONE_NEW_LINE)
-                : qrCodeValue.append("Permit number : ").append(ownershipTransfer.getParent().getPlanPermissionNumber()).append(ONE_NEW_LINE);
-        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(ownershipTransfer.getParent()) == null
+                : qrCodeValue.append("Permit number : ").append(ownershipTransfer.getApplication().getPlanPermissionNumber())
+                        .append(ONE_NEW_LINE);
+        qrCodeValue = bpaWorkFlowService.getAmountRuleByServiceType(ownershipTransfer.getApplication()) == null
                 ? qrCodeValue.append("Approved by : ").append(N_A).append(ONE_NEW_LINE)
                 : qrCodeValue.append("Approved by : ")
-                        .append(ownershipTransfer.getApproverPosition() == null ? "" : ownershipTransfer.getApproverPosition().getDeptDesig().getDesignation().getName())
+                        .append(ownershipTransfer.getApproverPosition() == null ? ""
+                                : ownershipTransfer.getApproverPosition().getDeptDesig().getDesignation().getName())
                         .append(ONE_NEW_LINE);
-        qrCodeValue = ownershipTransfer.getParent().getPlanPermissionDate() == null
+        qrCodeValue = ownershipTransfer.getApplication().getPlanPermissionDate() == null
                 ? qrCodeValue.append("Date of issue of permit : ").append(N_A).append(ONE_NEW_LINE)
                 : qrCodeValue.append("Date of issue of permit : ")
-                        .append(DateUtils.getDefaultFormattedDate(ownershipTransfer.getParent().getPlanPermissionDate())).append(ONE_NEW_LINE);
+                        .append(DateUtils.getDefaultFormattedDate(ownershipTransfer.getApplication().getPlanPermissionDate()))
+                        .append(ONE_NEW_LINE);
         qrCodeValue = isBlank(ownershipTransfer.getState().getOwnerUser().getName())
                 ? qrCodeValue.append("Name of approver : ").append(N_A).append(ONE_NEW_LINE)
-                : qrCodeValue.append("Name of approver : ").append(ownershipTransfer.getApproverUser() == null ? "" : ownershipTransfer.getApproverUser().getName()).append(ONE_NEW_LINE);
+                : qrCodeValue.append("Name of approver : ")
+                        .append(ownershipTransfer.getApproverUser() == null ? "" : ownershipTransfer.getApproverUser().getName())
+                        .append(ONE_NEW_LINE);
         return qrCodeValue.toString();
     }
 }

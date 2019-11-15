@@ -325,11 +325,13 @@ public class DxfFileConstants {
     public static final String RULE_28 = "28";
     public static final String SETBACK = "SetBack";
     public static final String YARD_NAME = "Yard Name";
-    
+
     public static final String OCCUPANCY_ALLOWED = "Only residential or commerical buildings will be scrutinized for now.";
     public static final String OCCUPANCY_ALLOWED_KEY = "occupancy_allowed";
     public static final String RWH_DECLARED = "RWH_DECLARED";
-    
+
     public static final String ANONYMOUS_APPLICANT = "ANONYMOUS";
     public static final String NEWCONSTRUCTION_SERVICE = "New Construction";
+    public static final String MAINRIVER = "MainRiver";
+    public static final String SUBRIVER = "SubRiver";
 }
