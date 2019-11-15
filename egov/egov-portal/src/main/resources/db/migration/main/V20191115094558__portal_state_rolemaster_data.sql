@@ -1,0 +1,1 @@
+INSERT INTO state.eg_role select nextval('state.seq_eg_role'), 'BUSINESS', 'One who can access the different service', now(), 1, 1, now(), 0, true where not exists (select * from state.eg_role where name='BUSINESS');

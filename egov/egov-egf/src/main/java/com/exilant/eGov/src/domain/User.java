@@ -118,7 +118,7 @@ public class User {
     // this method gets the assigned role for the user from the database.
     public String getRole(final Connection con) throws TaskFailedException {
         // if(LOGGER.isDebugEnabled()) LOGGER.debug(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>domain user");
-        final String query = "select r.Role_name as role from EG_ROLES r, state.EG_USER u,state.EG_USERROLE ur where u.user_name=? and ur.id_role=r.id_role and u.id_user=ur.id_user ";
+        final String query = "select r.Role_name as role from state.EG_ROLE r, state.EG_USER u,state.EG_USERROLE ur where u.user_name=? and ur.id_role=r.id_role and u.id_user=ur.id_user ";
         String role = "";
         try {
             final Query ps = persistenceService.getSession().createSQLQuery(query);

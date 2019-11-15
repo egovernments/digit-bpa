@@ -66,8 +66,8 @@ import static org.egov.infra.admin.master.entity.Role.SEQ_ROLE;
 
 @Entity
 @Unique(fields = "name", enableDfltMsg = true)
-@Table(name = "eg_role")
-@SequenceGenerator(name = SEQ_ROLE, sequenceName = SEQ_ROLE, allocationSize = 1)
+@Table(name = "eg_role", schema = "state")
+@SequenceGenerator(name = SEQ_ROLE, sequenceName = SEQ_ROLE, allocationSize = 1, schema = "state")
 public class Role extends AbstractAuditable {
 
     public static final String SEQ_ROLE = "SEQ_EG_ROLE";
