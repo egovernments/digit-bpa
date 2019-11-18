@@ -62,11 +62,13 @@ import org.egov.infra.microservice.contract.RequestInfoWrapper;
 import org.egov.infra.microservice.contract.ResponseInfo;
 import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.web.rest.error.ErrorResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -96,38 +98,42 @@ public class RestEdcrApplicationController {
     @PostMapping(value = "/scrutinizeplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> scrutinizePlan(@RequestBody MultipartFile planFile,
-    		@RequestParam String edcrRequest) {
+            @RequestParam String edcrRequest) {
         EdcrDetail edcrDetail = new EdcrDetail();
         EdcrRequest edcr = new EdcrRequest();
         try {
-        	edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
+            edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
             ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile);
             if (errorResponses != null)
                 return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
             else {
-            	edcrDetail = edcrRestService.createEdcr(edcr, planFile);
+                edcrDetail = edcrRestService.createEdcr(edcr, planFile);
             }
 
-        }catch (IOException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);        	 
+        } catch (IOException e) {
+            ErrorResponse error = new ErrorResponse("INCORRECT_REQUEST", e.getLocalizedMessage(),
+                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
         return getSuccessResponse(edcrDetail, edcr.getRequestInfo());
     }
 
     @PostMapping(value = "/scrutinydetails", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public ResponseEntity<?> scrutinyDetails(@ModelAttribute EdcrRequest edcrRequest, @RequestBody @Valid RequestInfoWrapper requestInfoWrapper) {
+    public ResponseEntity<?> scrutinyDetails(@ModelAttribute EdcrRequest edcrRequest,
+            @RequestBody @Valid RequestInfoWrapper requestInfoWrapper) {
         ErrorDetail errorResponses = edcrRestService.validateSearchRequest(edcrRequest.getEdcrNumber(),
                 edcrRequest.getTransactionNumber());
         EdcrDetail edcrDetail;
         if (errorResponses != null)
             return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
         else
-            edcrDetail = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber(), edcrRequest.getTenantId());
-        
-        if(edcrDetail.getErrors()!=null)
+            edcrDetail = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber(),
+                    edcrRequest.getTenantId());
+
+        if (edcrDetail.getErrors() != null)
             return new ResponseEntity<>(edcrDetail.getErrors(), HttpStatus.NOT_FOUND);
-        else        
+        else
             return getSuccessResponse(edcrDetail, requestInfoWrapper.getRequestInfo());
     }
 
@@ -135,13 +141,27 @@ public class RestEdcrApplicationController {
     public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, DIGIT_DCR, true);
     }
-    
-	private ResponseEntity<?> getSuccessResponse(EdcrDetail edcrDetail, RequestInfo requestInfo) {
-		EdcrResponse edcrRes = new EdcrResponse();
-		edcrRes.setEdcrDetail(Arrays.asList(edcrDetail));
-		ResponseInfo responseInfo = edcrRestService.createResponseInfoFromRequestInfo(requestInfo, true);
-		edcrRes.setResponseInfo(responseInfo);
-		return new ResponseEntity<>(edcrRes, HttpStatus.OK);
 
-	}
+    private ResponseEntity<?> getSuccessResponse(EdcrDetail edcrDetail, RequestInfo requestInfo) {
+        EdcrResponse edcrRes = new EdcrResponse();
+        edcrRes.setEdcrDetail(Arrays.asList(edcrDetail));
+        ResponseInfo responseInfo = edcrRestService.createResponseInfoFromRequestInfo(requestInfo, true);
+        edcrRes.setResponseInfo(responseInfo);
+        return new ResponseEntity<>(edcrRes, HttpStatus.OK);
+
+    }
+
+    @ExceptionHandler(Exception.class)
+    public final ResponseEntity<ErrorResponse> handleGenericException(Exception ex) {
+        String errorDesc;
+        if (ex.getLocalizedMessage() == null)
+            errorDesc = String.valueOf(ex).length() <= 200 ? String.valueOf(ex).substring(0, String.valueOf(ex).length())
+                    : String.valueOf(ex).substring(1, 200);
+        else
+            errorDesc = ex.getMessage();
+        ErrorResponse error = new ErrorResponse("Internal Server Error", errorDesc,
+                HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }

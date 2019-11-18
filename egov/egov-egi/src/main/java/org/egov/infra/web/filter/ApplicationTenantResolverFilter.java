@@ -77,6 +77,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.rest.support.MultiReadRequestWrapper;
 import org.egov.infra.utils.TenantUtils;
+import org.egov.infra.validation.exception.ApplicationRestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,7 +151,7 @@ public class ApplicationTenantResolverFilter implements Filter {
                 fullTenant = tenantFromBody;
             }
             if (StringUtils.isBlank(fullTenant)) {
-                throw new RuntimeException("RestUrl does not contain tenantId");
+                throw new ApplicationRestException("incorrect_request","RestUrl does not contain tenantId: " + fullTenant);
             }
             String tenant = fullTenant.substring(fullTenant.lastIndexOf('.') + 1, fullTenant.length());
             LOG.info("tenant from rest request =" + tenant);
@@ -178,7 +179,7 @@ public class ApplicationTenantResolverFilter implements Filter {
                 }
             }
             if (!found) {
-                throw new RuntimeException("Invalid tenantId");
+                throw new ApplicationRestException("invalid_tenant","Invalid Tenant Id: " + tenant);
             }
 
         }

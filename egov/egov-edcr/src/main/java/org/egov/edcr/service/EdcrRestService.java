@@ -193,13 +193,12 @@ public class EdcrRestService {
         } else {
             edcrApplication = edcrApplicationService.findByTransactionNumber(transactionNumber);
         }
-        if(edcrApplication != null)
-           return setEdcrResponse(edcrApplication, tenantId) ;
-        else
-        {
-        	EdcrDetail edcrDetail = new EdcrDetail();
-        	edcrDetail.setErrors("No Record Found");
-        	return edcrDetail;
+        if (edcrApplication != null)
+            return setEdcrResponse(edcrApplication, tenantId);
+        else {
+            EdcrDetail edcrDetail = new EdcrDetail();
+            edcrDetail.setErrors("No Record Found");
+            return edcrDetail;
         }
     }
 
@@ -216,7 +215,7 @@ public class EdcrRestService {
     public ErrorDetail validateSearchRequest(final String edcrNumber, final String transactionNumber) {
         ErrorDetail errorDetail = null;
         if (StringUtils.isBlank(edcrNumber) && StringUtils.isBlank(transactionNumber))
-            return new ErrorDetail(BPA_05, "Please enter valid edcrnumber or transactionnumber");
+            return new ErrorDetail("BPA-07", "Please enter valid edcrnumber or transactionnumber");
         return errorDetail;
     }
 
@@ -247,7 +246,7 @@ public class EdcrRestService {
                    */
             }
         } else {
-            return new ErrorDetail(BPA_05, "Plan file is mandatory");
+            return new ErrorDetail(BPA_05, "Please, upload plan file is mandatory");
         }
 
         if (StringUtils.isNotBlank(edcrRequest.getTransactionNumber())
@@ -256,7 +255,7 @@ public class EdcrRestService {
         }
         // Validate Tenant id
         if (!validateTenant(edcrRequest.getTenantId()))
-            return new ErrorDetail(BPA_05, "Please enter valid tenant");
+            return new ErrorDetail("BPA-06", "Please enter valid tenant");
 
         return null;
     }
