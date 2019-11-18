@@ -16,6 +16,8 @@ import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Plan;
@@ -42,6 +44,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
 @Service
@@ -84,6 +87,9 @@ public class EdcrApplicationService {
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+    
+    @Autowired
+    private EdcrBpaRestService edcrBpaRestService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -271,4 +277,11 @@ public class EdcrApplicationService {
         return edcrApplication;
     }
 
+    public void validateServiceType(EdcrApplication edcrApplication, BindingResult errors, HttpServletRequest request) {
+        boolean service = false;
+        List<String> serviceType = edcrBpaRestService.getEdcrIntegratedServices(request);
+             service = serviceType.contains(edcrApplication.getServiceType());
+            if (!service) 
+                errors.rejectValue("serviceType","msg.invalid.value");
+    }
 }
