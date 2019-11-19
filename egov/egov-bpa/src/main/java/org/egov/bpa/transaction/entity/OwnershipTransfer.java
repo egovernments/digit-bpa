@@ -104,7 +104,7 @@ public class OwnershipTransfer extends StateAware<Position> {
     @GeneratedValue(generator = SEQ_OWNERSHIP_TRANSFER, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    
     @Enumerated(EnumType.STRING)
     private Source source;
 

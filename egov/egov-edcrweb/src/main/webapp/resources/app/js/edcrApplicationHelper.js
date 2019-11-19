@@ -243,7 +243,14 @@ function getPermitApplicationByPermitNo(permitNumber) {
             	}
 
                 $('#occupancy').val(response.occupancy);
-                $('#applicantName').val(response.applicantName);
+                if (response.applicantName.indexOf(",") > -1) { 
+                	var applicant = response.applicantName.split(",") ;
+                	var firstElement = applicant[0];
+                	$('#applicantName').val(firstElement);
+                	}
+                else 
+                	$('#applicantName').val(response.applicantName);
+
                 $('#permitApplicationDate').val(response.applicationDate);
                 $('#serviceType').val(response.serviceTypeDesc);
                 $('#stakeholderId').val(response.stakeholderId);
