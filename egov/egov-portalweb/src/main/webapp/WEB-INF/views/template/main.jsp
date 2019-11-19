@@ -71,6 +71,7 @@
 
     <title><tiles:insertAttribute name="title"/></title>
 
+
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
     <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css?rnd=${app_release_no}' context='/egi'/>">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
@@ -104,6 +105,9 @@
     </script>
 </head>
 <body>
+ <spring:eval expression="@environment.getProperty('user.pwd.strength')" var="pwdstrengthmsg"/>
+ <spring:message code="usr.pwd.strength.msg.${pwdstrengthmsg}" var="pwdmsg" htmlEscape="true"/>
+ 
 <spring:htmlEscape defaultHtmlEscape="true"/>
 <tiles:insertAttribute name="body"/>
 
@@ -152,10 +156,11 @@
                             <input style="display:none" type="password"/>
                             <input type="password" class="form-control checkpassword readonly-pwd" id="retype-pass" autocomplete="new-password"
                                    onfocus="this.removeAttribute('readonly');" readonly="true"/>
-                            <div id="pwd-incorrt-match"
-                                 class="password-error error-msg alert alert-danger display-hide">Password is not matching
+                                    <div class="password-error-msg display-show">${pwdmsg}</div>
+                            <div id="pwd-incorrt-match"  
+                                 class="password-error-msg alert alert-danger display-hide">Password is not matching
                             </div>
-                            <div class="password-error error-msg display-hide">Password is incorrect</div>
+                            <div class="password-error-msg display-hide">Password is incorrect</div>
                         </div>
                     </div>
                     <div class="form-group text-right">

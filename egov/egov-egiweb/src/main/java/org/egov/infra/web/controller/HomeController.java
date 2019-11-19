@@ -191,8 +191,8 @@ public class HomeController {
         } else {
             User user = userService.getCurrentUser();
             if (passwordEncoder.matches(passwordChangeRequest.getCurrentPwd(), user.getPassword())) {
-                if (passwordEncoder.matches(passwordChangeRequest.getNewPwd(), user.getPassword()))
-                    return ResponseEntity.ok("NEW_AND_CURR_PWD_SAME");
+                /*if (passwordEncoder.matches(passwordChangeRequest.getNewPwd(), user.getPassword()))
+                    return ResponseEntity.ok("NEW_AND_CURR_PWD_SAME");*/
                 if (!validatorUtils.isValidPassword(passwordChangeRequest.getNewPwd()))
                     return ResponseEntity.ok("NEWPWD_INVALID");
                 if (passwordChangeRequest.getNewPwd().equals(passwordChangeRequest.getRetypeNewPwd())) {
