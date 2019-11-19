@@ -115,7 +115,7 @@ public class EdcrApplicationController {
             final Model model , HttpServletRequest request, final RedirectAttributes redirectAttrs) {
         edcrApplicationService.validateServiceType(edcrApplication, errors, request);
         if (errors.hasErrors()) {
-            model.addAttribute(EDCR_APPLICATION, new EdcrApplication());
+            model.addAttribute(EDCR_APPLICATION, edcrApplication);
             prepareNewForm(model, request);
             return EDCRAPPLICATION_NEW;
         }

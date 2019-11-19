@@ -2,6 +2,8 @@ package org.egov.edcr.service;
 
 import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
 
+
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,6 +49,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
+
 @Service
 @Transactional(readOnly = true)
 public class EdcrApplicationService {
@@ -54,6 +57,7 @@ public class EdcrApplicationService {
     private static final String NEW_SCRTNY = "New Plan Scrutiny";
     public static final String ULB_NAME = "ulbName";
     public static final String ABORTED = "Aborted";
+    private static final String MSG_INVALID_VALUE = "msg.invalid.value";
     private static Logger LOG = Logger.getLogger(EdcrApplicationService.class);
     @Autowired
     protected SecurityUtils securityUtils;
@@ -278,10 +282,10 @@ public class EdcrApplicationService {
     }
 
     public void validateServiceType(EdcrApplication edcrApplication, BindingResult errors, HttpServletRequest request) {
-        boolean service = false;
+        boolean service ;
         List<String> serviceType = edcrBpaRestService.getEdcrIntegratedServices(request);
              service = serviceType.contains(edcrApplication.getServiceType());
             if (!service) 
-                errors.rejectValue("serviceType","msg.invalid.value");
+                errors.rejectValue("serviceType","invalid.service.type");
     }
 }
