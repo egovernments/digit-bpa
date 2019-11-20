@@ -397,7 +397,7 @@
                             <input type="password" class="form-control check-password readonly-pwd" id="retypeNewPwd" maxlength="32"
                                    autocomplete="new-password" onfocus="this.removeAttribute('readonly');" readonly="true">
                             <div class="password-error error-msg display-hide"><spring:message code="err.pwd.incorrect"/></div>
-                            <div class="password-error-msg display-hide">${pwdmsg}</div>
+                            <div class="password-error-msg display-show">${pwdmsg}</div>
                         </div>
                     </div>
                     <div class="form-group text-right">

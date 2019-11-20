@@ -158,9 +158,9 @@
                                    onfocus="this.removeAttribute('readonly');" readonly="true"/>
                                     <div class="password-error-msg display-show">${pwdmsg}</div>
                             <div id="pwd-incorrt-match"  
-                                 class="password-error-msg alert alert-danger display-hide">Password is not matching
+                                 class="password-error error-msg alert alert-danger display-hide">Password is not matching
                             </div>
-                            <div class="password-error-msg display-hide">Password is incorrect</div>
+                            <div class="password-error error-msg display-hide">Password is incorrect</div>
                         </div>
                     </div>
                     <div class="form-group text-right">
