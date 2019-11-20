@@ -88,7 +88,7 @@ public class UserService {
     }
 
     public Set<Role> getRolesByUsername(String userName) {
-        return userRepository.findUserRolesByUserName(userName);
+        return userRepository.findUserRolesByUserNameAndTenantId(userName, ApplicationThreadLocals.getTenantID());
     }
 
     public User getUserById(Long id) {
@@ -148,8 +148,7 @@ public class UserService {
 
     public List<User> findAllByMatchingUserNameAndTenantIdForType(String username, UserType type) {
         return userRepository.findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(
-                "%" + username.toUpperCase() + "%", type, ApplicationThreadLocals.getTenantID(),
-                ApplicationConstant.STATE_TENANTID);
+                "%" + username.toUpperCase() + "%", type, ApplicationThreadLocals.getTenantID());
     }
     
     public List<User> getUsersByTypeAndTenants(UserType type) {

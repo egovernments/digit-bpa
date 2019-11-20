@@ -85,12 +85,19 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
 
     @Query("select distinct usr.roles from User usr where usr.username = :usrName ")
     Set<Role> findUserRolesByUserName(@Param("usrName") String userName);
+    
+    @Query("select distinct usr.roles from User usr where usr.username = :usrName and usr.tenantId = :tenantId ")
+    Set<Role> findUserRolesByUserNameAndTenantId(@Param("usrName") String userName, @Param("tenantId") String tenantId);
 
     List<User> findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(String username, UserType type);
 
     @Query("select distinct usr from User usr where upper(usr.username) like :usrName and usr.type = :type and (usr.tenantId = :tenantId or usr.tenantId = :stateTenantId)")
     List<User> findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(@Param("usrName") String usrName,
             @Param("type") UserType type, @Param("tenantId") String tenantId, @Param("stateTenantId") String stateTenantId);
+    
+    @Query("select distinct usr from User usr where upper(usr.username) like :usrName and usr.type = :type and usr.tenantId = :tenantId")
+    List<User> findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(@Param("usrName") String usrName,
+            @Param("type") UserType type, @Param("tenantId") String tenantId);
 
     List<User> findByNameContainingIgnoreCaseAndTypeAndActiveTrue(String name, UserType type);
 
