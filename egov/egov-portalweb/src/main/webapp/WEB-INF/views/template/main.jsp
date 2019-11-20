@@ -156,7 +156,7 @@
                             <input style="display:none" type="password"/>
                             <input type="password" class="form-control checkpassword readonly-pwd" id="retype-pass" autocomplete="new-password"
                                    onfocus="this.removeAttribute('readonly');" readonly="true"/>
-                                    <div class="password-error-msg display-show">${pwdmsg}</div>
+                                    <div class="password-error-msg display-hide">${pwdmsg}</div>
                             <div id="pwd-incorrt-match"  
                                  class="password-error error-msg alert alert-danger display-hide">Password is not matching
                             </div>

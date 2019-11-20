@@ -2,6 +2,7 @@ package org.egov.edcr.web.controller;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -212,7 +213,12 @@ public class EdcrApplicationController {
     @PostMapping("/occupancy-certificate/plan/submit")
     public String submitPlanForOccupancyCertificate(@Valid @ModelAttribute final EdcrApplication edcrApplication,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
+        if(edcrApplication.getApplicationType()== null|| 
+                !edcrApplication.getApplicationType().getApplicationTypeVal().equalsIgnoreCase("OCCUPANCY_CERTIFICATE")){
+            errors.rejectValue("applicationType","invalid.application.type");
+        }
         if (errors.hasErrors()) {
+            model.addAttribute(EDCR_APPLICATION, edcrApplication);
             prepareNewForm(model, request);
             return OC_PLAN_SCRUTINY_NEW;
         }

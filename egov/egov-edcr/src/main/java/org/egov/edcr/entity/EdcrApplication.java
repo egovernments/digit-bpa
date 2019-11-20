@@ -25,6 +25,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.egov.common.entity.edcr.PlanInformation;
@@ -47,7 +48,7 @@ public class EdcrApplication extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EDCR_APPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
-
+    @NotNull
     @Enumerated(EnumType.STRING)
     private ApplicationType applicationType;
 

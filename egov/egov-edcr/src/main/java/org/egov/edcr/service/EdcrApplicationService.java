@@ -287,5 +287,9 @@ public class EdcrApplicationService {
              service = serviceType.contains(edcrApplication.getServiceType());
             if (!service) 
                 errors.rejectValue("serviceType","invalid.service.type");
+            if(edcrApplication.getApplicationType()== null|| 
+                    !edcrApplication.getApplicationType().getApplicationTypeVal().equalsIgnoreCase("Permit")){
+                errors.rejectValue("applicationType","invalid.application.type");
+            }
     }
 }
