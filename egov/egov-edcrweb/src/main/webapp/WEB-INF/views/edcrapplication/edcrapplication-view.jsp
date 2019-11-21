@@ -25,7 +25,7 @@
 						<spring:message code="lbl.applicationdate" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						<fmt:formatDate pattern="dd/MM/yyyyy"
+						<fmt:formatDate pattern="dd/MM/yyyy"
 							value="${edcrApplication.applicationDate}" />
 					</div>
 				</div>
