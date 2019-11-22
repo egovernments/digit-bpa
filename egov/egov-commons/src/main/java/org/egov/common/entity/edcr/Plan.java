@@ -139,7 +139,7 @@ public class Plan implements Serializable {
 	private List<EdcrPdfDetail> edcrPdfDetails;
 	
 	private transient Map<String, String> errors = new LinkedHashMap<>();
-	@JsonIgnore
+
 	private ReportOutput reportOutput = new ReportOutput();
 	private transient Map<String, String> noObjectionCertificates = new HashMap<>();
 	private List<String> nocDeptCodes = new ArrayList<String>();
