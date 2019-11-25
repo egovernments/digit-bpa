@@ -2,8 +2,6 @@ package org.egov.edcr.service;
 
 import static org.egov.edcr.utility.DcrConstants.FILESTORE_MODULECODE;
 
-
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,7 +17,6 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.Plan;
@@ -49,7 +46,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.multipart.MultipartFile;
 
-
 @Service
 @Transactional(readOnly = true)
 public class EdcrApplicationService {
@@ -57,16 +53,15 @@ public class EdcrApplicationService {
     private static final String NEW_SCRTNY = "New Plan Scrutiny";
     public static final String ULB_NAME = "ulbName";
     public static final String ABORTED = "Aborted";
-    private static final String MSG_INVALID_VALUE = "msg.invalid.value";
     private static Logger LOG = Logger.getLogger(EdcrApplicationService.class);
     @Autowired
     protected SecurityUtils securityUtils;
 
     @Autowired
-    private EdcrApplicationRepository edcrApplicationRepository;
+    private transient EdcrApplicationRepository edcrApplicationRepository;
 
     @Autowired
-    private EdcrApplicationDetailRepository edcrApplicationDetailRepository;
+    private transient EdcrApplicationDetailRepository edcrApplicationDetailRepository;
 
     @Autowired
     private PlanService planService;
@@ -91,7 +86,7 @@ public class EdcrApplicationService {
 
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
-    
+
     @Autowired
     private EdcrBpaRestService edcrBpaRestService;
 
@@ -190,7 +185,7 @@ public class EdcrApplicationService {
     public EdcrApplication findByPlanPermitNumber(String permitNo) {
         return edcrApplicationRepository.findByPlanPermitNumber(permitNo);
     }
-    
+
     public EdcrApplication findByTransactionNumber(String transactionNo) {
         return edcrApplicationRepository.findByTransactionNumber(transactionNo);
     }
@@ -268,7 +263,7 @@ public class EdcrApplicationService {
             LOG.error("Error occurred when reading file!!!!!", e);
         }
     }
-    
+
     @Transactional
     public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication) {
         edcrApplication.setApplicationDate(new Date());
@@ -282,14 +277,15 @@ public class EdcrApplicationService {
     }
 
     public void validateServiceType(EdcrApplication edcrApplication, BindingResult errors, HttpServletRequest request) {
-        boolean service ;
         List<String> serviceType = edcrBpaRestService.getEdcrIntegratedServices(request);
-             service = serviceType.contains(edcrApplication.getServiceType());
-            if (!service) 
-                errors.rejectValue("serviceType","invalid.service.type");
-            if(edcrApplication.getApplicationType()== null|| 
-                    !edcrApplication.getApplicationType().getApplicationTypeVal().equalsIgnoreCase("Permit")){
-                errors.rejectValue("applicationType","invalid.application.type");
-            }
+        boolean service = serviceType.contains(edcrApplication.getServiceType());
+        if (!service && edcrApplication.getServiceType() != null)
+            errors.rejectValue("serviceType", "invalid.service.type");
+        if (edcrApplication.getApplicationType() == null ||
+                !edcrApplication.getApplicationType().getApplicationTypeVal().equalsIgnoreCase("Permit")) {
+            errors.rejectValue("applicationType", "invalid.application.type");
+        }
+        if (edcrApplication == null || edcrApplication.getId() == null)
+            errors.rejectValue("applicationNumber", "invalid.msg");
     }
 }

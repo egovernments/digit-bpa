@@ -85,19 +85,22 @@
         <div class="col-sm-3 add-margin">
             <input type="hidden" name="id" id="edcrApplnId" value="${edcrApplication.id}">
             <input type="hidden" name="edcrApplication" id="edcrApplication" value="${edcrApplication.id}">
-            <input type="text" class="form-control resetValues" name="applicationNumber" id="applicationNumber" value="${edcrApplication.applicationNumber}" required="required">
+            <input type="text" class="form-control resetValues" id="applicationNumber" value="${edcrApplication.applicationNumber}" required="required">
+            <form:errors path="applicationNumber" cssClass="error-msg" />
         </div>
     </div>
     <div class="form-group">
         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.applicantname" />
         </label>
         <div class="col-sm-3 add-margin">
-            <input type="text" name="applicantName" class="form-control resetValues" id="applicantName" value="${edcrApplication.applicantName}" readonly="readonly">
+            <input type="text" class="form-control resetValues" id="applicantName" value="${edcrApplication.applicantName}" readonly="readonly">
+            <form:errors path="applicantName" cssClass="error-msg" />
         </div>
         <label class="col-sm-2 control-label text-right"><spring:message code="lbl.service.type" />
         </label>
         <div class="col-sm-3 add-margin">
-            <input type="text" name="serviceType" class="form-control resetValues" id="serviceType" value="${edcrApplication.serviceType}" readonly="readonly">
+            <input type="text" class="form-control resetValues" id="serviceType" value="${edcrApplication.serviceType}" readonly="readonly">
+            <form:errors path="serviceType" cssClass="add-margin error-msg" />
         </div>
     </div>
     <%--<div class="form-group">

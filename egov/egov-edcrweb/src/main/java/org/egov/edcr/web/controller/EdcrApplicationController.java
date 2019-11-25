@@ -159,9 +159,12 @@ public class EdcrApplicationController {
     @PostMapping("/edcrapplication/update")
     public String update(@Valid @ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
-        if (errors.hasErrors()) {
+        edcrApplicationService.validateServiceType(edcrApplication, errors, request);
+         if (errors.hasErrors()) {
+            model.addAttribute(EDCR_APPLICATION, edcrApplication);
+            edcrApplication.setApplicationType(ApplicationType.PERMIT);
             prepareNewForm(model, request);
-            return EDCRAPPLICATION_EDIT;
+            return EDCRAPPLICATION_RE_UPLOAD;
         }
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
