@@ -285,7 +285,9 @@ public class EdcrApplicationService {
                 !edcrApplication.getApplicationType().getApplicationTypeVal().equalsIgnoreCase("Permit")) {
             errors.rejectValue("applicationType", "invalid.application.type");
         }
-        if (edcrApplication == null || edcrApplication.getId() == null)
-            errors.rejectValue("applicationNumber", "invalid.msg");
+    }
+    public void validate(EdcrApplication edcrApplication, BindingResult errors){
+        if(edcrApplication == null || edcrApplication.getId() == null)
+        errors.rejectValue("applicationNumber", "invalid.msg");
     }
 }

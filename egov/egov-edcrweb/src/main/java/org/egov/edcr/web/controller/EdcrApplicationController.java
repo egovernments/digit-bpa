@@ -159,6 +159,7 @@ public class EdcrApplicationController {
     @PostMapping("/edcrapplication/update")
     public String update(@Valid @ModelAttribute final EdcrApplication edcrApplication, final BindingResult errors,
             final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
+        edcrApplicationService.validate(edcrApplication, errors);
         edcrApplicationService.validateServiceType(edcrApplication, errors, request);
          if (errors.hasErrors()) {
             model.addAttribute(EDCR_APPLICATION, edcrApplication);
