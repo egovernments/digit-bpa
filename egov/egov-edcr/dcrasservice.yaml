@@ -92,45 +92,6 @@ paths:
       tags:
         - Search Scrutiny Details
         
-  /edcr/oauth/token:
-    post:
-      summary: To access the Secured RESTful APIs, Access token is required. Use this API to get the access token which is valid for 30 mins. 
-      requestBody:
-        description: By passing username and password auth generate oAuth token.
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/AuthTokenRequest'  
-      parameters:
-        - name: tenantId
-          in: query
-          description: city name
-          required: true
-          schema:
-           type: string
-        - name: userName
-          in: header
-          required: true
-          description: Client User Name provided by erp for each client to generate authtoken
-          schema:
-            type: string
-        - name: password
-          in: header
-          required: true
-          description: Client Password provided by erp for each client to generate authtoken
-          schema:
-            type: string
-            format: password
-      responses:
-        '200':
-          description: Authtoken generated in case of valid user details.
-          content:
-            application/json:
-              schema:
-                   $ref: '#/components/schemas/AuthTokenResponse'
-      tags:
-        - Get Access Token      
-        
 components:
   schemas:
     EdcrDetail:
@@ -213,52 +174,3 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EdcrDetail'
-    
-    AuthTokenRequest:
-      type: object
-      description: Pass the username and password created/provided by erp system to access the secured rest api's.
-      properties:
-        grant_type:
-          type: string
-          description: Pass "password" as default value. 
-        username:
-          type: string
-          maxLength: 64
-          description: Unique application user name provided by erp system.
-        password:
-            type: string
-            maxLength: 64
-            description: The password of the application user name provided by erp system.
-      example:
-          grant_type: "password"
-          username: "username"
-          password: "password"
-      required:
-         -  grant_type
-         -  username
-         -  password
-    AuthTokenResponse:
-      type: object
-      description: The access token is given by the authorization server when it accepts the client ID and client password sent by the client application.
-      properties:
-        access_token:
-          type: string
-          description: The access token string as issued by the authorization server.
-        token_type:
-          type: string
-          description: Specifies type of token.
-        expires_in:
-          type: integer
-          description: Specifies the duration of access token expiry.
-        refresh_token:
-          type: string
-          description:  It provides a refresh token, if the access token expires, to get the new access token using the authorization grant.
-        scope:
-            type: string
-            description: Specific actions application can be allowed.
-      example:
-          access_token: "e3b98877-f225-45e2-add4-3c53eeb6e7a8"
-          token_type: "bearer"
-          refresh_token: "58f34753-7695-4a71-c08a-d40241ec3dfb"
-          expires_in: 4499
-          scope: "read write"        
