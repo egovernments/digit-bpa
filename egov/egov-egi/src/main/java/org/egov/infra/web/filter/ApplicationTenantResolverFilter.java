@@ -229,18 +229,17 @@ public class ApplicationTenantResolverFilter implements Filter {
                                 else
                                     tenantAtBody = tenant[1];
                                 LOG.info("############Tenant From Body######" + tenantAtBody);
-                            } else if (param.contains("authToken")) {
-                                String[] authTokenVal = param.split(":");
-                                // Next to 'bearer' word space is required to differentiate token type and access token
-                                String tokenType = "bearer ";
-                                if (authTokenVal[1].startsWith("\"") && authTokenVal[1].endsWith("\"")) {
-                                    String authToken = authTokenVal[1].substring(1, authTokenVal[1].length() - 1);
-                                    LOG.info("############Auth Token######" + tokenType + authToken);
-                                    multiReadRequestWrapper.putHeader("Authorization", tokenType + authToken);
-                                } else {
-                                    multiReadRequestWrapper.putHeader("Authorization", tokenType + authTokenVal[1]);
-                                }
-                            }
+							} /*
+								 * else if (param.contains("authToken")) { String[] authTokenVal =
+								 * param.split(":"); // Next to 'bearer' word space is required to differentiate
+								 * token type and access token String tokenType = "bearer "; if
+								 * (authTokenVal[1].startsWith("\"") && authTokenVal[1].endsWith("\"")) { String
+								 * authToken = authTokenVal[1].substring(1, authTokenVal[1].length() - 1);
+								 * LOG.info("############Auth Token######" + tokenType + authToken);
+								 * multiReadRequestWrapper.putHeader("Authorization", tokenType + authToken); }
+								 * else { multiReadRequestWrapper.putHeader("Authorization", tokenType +
+								 * authTokenVal[1]); } }
+								 */
                         }
                     }
                 }
