@@ -202,14 +202,22 @@ public class EdcrRestService {
         }
     }
 
-    public ErrorDetail validateRequestParam(final EdcrRequest edcrRequest, final MultipartFile file) {
+    public ErrorDetail validatePlanFile(final MultipartFile file) {
         List<String> dcrAllowedExtenstions = new ArrayList<>(
                 Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.extenstions").split(",")));
 
         List<String> dcrMimeTypes = new ArrayList<>(
                 Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.mime.types").split(",")));
         String fileSize = edcrApplicationSettings.getValue("dcr.dxf.max.size");
-        return validateParam(dcrAllowedExtenstions, dcrMimeTypes, file, fileSize, edcrRequest);
+        return validateParam(dcrAllowedExtenstions, dcrMimeTypes, file, fileSize);
+    }
+    
+    public ErrorDetail validateEdcrRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
+    	if (StringUtils.isNotBlank(edcrRequest.getTransactionNumber())
+                && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber()) != null) {
+            return new ErrorDetail("BPA-01", "Transaction Number should be unique");
+        }
+    	return validatePlanFile(planFile);    	
     }
 
     public ErrorDetail validateSearchRequest(final String edcrNumber, final String transactionNumber) {
@@ -228,7 +236,7 @@ public class EdcrRestService {
      */
 
     public ErrorDetail validateParam(List<String> allowedExtenstions, List<String> mimeTypes,
-            MultipartFile file, final String maxAllowSizeInMB, final EdcrRequest edcrRequest) {
+            MultipartFile file, final String maxAllowSizeInMB) {
         String extension;
         String mimeType;
         if (file != null && !file.isEmpty()) {
@@ -248,15 +256,7 @@ public class EdcrRestService {
         } else {
             return new ErrorDetail(BPA_05, "Please, upload plan file is mandatory");
         }
-
-        if (StringUtils.isNotBlank(edcrRequest.getTransactionNumber())
-                && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber()) != null) {
-            return new ErrorDetail("BPA-01", "Transaction Number should be unique");
-        }
-        // Validate Tenant id
-        if (!validateTenant(edcrRequest.getTenantId()))
-            return new ErrorDetail("BPA-06", "Please enter valid tenant");
-
+                
         return null;
     }
 
@@ -276,10 +276,6 @@ public class EdcrRestService {
         String responseStatus = success ? "successful" : "failed";
 
         return new ResponseInfo(apiId, ver, ts, resMsgId, msgId, responseStatus);
-    }
-
-    public Boolean validateTenant(final String tenantId) {
-        return StringUtils.isNotBlank(tenantId);
     }
 
     public String getFileDownloadUrl(final String fileStoreId) {

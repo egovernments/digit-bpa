@@ -28,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -49,6 +50,8 @@ public class PlanService {
     private EdcrPdfDetailService edcrPdfDetailService;
     @Autowired
     private ExtractService extractService;
+    @Autowired
+    private EdcrApplicationService edcrApplicationService;
 
     public Plan process(EdcrApplication dcrApplication, String applicationType) {
 
@@ -234,5 +237,9 @@ public class PlanService {
             edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
         }
     }
-
+    
+    public Plan extractPlan(MultipartFile dxfFile) {
+    	File planFile = edcrApplicationService.savePlanDXF(dxfFile);
+        return extractService.extract(planFile, featureService.getFeatures());
+    }
 }

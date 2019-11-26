@@ -54,10 +54,13 @@ import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
+import org.egov.common.entity.edcr.Plan;
 import org.egov.edcr.contract.EdcrDetail;
 import org.egov.edcr.contract.EdcrRequest;
 import org.egov.edcr.contract.EdcrResponse;
+import org.egov.edcr.contract.PlanResponse;
 import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.service.PlanService;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
 import org.egov.infra.microservice.contract.ResponseInfo;
 import org.egov.infra.microservice.models.RequestInfo;
@@ -80,7 +83,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 @RestController
 @RequestMapping(value = "/rest/dcr")
@@ -91,6 +96,9 @@ public class RestEdcrApplicationController {
 
     @Autowired
     private EdcrRestService edcrRestService;
+    
+    @Autowired
+    private PlanService planService;
 
     @Autowired
     protected FileStoreUtils fileStoreUtils;
@@ -103,7 +111,7 @@ public class RestEdcrApplicationController {
         EdcrRequest edcr = new EdcrRequest();
         try {
             edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
-            ErrorDetail errorResponses = edcrRestService.validateRequestParam(edcr, planFile);
+            ErrorDetail errorResponses = (edcrRestService.validateEdcrRequest(edcr, planFile));
             if (errorResponses != null)
                 return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
             else {
@@ -135,7 +143,37 @@ public class RestEdcrApplicationController {
             return new ResponseEntity<>(edcrDetail.getErrors(), HttpStatus.NOT_FOUND);
         else
             return getSuccessResponse(edcrDetail, requestInfoWrapper.getRequestInfo());
-    }
+    }    
+	
+    @PostMapping(value = "/extractplan", produces =  MediaType.APPLICATION_JSON_VALUE)	
+	@ResponseBody 
+	public ResponseEntity<?> planDetails(@RequestBody MultipartFile planFile,
+            @RequestParam String edcrRequest) {          
+    	Plan plan = new Plan();
+        EdcrRequest edcr = new EdcrRequest();
+        try {
+            edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
+            ErrorDetail errorResponses = edcrRestService.validatePlanFile(planFile);
+            if (errorResponses != null)
+                return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
+            else {
+                plan = planService.extractPlan(planFile);   
+          }
+        } catch (IOException e) {
+            ErrorResponse error = new ErrorResponse("INCORRECT_REQUEST", e.getLocalizedMessage(),
+                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
+        String jsonRes = "";
+        try {
+        	jsonRes = mapper.writeValueAsString(plan);
+		} catch (JsonProcessingException e) {
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+		}
+        return getPlanSuccessResponse(jsonRes, edcr.getRequestInfo());	 	  
+	}	 
 
     @GetMapping("/downloadfile/{fileStoreId}")
     public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
@@ -149,6 +187,20 @@ public class RestEdcrApplicationController {
         edcrRes.setResponseInfo(responseInfo);
         return new ResponseEntity<>(edcrRes, HttpStatus.OK);
 
+    }
+    
+    private ResponseEntity<?> getPlanSuccessResponse(String jsonRes, RequestInfo requestInfo) {
+        PlanResponse planRes = new PlanResponse();
+        Plan plan;
+		try {
+			plan = new ObjectMapper().readValue(jsonRes, Plan.class);
+		} catch (IOException e) {
+            return new ResponseEntity<>(e, HttpStatus.BAD_REQUEST);
+        }
+        planRes.setPlan(plan);
+        ResponseInfo responseInfo = edcrRestService.createResponseInfoFromRequestInfo(requestInfo, true);
+        planRes.setResponseInfo(responseInfo);
+        return new ResponseEntity<>(planRes, HttpStatus.OK);
     }
 
     @ExceptionHandler(Exception.class)

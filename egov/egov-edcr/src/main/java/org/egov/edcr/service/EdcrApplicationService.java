@@ -149,6 +149,11 @@ public class EdcrApplicationService {
         return dxfFile;
 
     }
+    
+    public File savePlanDXF(final MultipartFile file) {
+        FileStoreMapper fileStoreMapper = addToFileStore(file);
+        return fileStoreService.fetch(fileStoreMapper.getFileStoreId(), FILESTORE_MODULECODE);
+    }
 
     private FileStoreMapper addToFileStore(final MultipartFile file) {
         FileStoreMapper fileStoreMapper;
@@ -270,5 +275,4 @@ public class EdcrApplicationService {
         edcrIndexService.updateEdcrRestIndexes(edcrApplication, NEW_SCRTNY);
         return edcrApplication;
     }
-
 }
