@@ -92,6 +92,40 @@ paths:
       tags:
         - Search Scrutiny Details
         
+  /rest/dcr/extractplan:
+    post:
+      summary: This API will extract the dcr data.
+      requestBody:
+        content:
+          multipart/mixed:
+            schema:
+              $ref: '#/components/schemas/ExtractPlanReq'
+            encoding:
+              dxfFile:
+                contentType: application/dxf
+      responses:
+        '200':
+          description: Plan extracted successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtractPlanResponse'
+              encoding:
+                dxfFile:
+                  contentType: application/dxf
+                planPdfs:
+                  contentType: application/pdf
+                planReport:
+                  contentType: application/pdf
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ErrorRes'
+      tags:
+        - Extract Plan
+        
 components:
   schemas:
     EdcrDetail:
@@ -174,3 +208,35 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EdcrDetail'
+            
+    ExtractPlanReq:
+      type: object
+      description: This object contains data to be submitted for extracting a plan drawing.
+      properties:
+        tenantId:
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
+        requestInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
+        dxfFile:
+          type: string
+          x-mimetype: application/dxf
+          description: The builing plan drawing file, in .dxf format, which needs to be scrutinized.
+      example:
+        tenantId: sonpur
+        transactionNumber: '1'
+        requestInfo: {}
+        dxfFile: ''
+      required:
+        - tenantId
+        - dxfFile          
+            
+    ExtractPlanResponse:
+      description: This object contains the response of a file scrutiny along with all the reports and status. 
+      properties:
+        responseInfo:
+          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ResponseInfo'
+        plan:
+          type: string
+          description: Dxf file content in object format
+            
+         
