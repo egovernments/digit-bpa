@@ -53,6 +53,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 
 public class ScrutinyDetail implements Serializable {
@@ -66,6 +68,14 @@ public class ScrutinyDetail implements Serializable {
      */
     private Map<Integer, ColumnHeadingDetail> columnHeading = new TreeMap<>();
     private List<Map<String, String>> detail = new ArrayList<>();
+
+    public static class ColumnHeadingDetail implements Serializable {
+        private static final long serialVersionUID = 2446433602892212662L;
+        public String name;
+        @JsonIgnore
+        public HorizontalAlign align;
+
+    }
 
     public String getKey() {
         return key;
@@ -120,7 +130,7 @@ public class ScrutinyDetail implements Serializable {
     }
 
     public void addColumnHeading(Integer orderNo, String heading, HorizontalAlign align) {
-    	ColumnHeadingDetail colHeadingDtl = new ColumnHeadingDetail();
+        ColumnHeadingDetail colHeadingDtl = new ColumnHeadingDetail();
         if (align != null)
             colHeadingDtl.align = align;
         colHeadingDtl.name = heading;
@@ -128,7 +138,7 @@ public class ScrutinyDetail implements Serializable {
     }
 
     public void addColumnHeading(Integer orderNo, String heading) {
-    	ColumnHeadingDetail colHeadingDtl = new ColumnHeadingDetail();
+        ColumnHeadingDetail colHeadingDtl = new ColumnHeadingDetail();
         colHeadingDtl.align = HorizontalAlign.LEFT;
         colHeadingDtl.name = heading;
         this.columnHeading.put(orderNo, colHeadingDtl);
