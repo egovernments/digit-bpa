@@ -55,7 +55,7 @@ $(function() {
 	var boundaryData = loadBoundary();
 	if(boundaryData!=null && boundaryData!=''){
 		if(applicationType=='new'){
-			paintBoundaryForNew(boundaryData);
+			paintBoundaryForNew(boundaryData, selectedAdminBoundary, selectedRevenueBoundary, selectedLocationBoundary);
 		}
 		if(applicationType=='modify'){
 			paintBoundaryForModify(boundaryData, selectedAdminBoundary, selectedRevenueBoundary, selectedLocationBoundary);
@@ -81,7 +81,7 @@ function loadBoundary() {
 	return responseData;
 }
 
-function paintBoundaryForNew(genericBoundaryConfigData) {
+function paintBoundaryForNew(genericBoundaryConfigData, selectedAdminBoundary, selectedRevenueBoundary, selectedLocationBoundary) {
 	var orderArray = [];
 	var tempArray = [];
 	var orderMap = new Map(); 
@@ -93,6 +93,9 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
 	var boundaryType;
 	var tempId = [];
 	var domOptionId;
+	var revenueBoundaryId;
+	var adminBoundaryId;
+	var locationBoundaryId;
 	var uniformMap = new Map(); 
 	
 	var crosslinkConfig=genericBoundaryConfigData['crossBoundary'];
@@ -164,11 +167,11 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
 			}
 			if(Math.max.apply(null, orderMap.get(orderArray[i].split('-')[0]))==orderArray[i].split(':')[0].split('-')[1]){
 				if(hierarchy=='ADMINISTRATION')
-					document.getElementById(domOptionId).name="adminBoundary";
+					adminBoundaryId = document.getElementById(domOptionId).name="adminBoundary";
 				if(hierarchy=='REVENUE')
-					document.getElementById(domOptionId).name="revenueBoundary";
+					revenueBoundaryId = document.getElementById(domOptionId).name="revenueBoundary";
 				if(hierarchy=='LOCATION')
-					document.getElementById(domOptionId).name="locationBoundary";
+					locationBoundaryId = document.getElementById(domOptionId).name="locationBoundary";
 			}
 			
 			if(uniformMap!=null && uniformMap!=''){
@@ -185,6 +188,22 @@ function paintBoundaryForNew(genericBoundaryConfigData) {
 			}
 		}
 	}
+	
+	if(revenueBoundaryId!=null && revenueBoundaryId!='' && document.getElementById(revenueBoundaryId))
+		document.getElementById(revenueBoundaryId).value=selectedRevenueBoundary;
+	if(adminBoundaryId!=null && adminBoundaryId!='' && document.getElementById(adminBoundaryId))
+		document.getElementById(adminBoundaryId).value=selectedAdminBoundary;
+	if(locationBoundaryId!=null && locationBoundaryId!='' && document.getElementById(locationBoundaryId))
+		document.getElementById(locationBoundaryId).value=selectedLocationBoundary;
+	
+	if(uniformMap == null || uniformMap == '' || uniformMap.size == 0){
+	    if(crosslinkConfig!=null && crosslinkConfig!='')
+	        crossBoundaryModify(selectedRevenueBoundary, fromHierarchy, toHierarchy);
+	}
+	
+      setParentDetails(genericBoundaryConfigData['boundaryData'], selectedRevenueBoundary,uniformMap,'REVENUE',crosslinkConfig);
+      setParentDetails(genericBoundaryConfigData['boundaryData'], selectedAdminBoundary,uniformMap,'ADMINISTRATION',crosslinkConfig);
+      setParentDetails(genericBoundaryConfigData['boundaryData'], selectedLocationBoundary,uniformMap,'LOCATION',crosslinkConfig);
 }
 
 function paintBoundaryForModify(genericBoundaryConfigData, selectedAdminBoundary, selectedRevenueBoundary, selectedLocationBoundary) {

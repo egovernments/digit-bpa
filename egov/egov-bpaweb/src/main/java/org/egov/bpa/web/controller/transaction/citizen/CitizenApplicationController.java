@@ -394,6 +394,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
         if (errors.hasErrors()) {
             buildingFloorDetailsService.buildNewlyAddedFloorDetails(bpaApplication);
             applicationBpaService.buildExistingAndProposedBuildingDetails(bpaApplication);
+            bpaUtils.loadBoundary(bpaApplication);
             prepareCommonModelAttribute(model, bpaApplication.isCitizenAccepted());
             return loadNewForm(bpaApplication, model, bpaApplication.getServiceType().getCode());
         }
@@ -594,7 +595,7 @@ public class CitizenApplicationController extends BpaGenericApplicationControlle
                     "Successfully saved with application number " + bpaApplicationRes.getApplicationNumber() + ".");
         else
             redirectAttributes.addFlashAttribute(MESSAGE,
-                    "Successfully forwarded application to the citizen with application number "
+                    "Successfully forwarded application with application number "
                             + bpaApplicationRes.getApplicationNumber() + ".");
 
         if (bpaUtils.isCitizenAcceptanceRequired() && !bpaApplicationRes.isCitizenAccepted() && workFlowAction != null
