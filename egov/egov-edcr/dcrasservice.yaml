@@ -29,13 +29,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScrutinizePlanResponse'
-              encoding:
-                dxfFile:
-                  contentType: application/dxf
-                planPdfs:
-                  contentType: application/pdf
-                planReport:
-                  contentType: application/pdf
         '400':
           description: Invalid Input
           content:
@@ -82,13 +75,6 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ScrutinizePlanResponse'
-              encoding:
-                dxfFile:
-                  contentType: application/dxf
-                planPdfs:
-                  contentType: application/pdf
-                planReport:
-                  contentType: application/pdf
       tags:
         - Search Scrutiny Details
         
@@ -110,13 +96,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ExtractPlanResponse'
-              encoding:
-                dxfFile:
-                  contentType: application/dxf
-                planPdfs:
-                  contentType: application/pdf
-                planReport:
-                  contentType: application/pdf
         '400':
           description: Invalid Input
           content:
@@ -138,7 +117,7 @@ components:
           description: Unique Transaction Number for each request.
         planDetail:
           type: string
-          description: Dxf file content in object format
+          description: Data extracted from drawing in json 
         edcrNumber:
           type: string
           maxLength: 32
@@ -235,8 +214,9 @@ components:
       properties:
         responseInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ResponseInfo'
-        plan:
+        planDetail:
           type: string
-          description: Dxf file content in object format
+          description: Data extracted from drawing in json
+          
             
          
