@@ -213,6 +213,8 @@ public class EdcrRestService {
     }
     
     public ErrorDetail validateEdcrRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
+    	if (StringUtils.isBlank(edcrRequest.getTransactionNumber()))
+            return new ErrorDetail("BPA-07", "Please enter transactionnumber");
     	if (StringUtils.isNotBlank(edcrRequest.getTransactionNumber())
                 && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber()) != null) {
             return new ErrorDetail("BPA-01", "Transaction Number should be unique");
