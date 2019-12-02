@@ -105,6 +105,8 @@ public class Parking extends FeatureProcess {
     private static final double SP_PARK_SLOT_MIN_SIDE = 3.6;
     private static final String DA_PARKING_MIN_AREA = " 3.60 M ";
     public static final String NO_OF_UNITS = "No of apartment units";
+    private static final double PARKING_AREA_WIDTH = 1.5;
+    private static final double PARKING_AREA_LENGTH = 2.0;
 
     private static final double OPEN_ECS = 23;
     private static final double COVER_ECS = 28;
@@ -122,10 +124,12 @@ public class Parking extends FeatureProcess {
     public static final String BSMNT_PARKING_DIM_DESC = "Basement parking ECS dimension ";
     public static final String VISITOR_PARKING = "Visitor parking";
     public static final String SPECIAL_PARKING_DIM_DESC = "Special parking ECS dimension ";
+    public static final String TWO_WHEELER_DIM_DESC = "Two wheeler parking dimension ";
+
 
     @Override
     public Plan validate(Plan pl) {
-        // validateDimensions(pl);
+        //validateDimensions(pl);
         return pl;
     }
 
@@ -189,6 +193,17 @@ public class Parking extends FeatureProcess {
             if (count > 0)
                 pl.addError(SPECIAL_PARKING_DIM_DESC, SPECIAL_PARKING_DIM_DESC + count
                         + " number of DA Parking slot polygon not having only 4 points.");
+        }
+        
+        if (!parkDtls.getTwoWheelers().isEmpty()) {
+            int count = 0;
+            for (Measurement m : parkDtls.getTwoWheelers())
+                if (m.getWidth().setScale(2, RoundingMode.UP).doubleValue() < PARKING_AREA_WIDTH ||  
+                		m.getLength().setScale(2, RoundingMode.UP).doubleValue() < PARKING_AREA_LENGTH )
+                    count++;
+            if (count > 0)
+                pl.addError(TWO_WHEELER_DIM_DESC, TWO_WHEELER_DIM_DESC + count
+                        + " number of two wheeler parking polygon does not satisfy dimension 1.50 m x 2.0 m.");
         }
     }
 
