@@ -106,7 +106,7 @@ public class Parking extends FeatureProcess {
     private static final String DA_PARKING_MIN_AREA = " 3.60 M ";
     public static final String NO_OF_UNITS = "No of apartment units";
     private static final double PARKING_AREA_WIDTH = 1.5;
-    private static final double PARKING_AREA_LENGTH = 2.0;
+    private static final double PARKING_AREA_HEIGHT = 2.0;
     private static final double MECH_PARKING_WIDTH = 2.7;
     private static final double MECH_PARKING_HEIGHT = 5.5;
 
@@ -130,6 +130,10 @@ public class Parking extends FeatureProcess {
     public static final String MECH_PARKING_DESC = "Mechanical parking dimension ";
     public static final String MECH_PARKING_DIM_DESC = "All Mechanical parking polylines should have dimension 2.7*5.5 m²";
     public static final String MECH_PARKING_DIM_DESC_NA = " mechanical parking polyines does not have dimensions 2.7*5.5 m²";
+    
+    private static final String PARKING_VIOLATED_DIM = " parking violated dimension.";
+    private static final String PARKING_AREA_DIM = "1.5 M x 2 M";
+
 
 
     @Override
@@ -201,16 +205,6 @@ public class Parking extends FeatureProcess {
                         + " number of DA Parking slot polygon not having only 4 points.");
         }
         
-        if (!parkDtls.getTwoWheelers().isEmpty()) {
-            int count = 0;
-            for (Measurement m : parkDtls.getTwoWheelers())
-                if (m.getWidth().setScale(2, RoundingMode.UP).doubleValue() < PARKING_AREA_WIDTH ||  
-                		m.getLength().setScale(2, RoundingMode.UP).doubleValue() < PARKING_AREA_LENGTH )
-                    count++;
-            if (count > 0)
-                pl.addError(TWO_WHEELER_DIM_DESC, TWO_WHEELER_DIM_DESC + count
-                        + " number of two wheeler parking polygon does not satisfy dimension 1.50 m x 2.0 m.");
-        }
         if (!parkDtls.getLoadUnload().isEmpty()) {
             int count = 0;
             for (Measurement m : parkDtls.getLoadUnload())
@@ -229,6 +223,16 @@ public class Parking extends FeatureProcess {
                 pl.addError(MECHANICAL_PARKING, count
                         + " number of Mechanical parking slot polygon not having only 4 points.");
         }
+        
+        if (!parkDtls.getTwoWheelers().isEmpty()) {
+			int count = 0;
+			for (Measurement m : parkDtls.getTwoWheelers())
+				if (m.getInvalidReason() != null && m.getInvalidReason().length() > 0)
+					count++;
+			if (count > 0)
+				pl.addError(TWO_WHEELER_DIM_DESC, TWO_WHEELER_DIM_DESC + count
+						+ " number of two wheeler Parking slot polygon not having only 4 points.");
+		}
     }
 
     public void processParking(Plan pl) {
@@ -307,6 +311,8 @@ public class Parking extends FeatureProcess {
         BigDecimal totalProvidedCarParkingArea = Util.roundOffTwoDecimal(totalProvidedCarParkArea);
         BigDecimal requiredVisitorParkingArea = Util.roundOffTwoDecimal(BigDecimal.valueOf(requiredVisitorParkArea));
         BigDecimal providedVisitorParkingArea = Util.roundOffTwoDecimal(providedVisitorParkArea);
+        
+        //checkDimensionForTwoWheelerParking(pl, helper);
         
         if (totalProvidedCarParkArea.doubleValue() == 0) {
             pl.addError(SUB_RULE_40_2_DESCRIPTION,
@@ -631,6 +637,45 @@ public class Parking extends FeatureProcess {
                         NO_VIOLATION_OF_AREA + specialParkCount + PARKING, Result.Accepted.getResultVal());
             }
     }
+    
+    private void checkDimensionForTwoWheelerParking(Plan pl, ParkingHelper helper) {
+		double providedArea = 0;
+		int twoWheelParkingCount = pl.getParkingDetails().getTwoWheelers().size();
+		int failedTwoWheelCount = 0;
+		helper.twoWheelerParking = BigDecimal.valueOf(0.25 * helper.totalRequiredCarParking * 2.70 * 5.50)
+				.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
+		if (!pl.getParkingDetails().getTwoWheelers().isEmpty()) {
+			for (Measurement m : pl.getParkingDetails().getTwoWheelers()) {
+				if (m.getWidth().setScale(2, RoundingMode.UP).doubleValue() < PARKING_AREA_WIDTH
+						|| m.getHeight().setScale(2, RoundingMode.UP).doubleValue() < PARKING_AREA_HEIGHT)
+					failedTwoWheelCount++;
+
+				providedArea = providedArea + m.getArea().doubleValue();
+			}
+		}
+		
+		if (providedArea < helper.twoWheelerParking) {
+			setReportOutputDetails(pl, SUB_RULE_34_2, TWO_WHEELER_PARK_AREA,
+					helper.twoWheelerParking + " " + DcrConstants.SQMTRS,
+					BigDecimal.valueOf(providedArea).setScale(2, BigDecimal.ROUND_HALF_UP) + " " + DcrConstants.SQMTRS,
+					Result.Not_Accepted.getResultVal());
+		} else {
+			setReportOutputDetails(pl, SUB_RULE_34_2, TWO_WHEELER_PARK_AREA,
+					helper.twoWheelerParking + " " + DcrConstants.SQMTRS,
+					BigDecimal.valueOf(providedArea).setScale(2, BigDecimal.ROUND_HALF_UP) + " " + DcrConstants.SQMTRS,
+					Result.Accepted.getResultVal());
+		}
+
+		if (providedArea >= helper.twoWheelerParking && failedTwoWheelCount >= 0) {
+			setReportOutputDetails(pl, SUB_RULE_40, TWO_WHEELER_DIM_DESC, PARKING_AREA_DIM,
+					OUT_OF + twoWheelParkingCount + PARKING + failedTwoWheelCount + PARKING_VIOLATED_DIM,
+					Result.Accepted.getResultVal());
+		} else {
+			setReportOutputDetails(pl, SUB_RULE_40, TWO_WHEELER_DIM_DESC, PARKING_AREA_DIM,
+					OUT_OF + twoWheelParkingCount + PARKING + failedTwoWheelCount + PARKING_VIOLATED_DIM,
+					Result.Not_Accepted.getResultVal());
+		}
+	}
 
     private BigDecimal getTotalCarpetAreaByOccupancy(Plan pl, OccupancyType type) {
         BigDecimal totalArea = BigDecimal.ZERO;
