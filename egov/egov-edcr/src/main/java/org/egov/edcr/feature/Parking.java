@@ -94,6 +94,7 @@ public class Parking extends FeatureProcess {
     private static final String MECHANICAL_PARKING = "Mechanical parking";
     private static final String MAX_ALLOWED_MECH_PARK = "Maximum allowed mechanical parking";
     private static final String TWO_WHEELER_PARK_AREA = "Two Wheeler Parking Area";
+    private static final String LOADING_UNLOADING_AREA = "Loading Unloading Area";
     private static final String SP_PARKING = "Special parking";
     private static final String SUB_RULE_34_1_DESCRIPTION = "Parking Slots Area";
     private static final String SUB_RULE_34_2 = "34-2";
@@ -313,7 +314,7 @@ public class Parking extends FeatureProcess {
         BigDecimal providedVisitorParkingArea = Util.roundOffTwoDecimal(providedVisitorParkArea);
         
         //checkDimensionForTwoWheelerParking(pl, helper);
-        
+       //  checkAreaForLoadUnloadSpaces(pl);
         if (totalProvidedCarParkArea.doubleValue() == 0) {
             pl.addError(SUB_RULE_40_2_DESCRIPTION,
                     getLocaleMessage("msg.error.not.defined", SUB_RULE_40_2_DESCRIPTION));
@@ -685,7 +686,30 @@ public class Parking extends FeatureProcess {
                     totalArea = totalArea.add(occupancy.getCarpetArea());
         return totalArea;
     }
-
+    
+    private void checkAreaForLoadUnloadSpaces(Plan pl) {
+        double providedArea = 0;
+        BigDecimal totalBuiltupArea = pl.getOccupancies().stream().map(Occupancy::getBuiltUpArea)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        double requiredArea = Math.abs(((totalBuiltupArea.doubleValue() - 700) / 1000) * 30);
+        if (!pl.getParkingDetails().getLoadUnload().isEmpty()) {
+                for (Measurement m : pl.getParkingDetails().getLoadUnload()) {
+                        if (m.getArea().compareTo(BigDecimal.valueOf(30)) >= 0)
+                            providedArea = providedArea + m.getArea().doubleValue();
+                }
+        }
+        if (providedArea < requiredArea) {
+                setReportOutputDetails(pl, SUB_RULE_40, LOADING_UNLOADING_AREA,
+                        requiredArea + " " + DcrConstants.SQMTRS, 
+                                BigDecimal.valueOf(providedArea).setScale(2, BigDecimal.ROUND_HALF_UP) + " " + DcrConstants.SQMTRS,
+                                Result.Not_Accepted.getResultVal());
+        } else {
+                setReportOutputDetails(pl, SUB_RULE_40, LOADING_UNLOADING_AREA,
+                        requiredArea + " " + DcrConstants.SQMTRS,
+                                BigDecimal.valueOf(providedArea).setScale(2, BigDecimal.ROUND_HALF_UP) + " " + DcrConstants.SQMTRS,
+                                Result.Accepted.getResultVal());
+        }
+}
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();
