@@ -205,6 +205,14 @@ public class Parking extends FeatureProcess {
                 pl.addError(TWO_WHEELER_DIM_DESC, TWO_WHEELER_DIM_DESC + count
                         + " number of two wheeler parking polygon does not satisfy dimension 1.50 m x 2.0 m.");
         }
+        if (!parkDtls.getLoadUnload().isEmpty()) {
+            int count = 0;
+            for (Measurement m : parkDtls.getLoadUnload())
+                if (m.getArea().compareTo(BigDecimal.valueOf(30)) < 0)
+                    count++;
+            if (count > 0)
+                pl.addError("load unload", count + " loading unloading parking spaces doesnt contain minimum of 30m2");
+        }
     }
 
     public void processParking(Plan pl) {
