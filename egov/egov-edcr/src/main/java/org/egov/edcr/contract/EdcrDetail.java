@@ -64,15 +64,15 @@ public class EdcrDetail {
 
     private String status;
     
-    private String edcrNumber;
-    
-    private List<String> planPdfs;
-
-    private Plan planDetail;
+    private String edcrNumber; 
     
     private String tenantId;
     
     private String errors;
+    
+    private List<String> planPdfs;
+
+    private Plan planDetail;
 
 
     public String getPlanReport() {
