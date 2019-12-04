@@ -234,13 +234,13 @@ public class AdditionalFeature extends FeatureProcess {
 
             if (pl.getPlanInformation() != null
                     && !pl.getPlanInformation().getBarrierFreeAccessForPhyChlngdPpl().isEmpty()
-                    && "YES".equals(pl.getPlanInformation().getBarrierFreeAccessForPhyChlngdPpl())) {
+                    && DcrConstants.YES.equals(pl.getPlanInformation().getBarrierFreeAccessForPhyChlngdPpl())) {
 
                 Map<String, String> details = new HashMap<>();
                 details.put(RULE_NO, RULE_50);
                 details.put(DESCRIPTION, BARRIER_FREE_ACCESS_FOR_PHYSICALLY_CHALLENGED_PEOPLE_DESC);
-                details.put(PERMISSIBLE, "YES");
-                details.put(PROVIDED, "YES");
+                details.put(PERMISSIBLE, DcrConstants.YES);
+                details.put(PROVIDED, DcrConstants.YES);
                 details.put(STATUS, Result.Accepted.getResultVal());
                 scrutinyDetail.getDetail().add(details);
                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
