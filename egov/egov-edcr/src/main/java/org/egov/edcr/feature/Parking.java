@@ -105,8 +105,8 @@ public class Parking extends FeatureProcess {
     private static final double SP_PARK_SLOT_MIN_SIDE = 3.6;
     private static final String DA_PARKING_MIN_AREA = " 3.60 M ";
     public static final String NO_OF_UNITS = "No of apartment units";
-    private static final double PARKING_AREA_WIDTH = 1.5;
-    private static final double PARKING_AREA_HEIGHT = 2.0;
+    private static final double TWO_WHEEL_PARKING_AREA_WIDTH = 1.5;
+    private static final double TWO_WHEEL_PARKING_AREA_HEIGHT = 2.0;
     private static final double MECH_PARKING_WIDTH = 2.7;
     private static final double MECH_PARKING_HEIGHT = 5.5;
 
@@ -646,8 +646,8 @@ public class Parking extends FeatureProcess {
 				.setScale(4, BigDecimal.ROUND_HALF_UP).doubleValue();
 		if (!pl.getParkingDetails().getTwoWheelers().isEmpty()) {
 			for (Measurement m : pl.getParkingDetails().getTwoWheelers()) {
-				if (m.getWidth().setScale(2, RoundingMode.UP).doubleValue() < PARKING_AREA_WIDTH
-						|| m.getHeight().setScale(2, RoundingMode.UP).doubleValue() < PARKING_AREA_HEIGHT)
+				if (m.getWidth().setScale(2, RoundingMode.UP).doubleValue() < TWO_WHEEL_PARKING_AREA_WIDTH
+						|| m.getHeight().setScale(2, RoundingMode.UP).doubleValue() < TWO_WHEEL_PARKING_AREA_HEIGHT)
 					failedTwoWheelCount++;
 
 				providedArea = providedArea + m.getArea().doubleValue();
