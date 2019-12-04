@@ -107,6 +107,8 @@ public class Parking extends FeatureProcess {
     public static final String NO_OF_UNITS = "No of apartment units";
     private static final double PARKING_AREA_WIDTH = 1.5;
     private static final double PARKING_AREA_LENGTH = 2.0;
+    private static final double MECH_PARKING_WIDTH = 2.7;
+    private static final double MECH_PARKING_HEIGHT = 5.5;
 
     private static final double OPEN_ECS = 23;
     private static final double COVER_ECS = 28;
@@ -125,6 +127,9 @@ public class Parking extends FeatureProcess {
     public static final String VISITOR_PARKING = "Visitor parking";
     public static final String SPECIAL_PARKING_DIM_DESC = "Special parking ECS dimension ";
     public static final String TWO_WHEELER_DIM_DESC = "Two wheeler parking dimension ";
+    public static final String MECH_PARKING_DESC = "Mechanical parking dimension ";
+    public static final String MECH_PARKING_DIM_DESC = "All Mechanical parking polylines should have dimension 2.7*5.5 m²";
+    public static final String MECH_PARKING_DIM_DESC_NA = " mechanical parking polyines does not have dimensions 2.7*5.5 m²";
 
 
     @Override
@@ -144,6 +149,7 @@ public class Parking extends FeatureProcess {
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
         processParking(pl);
+        //processMechanicalParking(pl);
         return pl;
     }
 
@@ -212,6 +218,16 @@ public class Parking extends FeatureProcess {
                     count++;
             if (count > 0)
                 pl.addError("load unload", count + " loading unloading parking spaces doesnt contain minimum of 30m2");
+        }
+        
+        if (!parkDtls.getMechParking().isEmpty()) {
+            int count = 0;
+            for (Measurement m : parkDtls.getMechParking())
+                if (m.getInvalidReason() != null && m.getInvalidReason().length() > 0)
+                    count++;
+            if (count > 0)
+                pl.addError(MECHANICAL_PARKING, count
+                        + " number of Mechanical parking slot polygon not having only 4 points.");
         }
     }
 
@@ -388,27 +404,36 @@ public class Parking extends FeatureProcess {
                     Result.Accepted.getResultVal());
         }
     }
-
-    private double processMechanicalParking(Plan pl, ParkingHelper helper) {
-        Integer noOfMechParkingFromPlInfo = pl.getPlanInformation().getNoOfMechanicalParking();
-        Integer providedSlots = pl.getParkingDetails().getMechParking().size();
-        double maxAllowedMechPark = BigDecimal.valueOf(helper.totalRequiredCarParking / 2).setScale(0, RoundingMode.UP)
-                .intValue();
-        if (noOfMechParkingFromPlInfo > 0) {
-            if (noOfMechParkingFromPlInfo > 0 && providedSlots == 0) {
-                setReportOutputDetails(pl, SUB_RULE_34_2, MECHANICAL_PARKING, 1 + NUMBERS, providedSlots + NUMBERS,
-                        Result.Not_Accepted.getResultVal());
-            } else if (noOfMechParkingFromPlInfo > 0 && providedSlots > 0
-                    && noOfMechParkingFromPlInfo > maxAllowedMechPark) {
-                setReportOutputDetails(pl, SUB_RULE_34_2, MAX_ALLOWED_MECH_PARK, maxAllowedMechPark + NUMBERS,
-                        noOfMechParkingFromPlInfo + NUMBERS, Result.Not_Accepted.getResultVal());
-            } else if (noOfMechParkingFromPlInfo > 0 && providedSlots > 0) {
-                setReportOutputDetails(pl, SUB_RULE_34_2, MECHANICAL_PARKING, "", noOfMechParkingFromPlInfo + NUMBERS,
-                        Result.Accepted.getResultVal());
-            }
+    
+    private void processMechanicalParking(Plan pl) {
+        int count = 0;
+        for (Measurement m : pl.getParkingDetails().getMechParking())
+            if (m.getWidth().compareTo(BigDecimal.valueOf(MECH_PARKING_WIDTH)) < 0
+                    || m.getHeight().compareTo(BigDecimal.valueOf(MECH_PARKING_HEIGHT)) < 0)
+                count++;
+        if (count > 0) {
+            setReportOutputDetails(pl, SUB_RULE_34_2, MECH_PARKING_DESC, MECH_PARKING_DIM_DESC,
+                    count + MECH_PARKING_DIM_DESC_NA,
+                    Result.Not_Accepted.getResultVal());
+        } else {
+            setReportOutputDetails(pl, SUB_RULE_34_2, MECH_PARKING_DESC, MECH_PARKING_DIM_DESC,
+                    count + MECH_PARKING_DIM_DESC_NA,
+                    Result.Accepted.getResultVal());
         }
-        return 0;
     }
+
+    /*
+     * private double processMechanicalParking(Plan pl, ParkingHelper helper) { Integer noOfMechParkingFromPlInfo =
+     * pl.getPlanInformation().getNoOfMechanicalParking(); Integer providedSlots = pl.getParkingDetails().getMechParking().size();
+     * double maxAllowedMechPark = BigDecimal.valueOf(helper.totalRequiredCarParking / 2).setScale(0, RoundingMode.UP)
+     * .intValue(); if (noOfMechParkingFromPlInfo > 0) { if (noOfMechParkingFromPlInfo > 0 && providedSlots == 0) {
+     * setReportOutputDetails(pl, SUB_RULE_34_2, MECHANICAL_PARKING, 1 + NUMBERS, providedSlots + NUMBERS,
+     * Result.Not_Accepted.getResultVal()); } else if (noOfMechParkingFromPlInfo > 0 && providedSlots > 0 &&
+     * noOfMechParkingFromPlInfo > maxAllowedMechPark) { setReportOutputDetails(pl, SUB_RULE_34_2, MAX_ALLOWED_MECH_PARK,
+     * maxAllowedMechPark + NUMBERS, noOfMechParkingFromPlInfo + NUMBERS, Result.Not_Accepted.getResultVal()); } else if
+     * (noOfMechParkingFromPlInfo > 0 && providedSlots > 0) { setReportOutputDetails(pl, SUB_RULE_34_2, MECHANICAL_PARKING, "",
+     * noOfMechParkingFromPlInfo + NUMBERS, Result.Accepted.getResultVal()); } } return 0; }
+     */
 
     /*
      * private void buildResultForYardValidation(Plan Plan, BigDecimal parkSlotAreaInFrontYard, BigDecimal maxAllowedArea, String
