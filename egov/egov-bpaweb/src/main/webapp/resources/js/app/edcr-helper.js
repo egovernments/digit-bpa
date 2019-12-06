@@ -848,7 +848,7 @@ $(document).ready(
                 }
                 
                 if($('input.hidden_AAI_NOC').val() == 'initiate' || $('input.autohidden_AAI_NOC').val() == 'autoinitiate'){
-                    $('span.mandatory _AAI_NOC').hide();
+                    $('span.mandatory._AAI_NOC').hide();
                 }
                 
                 if($('#nocAppl').length > 0)

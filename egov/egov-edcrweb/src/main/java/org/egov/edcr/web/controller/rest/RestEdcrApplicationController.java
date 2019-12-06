@@ -49,6 +49,7 @@ package org.egov.edcr.web.controller.rest;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.validation.Valid;
 
@@ -123,26 +124,21 @@ public class RestEdcrApplicationController {
                     HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
-        return getSuccessResponse(edcrDetail, edcr.getRequestInfo());
+        return getSuccessResponse(Arrays.asList(edcrDetail), edcr.getRequestInfo());
     }
 
     @PostMapping(value = "/scrutinydetails", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> scrutinyDetails(@ModelAttribute EdcrRequest edcrRequest,
             @RequestBody @Valid RequestInfoWrapper requestInfoWrapper) {
-        ErrorDetail errorResponses = edcrRestService.validateSearchRequest(edcrRequest.getEdcrNumber(),
-                edcrRequest.getTransactionNumber());
-        EdcrDetail edcrDetail;
-        if (errorResponses != null)
-            return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
-        else
-            edcrDetail = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber(),
+        List<EdcrDetail> edcrDetail = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber(),
                     edcrRequest.getTenantId());
 
-        if (edcrDetail.getErrors() != null)
-            return new ResponseEntity<>(edcrDetail.getErrors(), HttpStatus.NOT_FOUND);
-        else
+        if (!edcrDetail.isEmpty() && edcrDetail.get(0).getErrors() != null)
+            return new ResponseEntity<>(edcrDetail.get(0).getErrors(), HttpStatus.NOT_FOUND);
+        else {
             return getSuccessResponse(edcrDetail, requestInfoWrapper.getRequestInfo());
+        }
     }    
 	
     @PostMapping(value = "/extractplan", produces =  MediaType.APPLICATION_JSON_VALUE)	
@@ -180,9 +176,9 @@ public class RestEdcrApplicationController {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, DIGIT_DCR, true);
     }
 
-    private ResponseEntity<?> getSuccessResponse(EdcrDetail edcrDetail, RequestInfo requestInfo) {
+    private ResponseEntity<?> getSuccessResponse(List<EdcrDetail> edcrDetails, RequestInfo requestInfo) {
         EdcrResponse edcrRes = new EdcrResponse();
-        edcrRes.setEdcrDetail(Arrays.asList(edcrDetail));
+        edcrRes.setEdcrDetail(edcrDetails);
         ResponseInfo responseInfo = edcrRestService.createResponseInfoFromRequestInfo(requestInfo, true);
         edcrRes.setResponseInfo(responseInfo);
         return new ResponseEntity<>(edcrRes, HttpStatus.OK);

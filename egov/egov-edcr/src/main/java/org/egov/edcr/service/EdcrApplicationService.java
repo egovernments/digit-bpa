@@ -194,6 +194,12 @@ public class EdcrApplicationService {
         return edcrApplicationRepository.findAll();
     }
 
+    public List<EdcrApplication> getEdcrApplications() {
+    	Pageable pageable = new PageRequest(0, 25,Sort.Direction.DESC, "id"); 
+        Page<EdcrApplication> edcrApplications = edcrApplicationRepository.findAll(pageable);
+        return edcrApplications.getContent();
+    }
+
     @ReadOnly
     public Page<SearchBuildingPlanScrutinyForm> planScrutinyPagedSearch(SearchBuildingPlanScrutinyForm searchRequest) {
         final Pageable pageable = new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
