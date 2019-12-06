@@ -218,7 +218,7 @@ public class EdcrApplicationController {
     public String submitPlanForOccupancyCertificate(@Valid @ModelAttribute final EdcrApplication edcrApplication,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
         if(edcrApplication.getApplicationType()== null|| 
-                !edcrApplication.getApplicationType().getApplicationTypeVal().equalsIgnoreCase("OCCUPANCY_CERTIFICATE")){
+                !edcrApplication.getApplicationType().getApplicationTypeVal().equalsIgnoreCase("Occupancy certificate")){
             errors.rejectValue("applicationType","invalid.application.type");
         }
         if (errors.hasErrors()) {
