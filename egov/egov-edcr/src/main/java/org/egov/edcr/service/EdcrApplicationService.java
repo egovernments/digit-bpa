@@ -290,4 +290,18 @@ public class EdcrApplicationService {
         if(edcrApplication == null || edcrApplication.getId() == null)
         errors.rejectValue("applicationNumber", "invalid.msg");
     }
+
+    public void validateOC(EdcrApplication edcrApplication, BindingResult errors, HttpServletRequest request) {
+        List<String> serviceType = edcrBpaRestService.getEdcrIntegratedServices(request);
+        boolean service = serviceType.contains(edcrApplication.getServiceType());
+        if (!service && edcrApplication.getServiceType() != null)
+            errors.rejectValue("serviceType", "invalid.service.type");
+        if (edcrApplication.getApplicationType() == null ||
+                !edcrApplication.getApplicationType().getApplicationTypeVal()
+                        .equalsIgnoreCase(ApplicationType.OCCUPANCY_CERTIFICATE.getApplicationTypeVal())) {
+            errors.rejectValue("applicationType", "invalid.application.type");
+        }
+        if (edcrApplication == null || edcrApplication.getPlanPermitNumber() == null)
+            errors.rejectValue("planPermitNumber", "invalid.msg");
+    }
 }

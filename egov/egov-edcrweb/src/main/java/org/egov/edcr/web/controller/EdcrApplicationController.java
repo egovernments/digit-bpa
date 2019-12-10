@@ -217,17 +217,12 @@ public class EdcrApplicationController {
     @PostMapping("/occupancy-certificate/plan/submit")
     public String submitPlanForOccupancyCertificate(@Valid @ModelAttribute final EdcrApplication edcrApplication,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
-        if (edcrApplication.getApplicationType() == null ||
-                !edcrApplication.getApplicationType().getApplicationTypeVal()
-                        .equalsIgnoreCase(ApplicationType.OCCUPANCY_CERTIFICATE.getApplicationTypeVal())) {
-            errors.rejectValue("applicationType", "invalid.application.type");
-        }
+        edcrApplicationService.validateOC(edcrApplication, errors, request);
         if (errors.hasErrors()) {
             model.addAttribute(EDCR_APPLICATION, edcrApplication);
             prepareNewForm(model, request);
             return OC_PLAN_SCRUTINY_NEW;
         }
-
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
         edcrApplicationDetails.add(edcrApplicationDetail);
@@ -260,11 +255,12 @@ public class EdcrApplicationController {
     @PostMapping("/occupancy-certificate/plan/resubmit")
     public String resubmitPlanForOccupancyCertificate(@Valid @ModelAttribute final EdcrApplication edcrApplication,
             final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs, HttpServletRequest request) {
+        edcrApplicationService.validateOC(edcrApplication, errors, request);
+        edcrApplicationService.validate(edcrApplication, errors);
         if (errors.hasErrors()) {
             prepareNewForm(model, request);
             return OC_PLAN_SCRUTINY_RESUBMIT;
         }
-
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
         edcrApplicationDetails.add(edcrApplicationDetail);
