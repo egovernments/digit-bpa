@@ -269,11 +269,11 @@ public class BpaUtils {
             status = "Accepted by Applicant";
 
         if (isCitizenAcceptanceRequired() && !application.isCitizenAccepted()
-                && !logedInuserIsCitizen() && additionalPortalInboxUser != null){
+                && !logedInuserIsCitizen() && additionalPortalInboxUser != null) {
             status = "Applicant Acceptance Pending";
-            
-            if(application.getStatus().getCode().equals(APPLICATION_STATUS_CANCELLED))
-            	status = "Application Cancelled by Applicant";
+
+            if (application.getStatus().getCode().equals(APPLICATION_STATUS_CANCELLED))
+                status = "Application Cancelled by Applicant";
         }
 
         if ((application.getState() != null && (CLOSED.equals(application.getState().getValue())
@@ -989,9 +989,10 @@ public class BpaUtils {
         else
             return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
     }
-    
+
     public Boolean feeCollector() {
-        List<Role> collectorRole = securityUtils.getCurrentUser().getRoles().stream().filter(str -> str.getName().contains(BpaConstants.ROLE_BILLCOLLECTOR)).collect(Collectors.toList());
+        List<Role> collectorRole = securityUtils.getCurrentUser().getRoles().stream()
+                .filter(str -> str.getName().contains(BpaConstants.ROLE_BILLCOLLECTOR)).collect(Collectors.toList());
         return collectorRole.isEmpty() ? false : true;
     }
 }

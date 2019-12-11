@@ -99,8 +99,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-
-
 @Service
 @Transactional(readOnly = true)
 public class OwnershipTransferService {
@@ -138,37 +136,38 @@ public class OwnershipTransferService {
     @Autowired
     private OwnershipCoApplicantService coApplicantService;
     @Autowired
-	private WorkflowHistoryService workflowHistoryService;
-	@Autowired
-	private OwnershipTransferRepository ownershipRepository;
-	@Autowired
-	private BpaUtils bpaUtils;
-	@Autowired
-	private OwnershipTransferConditionsService ownershipConditionsService;
-    
+    private WorkflowHistoryService workflowHistoryService;
+    @Autowired
+    private OwnershipTransferRepository ownershipRepository;
+    @Autowired
+    private BpaUtils bpaUtils;
+    @Autowired
+    private OwnershipTransferConditionsService ownershipConditionsService;
+
     @Transactional
     public OwnershipTransfer createNewApplication(final OwnershipTransfer ownershipTransfer, WorkflowBean wfBean) {
-    	 if (ownershipTransfer.getApplicationNumber() == null) {
-         	ownershipTransfer.setApplicationNumber(applicationNumberGenerator.generate());
-         	ownershipTransfer.setApplicationDate(new Date());
-         	ownershipTransfer.setIsActive(false);
+        if (ownershipTransfer.getApplicationNumber() == null) {
+            ownershipTransfer.setApplicationNumber(applicationNumberGenerator.generate());
+            ownershipTransfer.setApplicationDate(new Date());
+            ownershipTransfer.setIsActive(false);
         }
         if (wfBean.getWorkFlowAction() != null && wfBean.getWorkFlowAction().equals(WF_LBE_SUBMIT_BUTTON)) {
-            final BpaStatus bpaStatus = bpaStatusService.findByModuleTypeAndCode(BpaConstants.OWNERSHIPSTATUS_MODULETYPE,APPLICATION_STATUS_SUBMITTED);
+            final BpaStatus bpaStatus = bpaStatusService.findByModuleTypeAndCode(BpaConstants.OWNERSHIPSTATUS_MODULETYPE,
+                    APPLICATION_STATUS_SUBMITTED);
             ownershipTransfer.setStatus(bpaStatus);
         } else {
-            final BpaStatus bpaStatus = bpaStatusService.findByModuleTypeAndCode(BpaConstants.OWNERSHIPSTATUS_MODULETYPE,APPLICATION_STATUS_CREATED);
+            final BpaStatus bpaStatus = bpaStatusService.findByModuleTypeAndCode(BpaConstants.OWNERSHIPSTATUS_MODULETYPE,
+                    APPLICATION_STATUS_CREATED);
             ownershipTransfer.setStatus(bpaStatus);
         }
-    	ownershipTransfer.setCoApplicants(buildCoApplicantDetails(ownershipTransfer));
+        ownershipTransfer.setCoApplicants(buildCoApplicantDetails(ownershipTransfer));
         OwnershipFeeCalculationService feeCalculation = (OwnershipFeeCalculationService) specificNoticeService
                 .find(OwnershipFeeCalculationService.class, specificNoticeService.getCityDetails());
         if (bpaAppConfigUtil.ownershipApplicationFeeCollectionRequired())
             ownershipTransfer.setDemand(feeCalculation.createDemand(ownershipTransfer));
         else
-        	ownershipTransfer.setDemand(feeCalculation.createDemandWhenFeeCollectionNotRequire(ownershipTransfer));
+            ownershipTransfer.setDemand(feeCalculation.createDemandWhenFeeCollectionNotRequire(ownershipTransfer));
         OwnershipTransfer ownershipRes = ownershipTransferRepository.saveAndFlush(ownershipTransfer);
-        
 
         return ownershipRes;
     }
@@ -176,32 +175,33 @@ public class OwnershipTransferService {
     @Transactional
     public OwnershipTransfer save(final OwnershipTransfer ownershipTransfer, final WorkflowBean wfBean) {
         if (ownershipTransfer.getApplicationNumber() == null) {
-        	ownershipTransfer.setApplicationNumber(applicationNumberGenerator.generate());
-        	ownershipTransfer.setApplicationDate(new Date());
-         	ownershipTransfer.setIsActive(false);
+            ownershipTransfer.setApplicationNumber(applicationNumberGenerator.generate());
+            ownershipTransfer.setApplicationDate(new Date());
+            ownershipTransfer.setIsActive(false);
         }
         buildDocuments(ownershipTransfer);
-        ownershipTransfer.setStatus(bpaStatusService.findByModuleTypeAndCode(BpaConstants.OWNERSHIPSTATUS_MODULETYPE, APPLICATION_STATUS_CREATED));
+        ownershipTransfer.setStatus(
+                bpaStatusService.findByModuleTypeAndCode(BpaConstants.OWNERSHIPSTATUS_MODULETYPE, APPLICATION_STATUS_CREATED));
         if (!WF_SAVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction()))
             bpaWorkflowRedirectUtility.redirectToBpaWorkFlow(ownershipTransfer, wfBean);
-    	ownershipTransfer.setCoApplicants(buildCoApplicantDetails(ownershipTransfer));
+        ownershipTransfer.setCoApplicants(buildCoApplicantDetails(ownershipTransfer));
         OwnershipTransfer ownershipResponse = ownershipTransferRepository.saveAndFlush(ownershipTransfer);
         return ownershipResponse;
     }
 
     @Transactional
     public void saveOwnership(OwnershipTransfer ownershipTransfer) {
-    	ownershipTransferRepository.saveAndFlush(ownershipTransfer);
-     }   
-    
+        ownershipTransferRepository.saveAndFlush(ownershipTransfer);
+    }
+
     public OwnershipTransfer findByApplicationNumber(final String applicationNumber) {
         return ownershipTransferRepository.findByApplicationNumber(applicationNumber);
     }
-    
+
     public List<OwnershipTransfer> findByBpaApplication(final BpaApplication bpaApplication) {
         return ownershipTransferRepository.findByApplicationOrderByIdDesc(bpaApplication);
     }
-    
+
     public List<OwnershipTransfer> findByBpaApplicationAndDate(final BpaApplication bpaApplication, Date createdDate) {
         return ownershipTransferRepository.findByApplicationAndCreatedDateLessThanOrderByIdDesc(bpaApplication, createdDate);
     }
@@ -209,15 +209,14 @@ public class OwnershipTransferService {
     public OwnershipTransfer findByDemand(final EgDemand demand) {
         return ownershipTransferRepository.findByDemand(demand);
     }
-    
+
     public List<OwnershipTransfer> findByOwnershipNumber(final String ownershipNumber) {
-        return ownershipTransferRepository.findByOwnershipNumberOrderByIdDesc(ownershipNumber) ;
+        return ownershipTransferRepository.findByOwnershipNumberOrderByIdDesc(ownershipNumber);
     }
-    
+
     public List<OwnershipTransfer> findByPlanPermissionNumber(final String permitNumber) {
         return ownershipTransferRepository.findByApplicationPlanPermissionNumberOrderByIdDesc(permitNumber);
-    }    
-    
+    }
 
     private void buildDocuments(final OwnershipTransfer ownershipTransfer) {
         if (ownershipTransfer.getFiles() != null && ownershipTransfer.getFiles().length > 0) {
@@ -230,21 +229,23 @@ public class OwnershipTransferService {
 
     @Transactional
     public OwnershipTransfer update(OwnershipTransfer ownershipTransfer, final WorkflowBean wfBean) {
-    	 PlanPermissionNumberGenerator planPermissionNumber = (PlanPermissionNumberGenerator) specificNoticeService
-                 .find(PlanPermissionNumberGeneratorImpl.class, specificNoticeService.getCityDetails());
+        PlanPermissionNumberGenerator planPermissionNumber = (PlanPermissionNumberGenerator) specificNoticeService
+                .find(PlanPermissionNumberGeneratorImpl.class, specificNoticeService.getCityDetails());
         if (WF_APPROVE_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())) {
-        	ownershipTransfer.setOwnershipApprovalDate(new Date());
-        	if (bpaAppConfigUtil.autogenerateOwnershipNumber()) 
-         	   ownershipTransfer.setOwnershipNumber(planPermissionNumber.generatePlanPermissionNumber(ownershipTransfer.getApplication()));
-        	else
-               ownershipTransfer.setOwnershipNumber(ownershipTransfer.getApplication().getPlanPermissionNumber());
-        	  ownershipTransfer.setApproverPosition(ownershipTransfer.getState().getOwnerPosition());
-                  ownershipTransfer.setApproverUser(
-                          ownershipTransfer.getState().getOwnerUser() == null ? securityUtils.getCurrentUser()
-                                  : ownershipTransfer.getState().getOwnerUser());
+            ownershipTransfer.setOwnershipApprovalDate(new Date());
+            if (bpaAppConfigUtil.autogenerateOwnershipNumber())
+                ownershipTransfer.setOwnershipNumber(
+                        planPermissionNumber.generatePlanPermissionNumber(ownershipTransfer.getApplication()));
+            else
+                ownershipTransfer.setOwnershipNumber(ownershipTransfer.getApplication().getPlanPermissionNumber());
+            ownershipTransfer.setApproverPosition(ownershipTransfer.getState().getOwnerPosition());
+            ownershipTransfer.setApproverUser(
+                    ownershipTransfer.getState().getOwnerUser() == null ? securityUtils.getCurrentUser()
+                            : ownershipTransfer.getState().getOwnerUser());
         }
-        if(BpaConstants.WF_ASST_ENG_APPROVED.equalsIgnoreCase(ownershipTransfer.getCurrentState().getValue()) && bpaAppConfigUtil.ownershipFeeCollectionRequired()) {
-        	calculateOwnershipFee(ownershipTransfer);
+        if (BpaConstants.WF_ASST_ENG_APPROVED.equalsIgnoreCase(ownershipTransfer.getCurrentState().getValue())
+                && bpaAppConfigUtil.ownershipFeeCollectionRequired()) {
+            calculateOwnershipFee(ownershipTransfer);
         }
         if (WF_REJECT_BUTTON.equalsIgnoreCase(wfBean.getWorkFlowAction())
                 || APPLICATION_STATUS_REJECTED.equalsIgnoreCase(ownershipTransfer.getStatus().getCode())) {
@@ -254,25 +255,26 @@ public class OwnershipTransferService {
         bpaWorkflowRedirectUtility.redirectToBpaWorkFlow(ownershipTransfer, wfBean);
         return ownershipRes;
     }
-    
+
     private void calculateOwnershipFee(final OwnershipTransfer ownershipTransfer) {
-    	OwnershipFeeCalculationService feeCalculation = (OwnershipFeeCalculationService) specificNoticeService
-                .find(OwnershipFeeCalculationService.class, specificNoticeService.getCityDetails());  
-    	OwnershipFee ownershipFee = feeCalculation.calculateOwnershipSanctionFees(ownershipTransfer);
-    	 ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(ownershipFee.getApplicationFee());
-    	 ownershipFee.setApplicationFee(applicationFee);
-         EgDemand demand = bpaDemandService.generateDemandUsingSanctionFeeList(ownershipFee.getApplicationFee(), ownershipFee.getOwnershipTransfer().getDemand());
-         if (ownershipFee.getOwnershipTransfer().getDemand() == null) { 
-        	 ownershipFee.getOwnershipTransfer().setDemand(demand);	
- 		}
-         ownershipFeeRepository.save(ownershipFee);
+        OwnershipFeeCalculationService feeCalculation = (OwnershipFeeCalculationService) specificNoticeService
+                .find(OwnershipFeeCalculationService.class, specificNoticeService.getCityDetails());
+        OwnershipFee ownershipFee = feeCalculation.calculateOwnershipSanctionFees(ownershipTransfer);
+        ApplicationFee applicationFee = applicationFeeService.saveApplicationFee(ownershipFee.getApplicationFee());
+        ownershipFee.setApplicationFee(applicationFee);
+        EgDemand demand = bpaDemandService.generateDemandUsingSanctionFeeList(ownershipFee.getApplicationFee(),
+                ownershipFee.getOwnershipTransfer().getDemand());
+        if (ownershipFee.getOwnershipTransfer().getDemand() == null) {
+            ownershipFee.getOwnershipTransfer().setDemand(demand);
+        }
+        ownershipFeeRepository.save(ownershipFee);
     }
-    
+
     private List<OwnershipTransferCoApplicant> buildCoApplicantDetails(final OwnershipTransfer ownershipTransfer) {
         List<OwnershipTransferCoApplicant> coApplicants = new LinkedList<>();
         List<OwnershipTransferCoApplicant> deleteCoApplicants = new LinkedList<>();
         for (OwnershipTransferCoApplicant applicant : ownershipTransfer.getCoApplicants()) {
-        	if (applicant.getCoApplicant().getName() != null) {
+            if (applicant.getCoApplicant().getName() != null) {
                 applicant.setOwnershipTransfer(ownershipTransfer);
                 coApplicants.add(applicant);
             } else if (applicant.getId() != null) {
@@ -280,15 +282,16 @@ public class OwnershipTransferService {
             }
         }
         if (coApplicants.isEmpty())
-        	ownershipTransfer.getCoApplicants().clear();
+            ownershipTransfer.getCoApplicants().clear();
         if (!deleteCoApplicants.isEmpty())
             coApplicantService.delete(deleteCoApplicants);
         return coApplicants;
     }
-    
+
     public void buildOwnerDetails(final OwnershipTransfer ownershipTransfer) {
-        Applicant existApplicant = applicantService.findByNameAndMobileNumberAndGenderAndType(ownershipTransfer.getOwner().getName(),
-        		ownershipTransfer.getOwner().getUser().getMobileNumber(), ownershipTransfer.getOwner().getGender(),
+        Applicant existApplicant = applicantService.findByNameAndMobileNumberAndGenderAndType(
+                ownershipTransfer.getOwner().getName(),
+                ownershipTransfer.getOwner().getUser().getMobileNumber(), ownershipTransfer.getOwner().getGender(),
                 UserType.CITIZEN);
         if (existApplicant == null) {
             Applicant applicant = new Applicant();
@@ -300,12 +303,12 @@ public class OwnershipTransferService {
             applicant.setUser(getCitizen(ownershipTransfer));
             ownershipTransfer.setOwner(applicant);
         } else {
-        	ownershipTransfer.setOwner(existApplicant);
+            ownershipTransfer.setOwner(existApplicant);
         }
         if (!ownershipTransfer.getOwner().getUser().isActive())
-        	ownershipTransfer.getOwner().getUser().setActive(true);
+            ownershipTransfer.getOwner().getUser().setActive(true);
     }
-    
+
     private Citizen getCitizen(OwnershipTransfer ownershipTransfer) {
         Citizen citizen;
         List<Citizen> citizensWithMobNo = citizenService
@@ -319,14 +322,14 @@ public class OwnershipTransferService {
             List<User> citizensWithAadhaar = userService
                     .getUserByAadhaarNumberAndType(ownershipTransfer.getOwner().getAadhaarNumber(), UserType.CITIZEN);
             if (!busUsersWithAadhaar.isEmpty() || !citizensWithAadhaar.isEmpty()) {
-            	ownershipTransfer.getOwner().setAadhaarNumber(StringUtils.EMPTY);
+                ownershipTransfer.getOwner().setAadhaarNumber(StringUtils.EMPTY);
             }
             List<User> citizensWithEmail = userService.getUsersByTypeAndEmailId(ownershipTransfer.getOwner().getEmailId(),
                     UserType.CITIZEN);
             List<User> busUsersWithEmail = userService.getUsersByTypeAndEmailId(ownershipTransfer.getOwner().getEmailId(),
                     UserType.BUSINESS);
             if (!busUsersWithEmail.isEmpty() || !citizensWithEmail.isEmpty()) {
-            	ownershipTransfer.getOwner().setEmailId(StringUtils.EMPTY);
+                ownershipTransfer.getOwner().setEmailId(StringUtils.EMPTY);
             }
             citizen = applicationBpaService.createApplicantAsCitizen(ownershipTransfer.getOwner());
             ownershipTransfer.setMailPwdRequired(true);
@@ -336,11 +339,11 @@ public class OwnershipTransferService {
         }
         return citizen;
     }
-    
+
     public void processAndStoreOwnershipDocuments(final OwnershipTransfer ownershipTransfer) {
         if (!ownershipTransfer.getOwnershipTransferDocuments().isEmpty()
                 && null == ownershipTransfer.getOwnershipTransferDocuments().get(0).getId())
-        	ownershipTransfer.getOwnershipTransferDocuments().forEach(document -> {
+            ownershipTransfer.getOwnershipTransferDocuments().forEach(document -> {
                 document.setOwnershipTransfer(ownershipTransfer);
                 GeneralDocument documentsCommon = document.getDocument();
                 documentsCommon.setServiceChecklist(
@@ -363,45 +366,47 @@ public class OwnershipTransferService {
             commonDoc.setSubmitted(true);
         }
     }
-    
+
     @ReadOnly
-	 public Page<SearchBpaApplicationForm> pagedSearch(SearchBpaApplicationForm searchRequest) {
+    public Page<SearchBpaApplicationForm> pagedSearch(SearchBpaApplicationForm searchRequest) {
 
-	   final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
-	         searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy());
+        final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
+                searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy());
 
-	   Page<OwnershipTransfer> ownershipApplications = ownershipRepository
-	          .findAll(SearchOwnershipTransferFormSpec.searchSpecification(searchRequest), pageable);
-	   List<SearchBpaApplicationForm> searchResults = new ArrayList<>();
-	   for (OwnershipTransfer ownership : ownershipApplications) {
-	       String pendingAction = ownership.getState() == null ? "N/A" : ownership.getState().getNextAction();
-	       Boolean hasCollectionPending = bpaUtils.checkAnyTaxIsPendingToCollect(ownership.getDemand());
-	       searchResults.add(
-	                    new SearchBpaApplicationForm(ownership, getProcessOwner(ownership), pendingAction, bpaUtils.feeCollector(), hasCollectionPending));
-	   }
-	   return new PageImpl<>(searchResults, pageable, ownershipApplications.getTotalElements());
-	 }
-	 
-	 private String getProcessOwner(OwnershipTransfer ownershipTransfer) {	  
-	   return ownershipTransfer.getState() != null && ownershipTransfer.getState().getOwnerPosition() != null 
-			  ? workflowHistoryService.getUserPositionByPositionAndDate(ownershipTransfer.getState().getOwnerPosition().getId(), ownershipTransfer.getState().getLastModifiedDate()).getName() 
-			  : ownershipTransfer.getLastModifiedBy().getName();
-     } 
-	 
-	 private void buildRejectionReasons(final OwnershipTransfer ownershipTransfer) {
-		 ownershipConditionsService.delete(ownershipTransfer.getRejectionReasons());
-		 ownershipConditionsService.delete(ownershipTransfer.getAdditionalOwnershipConditions());
-		 ownershipTransfer.getAdditionalOwnershipConditions().clear();
-		 ownershipTransfer.getRejectionReasons().clear();
-	     List<OwnershipTransferConditions> additionalRejectReasons = new ArrayList<>();
-	     for (OwnershipTransferConditions addnlReason : ownershipTransfer.getAdditionalRejectReasonsTemp()) {
-	         addnlReason.setOwnershipTransfer(ownershipTransfer);
-	         addnlReason.getNoticeCondition().setChecklistServicetype(
-	        		 ownershipTransfer.getAdditionalRejectReasonsTemp().get(0).getNoticeCondition().getChecklistServicetype());
-	         if (addnlReason != null && addnlReason.getNoticeCondition().getAdditionalCondition() != null)
-	                additionalRejectReasons.add(addnlReason);
-	     }
-	     ownershipTransfer.setRejectionReasons(ownershipTransfer.getRejectionReasonsTemp());
-	     ownershipTransfer.setAdditionalOwnershipConditions(additionalRejectReasons);
-	 }
+        Page<OwnershipTransfer> ownershipApplications = ownershipRepository
+                .findAll(SearchOwnershipTransferFormSpec.searchSpecification(searchRequest), pageable);
+        List<SearchBpaApplicationForm> searchResults = new ArrayList<>();
+        for (OwnershipTransfer ownership : ownershipApplications) {
+            String pendingAction = ownership.getState() == null ? "N/A" : ownership.getState().getNextAction();
+            Boolean hasCollectionPending = bpaUtils.checkAnyTaxIsPendingToCollect(ownership.getDemand());
+            searchResults.add(
+                    new SearchBpaApplicationForm(ownership, getProcessOwner(ownership), pendingAction, bpaUtils.feeCollector(),
+                            hasCollectionPending));
+        }
+        return new PageImpl<>(searchResults, pageable, ownershipApplications.getTotalElements());
+    }
+
+    private String getProcessOwner(OwnershipTransfer ownershipTransfer) {
+        return ownershipTransfer.getState() != null && ownershipTransfer.getState().getOwnerPosition() != null
+                ? workflowHistoryService.getUserPositionByPositionAndDate(ownershipTransfer.getState().getOwnerPosition().getId(),
+                        ownershipTransfer.getState().getLastModifiedDate()).getName()
+                : ownershipTransfer.getLastModifiedBy().getName();
+    }
+
+    private void buildRejectionReasons(final OwnershipTransfer ownershipTransfer) {
+        ownershipConditionsService.delete(ownershipTransfer.getRejectionReasons());
+        ownershipConditionsService.delete(ownershipTransfer.getAdditionalOwnershipConditions());
+        ownershipTransfer.getAdditionalOwnershipConditions().clear();
+        ownershipTransfer.getRejectionReasons().clear();
+        List<OwnershipTransferConditions> additionalRejectReasons = new ArrayList<>();
+        for (OwnershipTransferConditions addnlReason : ownershipTransfer.getAdditionalRejectReasonsTemp()) {
+            addnlReason.setOwnershipTransfer(ownershipTransfer);
+            addnlReason.getNoticeCondition().setChecklistServicetype(
+                    ownershipTransfer.getAdditionalRejectReasonsTemp().get(0).getNoticeCondition().getChecklistServicetype());
+            if (addnlReason != null && addnlReason.getNoticeCondition().getAdditionalCondition() != null)
+                additionalRejectReasons.add(addnlReason);
+        }
+        ownershipTransfer.setRejectionReasons(ownershipTransfer.getRejectionReasonsTemp());
+        ownershipTransfer.setAdditionalOwnershipConditions(additionalRejectReasons);
+    }
 }
