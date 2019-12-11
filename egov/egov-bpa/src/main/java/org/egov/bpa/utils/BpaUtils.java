@@ -927,11 +927,14 @@ public class BpaUtils {
     public void loadBoundary(BpaApplication bpaApplication) {
         SiteDetail siteDetail = bpaApplication.getSiteDetail().get(0);
         bpaApplication.setAdminBoundary(
-                siteDetail.getElectionBoundary() == null ? bpaApplication.getAdminBoundary() : String.valueOf(siteDetail.getElectionBoundary().getId()));
+                siteDetail.getElectionBoundary() == null ? bpaApplication.getAdminBoundary()
+                        : String.valueOf(siteDetail.getElectionBoundary().getId()));
         bpaApplication.setLocationBoundary(
-                siteDetail.getLocationBoundary() == null ? bpaApplication.getLocationBoundary() : String.valueOf(siteDetail.getLocationBoundary().getId()));
+                siteDetail.getLocationBoundary() == null ? bpaApplication.getLocationBoundary()
+                        : String.valueOf(siteDetail.getLocationBoundary().getId()));
         bpaApplication.setRevenueBoundary(
-                siteDetail.getAdminBoundary() == null ? bpaApplication.getRevenueBoundary() : String.valueOf(siteDetail.getAdminBoundary().getId()));
+                siteDetail.getAdminBoundary() == null ? bpaApplication.getRevenueBoundary()
+                        : String.valueOf(siteDetail.getAdminBoundary().getId()));
     }
 
     public Boundary getBoundaryForWorkflow(SiteDetail siteDetail) {
