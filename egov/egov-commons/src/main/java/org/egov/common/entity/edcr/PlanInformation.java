@@ -63,11 +63,11 @@ public class PlanInformation implements Serializable {
     @Id
     @GeneratedValue(generator = SEQ_EDCR_PLANINFO, strategy = GenerationType.SEQUENCE)
     private Long id;
-
+//Plot area
     private BigDecimal plotArea = BigDecimal.ZERO;
-
+//Owner Name
     private String ownerName;
-
+//
     private String occupancy;
 
     private String serviceType;
