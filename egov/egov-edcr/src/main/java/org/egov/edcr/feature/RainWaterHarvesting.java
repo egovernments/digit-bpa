@@ -53,6 +53,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
@@ -85,7 +86,7 @@ public class RainWaterHarvesting extends FeatureProcess {
         scrutinyDetail = new ScrutinyDetail();
         scrutinyDetail.addColumnHeading(1, RULE_NO);
         scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        //scrutinyDetail.addColumnHeading(3, REQUIRED);
+        // scrutinyDetail.addColumnHeading(3, REQUIRED);
         scrutinyDetail.addColumnHeading(4, PROVIDED);
         scrutinyDetail.addColumnHeading(5, STATUS);
         scrutinyDetail.setKey("Common_Rain Water Harvesting");
@@ -93,17 +94,17 @@ public class RainWaterHarvesting extends FeatureProcess {
         String subRuleDesc = RULE_51_DESCRIPTION;
         // BigDecimal expectedTankCapacity = BigDecimal.ZERO;
         BigDecimal plotArea = pl.getPlot() != null ? pl.getPlot().getArea() : BigDecimal.ZERO;
+        OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding() != null
+                ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+                : null;
 
-        if (plotArea.compareTo(HUNDRED) >= 0) {
-            if (pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NO)
-                    || pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NA)) {
-                errors.put(DxfFileConstants.RWH_DECLARED, RWH_DECLARATION_ERROR);
-                pl.addErrors(errors);
-                addReportOutput(pl, subRule, subRuleDesc);
-            } else {
-                addReportOutput(pl, subRule, subRuleDesc);
+        if (mostRestrictiveFarHelper != null && mostRestrictiveFarHelper.getType() != null) {
+            if (DxfFileConstants.A.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode()) &&
+                    plotArea.compareTo(HUNDRED) >= 0) {
+                addOutput(pl, errors, subRule, subRuleDesc);
+            } else if (DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())) {
+                addOutput(pl, errors, subRule, subRuleDesc);
             }
-
         }
 
         /*
@@ -115,6 +116,17 @@ public class RainWaterHarvesting extends FeatureProcess {
          * processRWHTankCapacity(pl, "", subRule, subRuleDesc, expectedTankCapacity, valid); } }
          */
         return pl;
+    }
+
+    private void addOutput(Plan pl, HashMap<String, String> errors, String subRule, String subRuleDesc) {
+        if (pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NO)
+                || pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NA)) {
+            errors.put(DxfFileConstants.RWH_DECLARED, RWH_DECLARATION_ERROR);
+            pl.addErrors(errors);
+            addReportOutput(pl, subRule, subRuleDesc);
+        } else {
+            addReportOutput(pl, subRule, subRuleDesc);
+        }
     }
 
     private void addReportOutput(Plan pl, String subRule, String subRuleDesc) {

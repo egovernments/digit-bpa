@@ -133,7 +133,7 @@ public class UserService {
     }
 
     public Set<Role> getRolesByUsername(String userName) {
-        return userRepository.findUserRolesByUserName(userName);
+        return userRepository.findUserRolesByUserNameAndTenantId(userName, ApplicationThreadLocals.getTenantID());
     }
 
     public Set<Role> getEmployeeRolesByUsername(String userName) {

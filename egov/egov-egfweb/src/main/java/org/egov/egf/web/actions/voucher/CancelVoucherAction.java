@@ -176,12 +176,12 @@ public class CancelVoucherAction extends BaseFormAction {
 
     private boolean isSuperUser() {
         final Query queryFnd = persistenceService.getSession().createNativeQuery(new StringBuilder(" SELECT usrr.USERID")
-                .append(" FROM state.EG_USERROLE usrr,  EG_ROLE r")
+                .append(" FROM state.EG_USERROLE usrr,  state.EG_ROLE r")
                 .append(" WHERE usrr.ROLEID=r.ID and usrr.userid = :userId AND lower(r.NAME)=:name").toString());
         final List<Object> superUserList = queryFnd.setParameter("userId", loggedInUser, IntegerType.INSTANCE)
                 .setParameter("name", FinancialConstants.SUPERUSER, StringType.INSTANCE)
                 .list();
-        if (superUserList != null && superUserList.size() > 0)
+        if (superUserList != null && !superUserList.isEmpty())
             return true;
         else
             return false;

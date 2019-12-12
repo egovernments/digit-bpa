@@ -48,110 +48,28 @@
 
 package org.egov.edcr.contract;
 
-import java.util.List;
-
 import org.egov.common.entity.edcr.Plan;
+import org.egov.infra.microservice.contract.ResponseInfo;
 
-public class EdcrDetail {
+public class PlanResponse {
 
-    private String dxfFile;
-
-    private String updatedDxfFile;
+    private ResponseInfo responseInfo;
     
-    private String planReport;
-    
-    private String transactionNumber;
+    private Plan plan;
 
-    private String status;
-    
-    private String edcrNumber; 
-    
-    private String tenantId;
-    
-    private String errors;
-    
-    private List<String> planPdfs;
-
-    private Plan planDetail;
-
-
-    public String getPlanReport() {
-        return planReport;
-    }
-
-    public void setPlanReport(String planReport) {
-        this.planReport = planReport;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public Plan getPlanDetail() {
-        return planDetail;
-    }
-
-    public void setPlanDetail(Plan planDetail) {
-        this.planDetail = planDetail;
-    }
-
-    public List<String> getPlanPdfs() {
-        return planPdfs;
-    }
-
-    public void setPlanPdfs(List<String> planPdfs) {
-        this.planPdfs = planPdfs;
-    }
-
-    public String getEdcrNumber() {
-        return edcrNumber;
-    }
-
-    public void setEdcrNumber(String edcrNumber) {
-        this.edcrNumber = edcrNumber;
-    }
-
-	public String getTransactionNumber() {
-		return transactionNumber;
+	public ResponseInfo getResponseInfo() {
+		return responseInfo;
 	}
 
-	public void setTransactionNumber(String transactionNumber) {
-		this.transactionNumber = transactionNumber;
+	public void setResponseInfo(ResponseInfo responseInfo) {
+		this.responseInfo = responseInfo;
 	}
 
-	public String getTenantId() {
-		return tenantId;
+	public Plan getPlan() {
+		return plan;
 	}
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
-
-	public String getDxfFile() {
-		return dxfFile;
-	}
-
-	public void setDxfFile(String dxfFile) {
-		this.dxfFile = dxfFile;
-	}
-
-	public String getUpdatedDxfFile() {
-		return updatedDxfFile;
-	}
-
-	public void setUpdatedDxfFile(String updatedDxfFile) {
-		this.updatedDxfFile = updatedDxfFile;
-	}
-
-	public String getErrors() {
-		return errors;
-	}
-
-	public void setErrors(String errors) {
-		this.errors = errors;
+	public void setPlan(Plan plan) {
+		this.plan = plan;
 	}
 }

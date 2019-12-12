@@ -482,6 +482,7 @@ public class CitizenUpdateApplicationController extends BpaGenericApplicationCon
             final BpaStatus bpaStatus = applicationBpaService
                     .getStatusByCodeAndModuleType(APPLICATION_STATUS_SUBMITTED);
             bpaApplication.setStatus(bpaStatus);
+            bpaApplication.setApplicationDate(new Date());
             if (isEdcrIntegrationRequire)
                 permitNocService.initiateNoc(bpaApplication);
 

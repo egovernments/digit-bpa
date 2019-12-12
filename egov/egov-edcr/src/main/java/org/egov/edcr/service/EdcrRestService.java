@@ -132,6 +132,15 @@ public class EdcrRestService {
         edcrApplication = edcrApplicationService.createRestEdcr(edcrApplication);
         return setEdcrResponse(edcrApplication, edcrRequest.getTenantId());
     }
+    
+    @Transactional
+    public List<EdcrDetail> edcrDetailsResponse(List<EdcrApplication> edcrApplications, String tenantId) {
+    	List<EdcrDetail> edcrDetails = new ArrayList<>();
+    	for(EdcrApplication edcrApp : edcrApplications)
+    		edcrDetails.add(setEdcrResponse(edcrApp, tenantId));
+    	       			
+    	return edcrDetails;
+    }
 
     public EdcrDetail setEdcrResponse(EdcrApplication edcrApplication, String tenantId) {
         EdcrDetail edcrDetail = new EdcrDetail();
@@ -179,44 +188,64 @@ public class EdcrRestService {
         return edcrDetail;
     }
 
-    public EdcrDetail fetchEdcr(final String edcrNumber, final String transactionNumber, String tenantId) {
-        EdcrApplication edcrApplication = null;
+    public List<EdcrDetail> fetchEdcr(final String edcrNumber, final String transactionNumber, String tenantId) {
+        List<EdcrApplication> edcrDetails = new ArrayList<>();
+        EdcrApplication edcrApplication = new EdcrApplication();
+
         if (StringUtils.isNotBlank(edcrNumber) && StringUtils.isNotBlank(transactionNumber)) {
             EdcrApplicationDetail dcrDetails = edcrApplicationDetailService.findByDcrAndTransactionNumber(edcrNumber,
                     transactionNumber);
-            if (dcrDetails != null)
+            if (dcrDetails != null) {
                 edcrApplication = dcrDetails.getApplication();
+                edcrDetails.add(edcrApplication);
+            }
         } else if (StringUtils.isNotBlank(edcrNumber)) {
             EdcrApplicationDetail dcrDetails = edcrApplicationDetailService.findByDcrNumber(edcrNumber);
-            if (dcrDetails != null)
+            if (dcrDetails != null) {
                 edcrApplication = dcrDetails.getApplication();
-        } else {
+                edcrDetails.add(edcrApplication);
+            }
+        } else if (StringUtils.isNotBlank(transactionNumber)) {
             edcrApplication = edcrApplicationService.findByTransactionNumber(transactionNumber);
+            if(edcrApplication != null)
+               edcrDetails.add(edcrApplication);
         }
-        if(edcrApplication != null)
-           return setEdcrResponse(edcrApplication, tenantId) ;
         else
-        {
-        	EdcrDetail edcrDetail = new EdcrDetail();
-        	edcrDetail.setErrors("No Record Found");
-        	return edcrDetail;
+        	edcrDetails = edcrApplicationService.getEdcrApplications();
+
+        if (!edcrDetails.isEmpty())
+            return edcrDetailsResponse(edcrDetails, tenantId);
+        else {
+            EdcrDetail edcrDetail = new EdcrDetail();
+            edcrDetail.setErrors("No Record Found");
+            return Arrays.asList(edcrDetail);
         }
     }
 
-    public ErrorDetail validateRequestParam(final EdcrRequest edcrRequest, final MultipartFile file) {
+    public ErrorDetail validatePlanFile(final MultipartFile file) {
         List<String> dcrAllowedExtenstions = new ArrayList<>(
                 Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.extenstions").split(",")));
 
         List<String> dcrMimeTypes = new ArrayList<>(
                 Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.mime.types").split(",")));
         String fileSize = edcrApplicationSettings.getValue("dcr.dxf.max.size");
-        return validateParam(dcrAllowedExtenstions, dcrMimeTypes, file, fileSize, edcrRequest);
+        return validateParam(dcrAllowedExtenstions, dcrMimeTypes, file, fileSize);
+    }
+    
+    public ErrorDetail validateEdcrRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
+    	if (StringUtils.isBlank(edcrRequest.getTransactionNumber()))
+            return new ErrorDetail("BPA-07", "Please enter transaction number");
+    	if (StringUtils.isNotBlank(edcrRequest.getTransactionNumber())
+                && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber()) != null) {
+            return new ErrorDetail("BPA-01", "Transaction Number should be unique");
+        }
+    	return validatePlanFile(planFile);    	
     }
 
     public ErrorDetail validateSearchRequest(final String edcrNumber, final String transactionNumber) {
         ErrorDetail errorDetail = null;
         if (StringUtils.isBlank(edcrNumber) && StringUtils.isBlank(transactionNumber))
-            return new ErrorDetail(BPA_05, "Please enter valid edcrnumber or transactionnumber");
+            return new ErrorDetail("BPA-07", "Please enter valid edcr number or transaction number");
         return errorDetail;
     }
 
@@ -229,7 +258,7 @@ public class EdcrRestService {
      */
 
     public ErrorDetail validateParam(List<String> allowedExtenstions, List<String> mimeTypes,
-            MultipartFile file, final String maxAllowSizeInMB, final EdcrRequest edcrRequest) {
+            MultipartFile file, final String maxAllowSizeInMB) {
         String extension;
         String mimeType;
         if (file != null && !file.isEmpty()) {
@@ -247,17 +276,9 @@ public class EdcrRestService {
                    */
             }
         } else {
-            return new ErrorDetail(BPA_05, "Plan file is mandatory");
+            return new ErrorDetail(BPA_05, "Please, upload plan file is mandatory");
         }
-
-        if (StringUtils.isNotBlank(edcrRequest.getTransactionNumber())
-                && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber()) != null) {
-            return new ErrorDetail("BPA-01", "Transaction Number should be unique");
-        }
-        // Validate Tenant id
-        if (!validateTenant(edcrRequest.getTenantId()))
-            return new ErrorDetail(BPA_05, "Please enter valid tenant");
-
+                
         return null;
     }
 
@@ -277,10 +298,6 @@ public class EdcrRestService {
         String responseStatus = success ? "successful" : "failed";
 
         return new ResponseInfo(apiId, ver, ts, resMsgId, msgId, responseStatus);
-    }
-
-    public Boolean validateTenant(final String tenantId) {
-        return StringUtils.isNotBlank(tenantId);
     }
 
     public String getFileDownloadUrl(final String fileStoreId) {

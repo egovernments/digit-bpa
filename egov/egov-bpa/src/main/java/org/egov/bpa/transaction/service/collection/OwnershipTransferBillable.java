@@ -284,10 +284,9 @@ public class OwnershipTransferBillable extends AbstractBillable implements Billa
     public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
-
+    
     @Override
     public BigDecimal getMinAmountPayable() {
-        // TODO Auto-generated method stub
-        return null;
+        return BigDecimal.ZERO;
     }
 }

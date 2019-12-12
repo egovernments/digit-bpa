@@ -206,7 +206,18 @@
  	</welcome-file-list>
  	
  	<error-page>
- 		<location>/error</location>
+ 	<exception-type>org.egov.infra.validation.exception.ApplicationRestException</exception-type>
+ 	<location>/rest/dcr/error</location>
+  	</error-page>
+  	
+ 	<error-page>
+ 	<exception-type>org.egov.infra.exception.ApplicationRuntimeException</exception-type>
+ 	<location>/error/500</location>
+ 	</error-page>
+ 	
+ 	<error-page>
+ 		<error-code>404</error-code>
+ 		<location>/error/404</location>
  	</error-page>
  	
 </web-app>

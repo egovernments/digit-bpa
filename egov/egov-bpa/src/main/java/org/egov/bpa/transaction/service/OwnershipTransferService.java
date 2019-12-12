@@ -378,23 +378,6 @@ public class OwnershipTransferService {
         }
     }
 
-    public void validateDocs(final OwnershipTransfer ownershipTransfer, final BindingResult errors) {
-        List<String> appDocAllowedExtenstions = new ArrayList<>(
-                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.app.docs.allowed.extenstions").split(",")));
-
-        List<String> appDocMimeTypes = new ArrayList<>(
-                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.app.docs.allowed.mime.types").split(",")));
-
-        Integer i = 0;
-        for (OwnershipTransferDocument document : ownershipTransfer.getOwnershipTransferDocuments()) {
-            bpaUtils.validateFiles(errors, appDocAllowedExtenstions, appDocMimeTypes, document.getDocument().getFiles(),
-                    "ownershipTransferDocuments[" + i + "].document.files",
-                    bpaApplicationSettings.getValue("bpa.citizen.app.docs.max.size"));
-            i++;
-        }
-
-    }
-
     public void validateOwnershipTransfer(final OwnershipTransfer ownershipTransfer, final BindingResult resultBinder) {
         Pattern pattern;
         Matcher matcher;
@@ -454,5 +437,21 @@ public class OwnershipTransferService {
         }
         ownershipTransfer.setRejectionReasons(ownershipTransfer.getRejectionReasonsTemp());
         ownershipTransfer.setAdditionalOwnershipConditions(additionalRejectReasons);
+    }
+    
+    public void validateDocs(final OwnershipTransfer ownershipTransfer, final BindingResult errors) {
+        List<String> appDocAllowedExtenstions = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.app.docs.allowed.extenstions").split(",")));
+
+        List<String> appDocMimeTypes = new ArrayList<>(
+                Arrays.asList(bpaApplicationSettings.getValue("bpa.citizen.app.docs.allowed.mime.types").split(",")));
+
+        Integer i = 0;
+        for (OwnershipTransferDocument document : ownershipTransfer.getOwnershipTransferDocuments()) {
+            bpaUtils.validateFiles(errors, appDocAllowedExtenstions, appDocMimeTypes, document.getDocument().getFiles(),
+                    "ownershipTransferDocuments[" + i + "].document.files",
+                    bpaApplicationSettings.getValue("bpa.citizen.app.docs.max.size"));
+            i++;
+        }
     }
 }

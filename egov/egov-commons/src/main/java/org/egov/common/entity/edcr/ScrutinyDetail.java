@@ -53,6 +53,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import ar.com.fdvs.dj.domain.constants.HorizontalAlign;
 
 public class ScrutinyDetail implements Serializable {
@@ -67,9 +69,10 @@ public class ScrutinyDetail implements Serializable {
     private Map<Integer, ColumnHeadingDetail> columnHeading = new TreeMap<>();
     private List<Map<String, String>> detail = new ArrayList<>();
 
-    public class ColumnHeadingDetail implements Serializable {
+    public static class ColumnHeadingDetail implements Serializable {
         private static final long serialVersionUID = 2446433602892212662L;
         public String name;
+        @JsonIgnore
         public HorizontalAlign align;
 
     }

@@ -77,6 +77,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.rest.support.MultiReadRequestWrapper;
 import org.egov.infra.utils.TenantUtils;
+import org.egov.infra.validation.exception.ApplicationRestException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -150,7 +151,7 @@ public class ApplicationTenantResolverFilter implements Filter {
                 fullTenant = tenantFromBody;
             }
             if (StringUtils.isBlank(fullTenant)) {
-                throw new RuntimeException("RestUrl does not contain tenantId");
+                throw new ApplicationRestException("incorrect_request","RestUrl does not contain tenantId: " + fullTenant);
             }
             String tenant = fullTenant.substring(fullTenant.lastIndexOf('.') + 1, fullTenant.length());
             LOG.info("tenant from rest request =" + tenant);
@@ -178,7 +179,7 @@ public class ApplicationTenantResolverFilter implements Filter {
                 }
             }
             if (!found) {
-                throw new RuntimeException("Invalid tenantId");
+                throw new ApplicationRestException("invalid_tenant","Invalid Tenant Id: " + tenant);
             }
 
         }
@@ -228,18 +229,17 @@ public class ApplicationTenantResolverFilter implements Filter {
                                 else
                                     tenantAtBody = tenant[1];
                                 LOG.info("############Tenant From Body######" + tenantAtBody);
-                            } else if (param.contains("authToken")) {
-                                String[] authTokenVal = param.split(":");
-                                // Next to 'bearer' word space is required to differentiate token type and access token
-                                String tokenType = "bearer ";
-                                if (authTokenVal[1].startsWith("\"") && authTokenVal[1].endsWith("\"")) {
-                                    String authToken = authTokenVal[1].substring(1, authTokenVal[1].length() - 1);
-                                    LOG.info("############Auth Token######" + tokenType + authToken);
-                                    multiReadRequestWrapper.putHeader("Authorization", tokenType + authToken);
-                                } else {
-                                    multiReadRequestWrapper.putHeader("Authorization", tokenType + authTokenVal[1]);
-                                }
-                            }
+							} /*
+								 * else if (param.contains("authToken")) { String[] authTokenVal =
+								 * param.split(":"); // Next to 'bearer' word space is required to differentiate
+								 * token type and access token String tokenType = "bearer "; if
+								 * (authTokenVal[1].startsWith("\"") && authTokenVal[1].endsWith("\"")) { String
+								 * authToken = authTokenVal[1].substring(1, authTokenVal[1].length() - 1);
+								 * LOG.info("############Auth Token######" + tokenType + authToken);
+								 * multiReadRequestWrapper.putHeader("Authorization", tokenType + authToken); }
+								 * else { multiReadRequestWrapper.putHeader("Authorization", tokenType +
+								 * authTokenVal[1]); } }
+								 */
                         }
                     }
                 }

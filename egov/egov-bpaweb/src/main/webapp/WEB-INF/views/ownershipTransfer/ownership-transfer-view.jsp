@@ -160,6 +160,14 @@
 				</c:if>
 
 			</div>
+			<div class="panel panel-primary" data-collapsed="0">
+				<jsp:include page="../application/applicationhistory-view.jsp"></jsp:include>
+			</div>
+			<c:if test="${showRejectionReasons}">
+				<div class="panel panel-primary" data-collapsed="0">
+					<jsp:include page="../application/rejection-reasons.jsp"></jsp:include>
+				</div>
+			</c:if>
 			<div class="text-center">
 				<c:if test="${ownershipTransfer.status.code eq 'Rejected'}">
 					<td><a

@@ -88,8 +88,19 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
 
     @Query("select distinct usr.roles from User usr where usr.username = :usrName ")
     Set<Role> findUserRolesByUserName(@Param("usrName") String userName);
+    
+    @Query("select distinct usr.roles from User usr where usr.username = :usrName and usr.tenantId = :tenantId ")
+    Set<Role> findUserRolesByUserNameAndTenantId(@Param("usrName") String userName, @Param("tenantId") String tenantId);
 
     List<User> findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(String username, UserType type);
+    
+    @Query("select distinct usr from User usr where upper(usr.username) like :usrName and usr.type = :type and (usr.tenantId = :tenantId or usr.tenantId = :stateTenantId)")
+    List<User> findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(@Param("usrName") String usrName,
+            @Param("type") UserType type, @Param("tenantId") String tenantId, @Param("stateTenantId") String stateTenantId);
+    
+    @Query("select distinct usr from User usr where upper(usr.username) like :usrName and usr.type = :type and usr.tenantId = :tenantId")
+    List<User> findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(@Param("usrName") String usrName,
+            @Param("type") UserType type, @Param("tenantId") String tenantId);
 
     List<User> findByNameContainingIgnoreCaseAndTypeAndActiveTrue(String name, UserType type);
 
@@ -105,25 +116,25 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
     @Query(" select count(id) from User usr where usr.username like :name||'%' ")
     Integer getUserSerialNumberByName(@Param("name") final String name);
 
-    User findByNameAndMobileNumberAndGender(String name, String mobileNumber, Gender gender);
-
-    List<User> findByMobileNumberAndType(String mobileNumber, UserType type);
-
     @Query("select distinct usr.roles from User usr where usr.username = :usrName and usr.type = :type")
     Set<Role> findUserRolesByUserNameAndType(@Param("usrName") String userName, @Param("type") UserType type);
 
-    List<User> findByEmailIdAndTypeOrderById(String emailId, UserType type);
-
-    User findByPan(String pan);
-
-    List<User> findByMobileNumberAndTypeOrderById(String mobileNumber, UserType type);
-
-    List<User> findByTypeAndActiveTrueOrderByUsername(UserType type);
+    User findByNameAndMobileNumberAndGender(String name, String mobileNumber, Gender gender);
 
     List<User> findByNameAndMobileNumberAndGenderAndTypeOrderByIdDesc(String name, String mobileNumber, Gender gender,
             UserType type);
 
+    List<User> findByMobileNumberAndType(String mobileNumber, UserType type);
+
+    List<User> findByMobileNumberAndTypeOrderById(String mobileNumber, UserType type);
+
     List<User> findByTypeAndActiveTrue(UserType type);
+    
+    List<User> findByTypeAndActiveTrueOrderByUsername(UserType type);
+    
+    List<User> findByEmailIdAndTypeOrderById(String emailId, UserType type);
+    
+    User findByPan(String pan);
 
     @Query("select distinct usr from User usr where usr.type=:type and (usr.tenantId = :tenantId or usr.tenantId = :stateTenantId) and usr.active=true")
     List<User> findUsersByTypeAndTenants(@Param("type") UserType type, @Param("tenantId") String tenantId,
@@ -131,9 +142,4 @@ public interface UserRepository extends JpaRepository<User, Long>, RevisionRepos
 
     @Query("select distinct usr from User usr where usr.type=:type and usr.tenantId = :tenant and usr.active=true")
     List<User> findUsersByTypeAndTenantId(@Param("type") UserType type, @Param("tenant") String tenant);
-
-    @Query("select distinct usr from User usr where upper(usr.username) like :usrName and usr.type = :type and (usr.tenantId = :tenantId or usr.tenantId = :stateTenantId)")
-    List<User> findByUsernameContainingIgnoreCaseAndTypeAndTenantIdAndActiveTrue(@Param("usrName") String usrName,
-            @Param("type") UserType type, @Param("tenantId") String tenantId, @Param("stateTenantId") String stateTenantId);
-
 }

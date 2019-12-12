@@ -137,7 +137,7 @@ public class LandUse extends FeatureProcess {
                 details.put(ROAD_WIDTH, pl.getPlanInformation().getRoadWidth().toString());
                 details.put(REQUIRED, "Atleast one floor should be commercial");
                 details.put(PROVIDED, floorNos.length() == 0 ? "commercial floor is not present"
-                        : "floors " + floorNos.toString().substring(0, floorNos.length() - 1) + "are commercial");
+                        : floorNos.toString().substring(0, floorNos.length() - 1) + " floors are commercial");
                 details.put(STATUS, isAccepted ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
                 scrutinyDetail.getDetail().add(details);
                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);

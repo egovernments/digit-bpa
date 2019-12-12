@@ -58,10 +58,10 @@ public class EdcrApplicationService {
     protected SecurityUtils securityUtils;
 
     @Autowired
-    private transient EdcrApplicationRepository edcrApplicationRepository;
+    private EdcrApplicationRepository edcrApplicationRepository;
 
     @Autowired
-    private transient EdcrApplicationDetailRepository edcrApplicationDetailRepository;
+    private EdcrApplicationDetailRepository edcrApplicationDetailRepository;
 
     @Autowired
     private PlanService planService;
@@ -154,6 +154,11 @@ public class EdcrApplicationService {
         return dxfFile;
 
     }
+    
+    public File savePlanDXF(final MultipartFile file) {
+        FileStoreMapper fileStoreMapper = addToFileStore(file);
+        return fileStoreService.fetch(fileStoreMapper.getFileStoreId(), FILESTORE_MODULECODE);
+    }
 
     private FileStoreMapper addToFileStore(final MultipartFile file) {
         FileStoreMapper fileStoreMapper;
@@ -185,13 +190,19 @@ public class EdcrApplicationService {
     public EdcrApplication findByPlanPermitNumber(String permitNo) {
         return edcrApplicationRepository.findByPlanPermitNumber(permitNo);
     }
-
+    
     public EdcrApplication findByTransactionNumber(String transactionNo) {
         return edcrApplicationRepository.findByTransactionNumber(transactionNo);
     }
 
     public List<EdcrApplication> search(EdcrApplication edcrApplication) {
         return edcrApplicationRepository.findAll();
+    }
+
+    public List<EdcrApplication> getEdcrApplications() {
+    	Pageable pageable = new PageRequest(0, 25,Sort.Direction.DESC, "id"); 
+        Page<EdcrApplication> edcrApplications = edcrApplicationRepository.findAll(pageable);
+        return edcrApplications.getContent();
     }
 
     @ReadOnly
@@ -263,7 +274,7 @@ public class EdcrApplicationService {
             LOG.error("Error occurred when reading file!!!!!", e);
         }
     }
-
+    
     @Transactional
     public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication) {
         edcrApplication.setApplicationDate(new Date());
@@ -275,7 +286,6 @@ public class EdcrApplicationService {
         edcrIndexService.updateEdcrRestIndexes(edcrApplication, NEW_SCRTNY);
         return edcrApplication;
     }
-
     public void validateServiceType(EdcrApplication edcrApplication, BindingResult errors, HttpServletRequest request) {
         List<String> serviceType = edcrBpaRestService.getEdcrIntegratedServices(request);
         boolean service = serviceType.contains(edcrApplication.getServiceType());
