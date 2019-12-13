@@ -157,6 +157,8 @@ components:
       properties:
         tenantId:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
+        applicantName:
+          type: string
         transactionNumber:
           type: string
           maxLength: 32
@@ -373,6 +375,8 @@ components:
       properties:
         tenantId:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
+        applicantName:
+          type: string
         requestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
         dxfFile:
