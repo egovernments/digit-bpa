@@ -153,7 +153,7 @@ public class RestEdcrApplicationController {
             if (errorResponses != null)
                 return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
             else {
-                plan = planService.extractPlan(planFile);   
+                plan = planService.extractPlan(edcr, planFile);   
           }
         } catch (IOException e) {
             ErrorResponse error = new ErrorResponse("INCORRECT_REQUEST", e.getLocalizedMessage(),

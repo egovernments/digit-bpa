@@ -123,7 +123,10 @@ public class EdcrRestService {
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
         edcrApplicationDetails.add(edcrApplicationDetail);
         edcrApplication.setTransactionNumber(edcrRequest.getTransactionNumber());
-        edcrApplication.setApplicantName(DxfFileConstants.ANONYMOUS_APPLICANT);
+        if(StringUtils.isNotBlank(edcrRequest.getApplicantName()))
+           edcrApplication.setApplicantName(edcrRequest.getApplicantName());
+        else
+           edcrApplication.setApplicantName(DxfFileConstants.ANONYMOUS_APPLICANT);
         edcrApplication.setArchitectInformation(DxfFileConstants.ANONYMOUS_APPLICANT);
         edcrApplication.setServiceType(DxfFileConstants.NEWCONSTRUCTION_SERVICE);
         edcrApplication.setApplicationType(ApplicationType.PERMIT);
@@ -166,6 +169,7 @@ public class EdcrRestService {
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 Plan pl1 = mapper.readValue(file, Plan.class);
+                pl1.getPlanInformation().setApplicantName(edcrApplication.getApplicantName());
                 if (LOG.isInfoEnabled())
                     LOG.info("**************** Plan detail object **************" + pl1);
                 edcrDetail.setPlanDetail(pl1);
