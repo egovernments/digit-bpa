@@ -1,0 +1,1 @@
+ALTER TABLE  egeis_desig_rolemapping ADD CONSTRAINT role_fk FOREIGN KEY (roleid) REFERENCES state.eg_role(id); 

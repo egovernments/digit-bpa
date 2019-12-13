@@ -105,7 +105,7 @@ insert into state.eg_userrole (roleid, userid) select r.id, u.id from eg_role r,
 insert into state.eg_userrole (roleid, userid) select r.id, u.id from eg_role r, state.eg_user u where r.name in ('Employee Admin', 'BPA Approver') and u.username like 'TPASSTEXEENG%' and tenantid=(select lower(replace(localname,' ','')) from eg_city);
 insert into state.eg_userrole (roleid, userid) select r.id, u.id from eg_role r, state.eg_user u where r.name in ('Employee Admin', 'BPA Approver') and u.username like 'TPSUPENG%' and tenantid=(select lower(replace(localname,' ','')) from eg_city);
 --state
-insert into state.eg_userrole (roleid, userid) select r.id, u.id from eg_role r, state.eg_user u where r.name in ('Employee Admin', 'BPA Approver', 'BPA Administrator') and u.username like 'TPSUPENG%' and tenantid=(select lower(replace(localname,' ','')) from eg_city);
+insert into state.eg_userrole (roleid, userid) select r.id, u.id from eg_role r, state.eg_user u where r.name in ('Employee Admin', 'BPA Approver', 'Bpa Administrator') and u.username like 'TPSUPENG%' and tenantid=(select lower(replace(localname,' ','')) from eg_city);
 
 --Employee data
 insert into egeis_employee(id, code, employeestatus, employeetype, version) values ((select id from state.eg_user where username='TS1' and tenantid=(select lower(replace(localname,' ','')) from eg_city)), 'TS1', 'EMPLOYED', (select id from egeis_employeetype where name='Permanent'), 0);

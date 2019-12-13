@@ -1,1 +1,0 @@
-INSERT into state.eg_role select nextval('state.seq_eg_role'),'ERP Report Viewer','One who can view the reports of all the modules of the ERP',now(),1,1,now(),0, false where not exists (select * from state.eg_role where name='ERP Report Viewer');
