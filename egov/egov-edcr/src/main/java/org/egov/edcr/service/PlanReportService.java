@@ -833,10 +833,12 @@ public class PlanReportService {
                 dcrApplicationNumber = dcrApplicationNumberGenerator.generateEdcrApplicationNumber(dcrApplication);
             EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
             edcrApplicationDetail.setDcrNumber(dcrApplicationNumber);
+            valuesMap.put("dcrNo", dcrApplicationNumber);
         }
         if (finalReportStatus) {
             valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(dcrApplication, finalReportStatus)));
         }
+        valuesMap.put("applicationType", dcrApplication.getApplicationType().getApplicationTypeVal());
 
         final DynamicReport dr = drb.build();
         plan.setEdcrPassed(finalReportStatus);
