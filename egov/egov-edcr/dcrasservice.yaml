@@ -143,10 +143,11 @@ components:
           description: System generated scrutiny report for the uploaded drawing(dxf). This will be a pdf file 
         status:
           type: string
-          description: Status of the plan after the scrutiny process. If all the rules are passed the status will be "Approved". If one of the rules is failed the status will be "Rejected".
+          description: Status of the plan after the scrutiny process. If all the rules are passed the status will be "Accepted". If one of the rules is failed the status will be "Not Accepted".If there is issue in reading drawing or drawing not defined in standard format, then status will be "Aborted"
           enum:
             - Accepted
             - Not Accepted
+            - Aborted
         tenantId:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
 
