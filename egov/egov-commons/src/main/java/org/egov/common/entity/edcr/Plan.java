@@ -72,32 +72,50 @@ public class Plan implements Serializable {
 
 	private static final long serialVersionUID = 7276648029097296311L;
 	
+	/**
+	 * Plan scrutiny report status. Values true mean "Accepted" and False mean
+	 * "Not Accepted". Default value false. On plan scrutiny, if all the rules
+	 * are success then value is true.
+	 */
 	private Boolean edcrPassed = false;
+	// Submission date of plan scrutiny.
 	private Date applicationDate;
 	
-	
+	/**
+	 * Planinformation captures the declarations of the plan.Plan information captures the boundary, building location details,surrounding building NOC's etc.
+	   User will assert the details about the plot. The same will be used to print in plan report. 
+	*/
 	private PlanInformation planInformation;
+	// Plot and Set back details.
 	private Plot plot;
-
-	private List<Block> blocks = new ArrayList<>();
-	private List<AccessoryBlock> accessoryBlocks = new ArrayList<>();
-	private VirtualBuilding virtualBuilding=new VirtualBuilding();
-	private BigDecimal coverageArea = BigDecimal.ZERO;
-	private BigDecimal totalBuiltUpArea;
-	private BigDecimal totalFloorArea;
 	
+	//Single plan contain multiple block/building information. Records Existing and proposed block information. 
+	private List<Block> blocks = new ArrayList<>();
+	
+	//Records Accessory building details. Building has outdoor structures such as attached or detached garages, sheds, storage building etc.This will not consider as another block. 
+	private List<AccessoryBlock> accessoryBlocks = new ArrayList<>();
+	
+	//Temporary building object used to validate rules based on overall plot/buildings details. Eg: Total buildup area of all the blocks, Unique occupancies present in this plot etc.
+	private VirtualBuilding virtualBuilding=new VirtualBuilding();
+	// List of electric lines which are passed through plot. 
 	private transient List<ElectricLine> electricLine = new ArrayList<>();
+	//Non notified road like municipal road etc which are present next to plot.
 	private transient List<NonNotifiedRoad> nonNotifiedRoads = new ArrayList<>();
+	//Notified road like highway road etc which are present next to plot.
 	private transient List<NotifiedRoad> notifiedRoads = new ArrayList<>();
+	//Irregular shape roads whic are present next to plot
 	private transient List<CulDeSacRoad> culdeSacRoads = new ArrayList<>();
+	//Lane road which are present next to plot.
 	private transient List<Lane> laneRoads = new ArrayList<>();
 	
-
+   //Travel distance to exit from the buildings.
 	private transient List<BigDecimal> travelDistancesToExit = new ArrayList<>();
- 
+   //Parking facilities provided in the plot. Includes visitor, two wheeler, four wheeler etc
 	private transient ParkingDetails parkingDetails = new ParkingDetails();
+	//If canopy present, then distance from the plot boundary
 	private transient List<BigDecimal> canopyDistanceFromPlotBoundary;
 
+    //List of occupancies present in the plot including all the blocks.
 	private List<Occupancy> occupancies = new ArrayList<>();
 	@JsonIgnore
 	private transient Map<Integer, org.egov.common.entity.bpa.Occupancy> occupanciesMaster = new HashMap<>();
@@ -108,24 +126,33 @@ public class Plan implements Serializable {
 	@JsonIgnore
 	private transient Map<String, Integer> subFeatureColorCodesMaster = new HashMap<>();
 	
+	//Utilities of building like solar,waste disposal plant, watertank, rain water harvesting etc
 	private Utility utility = new Utility();
+	
+	//coverage Overall Coverage of all the block. Total area of all the floor/plot area.
 	private BigDecimal coverage = BigDecimal.ZERO;
-	private BigDecimal far = BigDecimal.ZERO;
+	
+	//Calculated Permissible FSI and provided FSI details   
 	private FarDetails farDetails;
 	
+	//Drawing standard parameters required to process dxf file. 
 	private DrawingPreference drawingPreference=new DrawingPreference();
 
 	@Transient
 	private Double parkingRequired;
-
+    //Septic tanks defined in the plan
 	private transient List<SepticTank> septicTanks = new ArrayList<>();
+	// Trees and plant defined in the plan
 	private transient Plantation plantation;
+	//Guard room details
 	private transient GuardRoom guardRoom;
+	// Segregated toilet facilities for visitors in Public Buildings (within the premises of the building, but outside the building block) 
 	private transient SegregatedToilet segregatedToilet;
-	
+	//Roads which are surrendered by citizen
 	private transient List<Measurement> surrenderRoads = new ArrayList<>();
+	//For proposed road widening, surrendered road area.This area will be used to calculate FAR,setback and permissible buildup area.
 	private transient BigDecimal totalSurrenderRoadArea = BigDecimal.ZERO;
-	
+	//Distance of plot with external entities like rive, lake, monuments, government building etc are grouped.
 	private DistanceToExternalEntity distanceToExternalEntity=new DistanceToExternalEntity();
 	
 	@Transient
@@ -138,9 +165,13 @@ public class Plan implements Serializable {
 	@JsonIgnore
 	private List<EdcrPdfDetail> edcrPdfDetails;
 	
+	//Used to show drawing mistakes, General errors, mistakes in following layer/color coding standard etc 
 	private transient Map<String, String> errors = new LinkedHashMap<>();
-
+    /**
+     * The report output object. Based on type of building and occupancies,the rules are validated and rules which are considered for the submitted plan are recorded in this object.
+     */
 	private ReportOutput reportOutput = new ReportOutput();
+	//System will evaluate the list of noc's required based on the plan input
 	private transient Map<String, String> noObjectionCertificates = new HashMap<>();
 	private List<String> nocDeptCodes = new ArrayList<String>();
 
@@ -338,30 +369,6 @@ public class Plan implements Serializable {
 		this.coverage = coverage;
 	}
 
-	public BigDecimal getFar() {
-		return far;
-	}
-
-	public void setFar(BigDecimal far) {
-		this.far = far;
-	}
-
-	public BigDecimal getTotalBuiltUpArea() {
-		return totalBuiltUpArea;
-	}
-
-	public void setTotalBuiltUpArea(BigDecimal totalBuiltUpArea) {
-		this.totalBuiltUpArea = totalBuiltUpArea;
-	}
-
-	public BigDecimal getTotalFloorArea() {
-		return totalFloorArea;
-	}
-
-	public void setTotalFloorArea(BigDecimal totalFloorArea) {
-		this.totalFloorArea = totalFloorArea;
-	}
-
 	public void sortBlockByName() {
 		if (!blocks.isEmpty())
 			Collections.sort(blocks, Comparator.comparing(Block::getNumber));
@@ -423,22 +430,6 @@ public class Plan implements Serializable {
 
 	public void setAdditionsToDxf(StringBuffer additionsToDxf) {
 		this.additionsToDxf = additionsToDxf;
-	}
-
-	public BigDecimal getCoverageArea() {
-		return coverageArea;
-	}
-
-	public void setCoverageArea(BigDecimal coverageArea) {
-		this.coverageArea = coverageArea;
-	}
-
-	public Double getParkingRequired() {
-		return parkingRequired;
-	}
-
-	public void setParkingRequired(Double parkingRequired) {
-		this.parkingRequired = parkingRequired;
 	}
 
 	public String getDxfFileName() {

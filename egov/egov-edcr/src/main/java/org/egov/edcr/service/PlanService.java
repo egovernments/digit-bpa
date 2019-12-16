@@ -10,12 +10,14 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.common.entity.edcr.EdcrPdfDetail;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.PlanFeature;
 import org.egov.common.entity.edcr.PlanInformation;
 import org.egov.edcr.constants.DxfFileConstants;
+import org.egov.edcr.contract.EdcrRequest;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.feature.FeatureProcess;
@@ -238,8 +240,14 @@ public class PlanService {
         }
     }
     
-    public Plan extractPlan(MultipartFile dxfFile) {
+    public Plan extractPlan(EdcrRequest edcrRequest, MultipartFile dxfFile) {
     	File planFile = edcrApplicationService.savePlanDXF(dxfFile);
-        return extractService.extract(planFile, featureService.getFeatures());
+        Plan plan = extractService.extract(planFile, featureService.getFeatures());
+        if(StringUtils.isNotBlank(edcrRequest.getApplicantName()))
+        	plan.getPlanInformation().setApplicantName(edcrRequest.getApplicantName());
+         else
+        	 plan.getPlanInformation().setApplicantName(DxfFileConstants.ANONYMOUS_APPLICANT);      
+        
+        return plan;
     }
 }

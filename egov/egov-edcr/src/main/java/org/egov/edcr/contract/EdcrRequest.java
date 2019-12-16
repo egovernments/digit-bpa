@@ -58,6 +58,8 @@ public class EdcrRequest {
 	
 	@JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
+	
+    private String applicantName;
 
     private String transactionNumber;
 
@@ -73,6 +75,14 @@ public class EdcrRequest {
 
 	public void setRequestInfo(RequestInfo requestInfo) {
 		this.requestInfo = requestInfo;
+	}
+
+	public String getApplicantName() {
+		return applicantName;
+	}
+
+	public void setApplicantName(String applicantName) {
+		this.applicantName = applicantName;
 	}
 
 	public String getTransactionNumber() {

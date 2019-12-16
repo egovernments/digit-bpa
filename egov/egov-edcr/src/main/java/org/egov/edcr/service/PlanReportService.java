@@ -601,7 +601,7 @@ public class PlanReportService {
         valuesMap.put("nocs", plan.getNoObjectionCertificates());
         valuesMap.put("reportGeneratedDate", DateUtils.toDefaultDateTimeFormat(new Date()));
         valuesMap.put("currentYear", new LocalDate().getYear());
-        valuesMap.put("far", plan.getFar());
+        valuesMap.put("far", plan.getFarDetails()!=null?plan.getFarDetails().getProvidedFar():"");
         valuesMap.put("coverage", plan.getCoverage());
         valuesMap.put("totalFloorArea",
                 plan.getVirtualBuilding() != null ? plan.getVirtualBuilding().getTotalFloorArea()
@@ -833,10 +833,12 @@ public class PlanReportService {
                 dcrApplicationNumber = dcrApplicationNumberGenerator.generateEdcrApplicationNumber(dcrApplication);
             EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
             edcrApplicationDetail.setDcrNumber(dcrApplicationNumber);
+            valuesMap.put("dcrNo", dcrApplicationNumber);
         }
         if (finalReportStatus) {
             valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(dcrApplication, finalReportStatus)));
         }
+        valuesMap.put("applicationType", dcrApplication.getApplicationType().getApplicationTypeVal());
 
         final DynamicReport dr = drb.build();
         plan.setEdcrPassed(finalReportStatus);

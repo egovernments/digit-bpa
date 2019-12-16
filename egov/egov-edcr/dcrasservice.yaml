@@ -116,8 +116,7 @@ components:
           maxLength: 32
           description: Unique Transaction Number for each request.
         planDetail:
-          type: string
-          description: Data extracted from drawing in json 
+          $ref: '#/components/schemas/planDetail'
         edcrNumber:
           type: string
           maxLength: 32
@@ -144,10 +143,11 @@ components:
           description: System generated scrutiny report for the uploaded drawing(dxf). This will be a pdf file 
         status:
           type: string
-          description: Status of the plan after the scrutiny process. If all the rules are passed the status will be "Approved". If one of the rules is failed the status will be "Rejected".
+          description: Status of the plan after the scrutiny process. If all the rules are passed the status will be "Accepted". If one of the rules is failed the status will be "Not Accepted".If there is issue in reading drawing or drawing not defined in standard format, then status will be "Aborted"
           enum:
             - Accepted
             - Not Accepted
+            - Aborted
         tenantId:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
 
@@ -157,6 +157,8 @@ components:
       properties:
         tenantId:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
+        applicantName:
+          type: string
         transactionNumber:
           type: string
           maxLength: 32
@@ -188,12 +190,193 @@ components:
           items:
             $ref: '#/components/schemas/EdcrDetail'
             
+    planInformation:
+      type: object
+      description: Planinformation captures the declarations of the plan.Plan information captures the boundary, building location details,surrounding building NOC's etc. User will assert the details about the plot. The same will be used to print in plan report.
+    plot: 
+      type: object
+      description: Plot and Set back details.
+    virtualBuilding: 
+      type: object
+      description: Temporary building object used to validate rules based on overall plot/buildings details. Example Total buildup area of all the blocks, Unique occupancies present in this plot etc.      
+    accessoryBlock: 
+      type: object
+      description: Records Accessory building details. Building has outdoor structures such as attached or detached garages, sheds, storage building etc.This will not consider as another block.  
+    block: 
+      type: object
+      description: Single plan contain multiple block/building information. Records Existing and proposed block information.  
+    electricLine: 
+      type: object
+      description: Electric lines which are passed through plot
+    nonNotifiedRoad:  
+      type: object
+      description: Non notified road like municipal road etc which are present next to plot
+    notifiedRoad:  
+      type: object
+      description: Notified road like highway road etc which are present next to plot
+    culdeSacRoad:  
+      type: object
+      description: Irregular shape roads which are present next to plot
+    laneRoad:  
+      type: object
+      description: Lane road which are present next to plot
+    parkingDetails:  
+      type: object
+      description: Parking facilities provided in the plot. Includes visitor, two wheeler, four wheeler etc
+    occupancy:  
+      type: object
+      description: List of occupancies present in the plot inclusive of all the blocks.
+    utility:  
+      type: object
+      description: Utilities of building like solar,waste disposal plant, watertank, rain water harvesting etc
+    farDetails:  
+      type: object
+      description: Calculated Permissible FSI and provided FSI details
+    drawingPreference:  
+      type: object
+      description: Drawing standard parameters required to process dxf file    
+    septicTank:  
+      type: object
+      description: List of Septic tanks defined in the plan
+    plantation:  
+      type: object
+      description: Trees and plant defined in the plan
+    guardRoom:  
+      type: object
+      description: Guard room details
+    segregatedToilet:  
+      type: object
+      description: Segregated toilet facilities for visitors in Public Buildings (within the premises of the building, but outside the building block)      
+    distanceToExternalEntity:  
+      type: object
+      description: Distance of plot with external entities like rive, lake, monuments, government building etc are grouped    
+    measurement:  
+      type: object
+      description: Common object used to capture length,width,height,mean etc
+    reportOutput:  
+      type: object
+      description: The report output object. Based on type of building and occupancies,the rules are validated and rules which are considered for the submitted plan are recorded in this object             
+    
+    planDetail:
+      type: object
+      description: All the details extracted from the plan are referred in this object
+      properties:
+        edcrPassed:
+          type: boolean
+          description: Plan scrutiny report status. Values true mean "Accepted" and False mean "Not Accepted". Default value false. On plan scrutiny, if all the rules are success then value is true. 
+        applicationDate:
+          type: integer
+          format: int64
+          x-displayformat: 'dd/MM/yyyy'
+          description: Submission date of plan scrutiny
+        planInformation:
+          $ref: '#/components/schemas/planInformation'  
+        plot:
+          $ref: '#/components/schemas/plot'    
+        block:
+          type:  array
+          items:
+            $ref: '#/components/schemas/block'  
+        accessoryBlocks:
+          type:  array
+          items:
+            $ref: '#/components/schemas/accessoryBlock'    
+        virtualBuilding:   
+          $ref: '#/components/schemas/virtualBuilding'    
+        electricLine:
+          type:  array
+          items:
+            $ref: '#/components/schemas/electricLine'   
+        nonNotifiedRoads:
+          type:  array
+          items:
+            $ref: '#/components/schemas/nonNotifiedRoad'   
+        notifiedRoads:
+          type:  array
+          items:
+            $ref: '#/components/schemas/notifiedRoad' 
+        culdeSacRoads:
+          type:  array
+          items:
+            $ref: '#/components/schemas/culdeSacRoad' 
+        laneRoads:
+          type:  array
+          items:
+            $ref: '#/components/schemas/laneRoad'     
+        travelDistancesToExit:
+          type:  array
+          items:
+            type: number
+          description: Travel distance to exit from the buildings
+        parkingDetails:  
+          type:  array
+          items:
+            $ref: '#/components/schemas/parkingDetails' 
+        canopyDistanceFromPlotBoundary:
+          type:  array
+          items:
+            type: number
+          description: If canopy present, capture distance from the plot boundary  to canopy.   
+        occupancies:
+          type:  array
+          items:
+            $ref: '#/components/schemas/occupancy'  
+        utility:
+          $ref: '#/components/schemas/utility'   
+        coverage:
+          type: number
+          format: BigDecimal
+          description: coverage Overall Coverage of all the block. Total area of all the floor/plot area.
+        farDetails:
+          $ref: '#/components/schemas/farDetails'   
+        drawingPreference:
+          $ref: '#/components/schemas/drawingPreference'     
+        septicTank:
+          type:  array
+          items:
+            $ref: '#/components/schemas/septicTank'    
+        plantation:
+          $ref: '#/components/schemas/plantation'   
+        guardRoom:
+          $ref: '#/components/schemas/guardRoom'             
+        segregatedToilet:
+          $ref: '#/components/schemas/segregatedToilet'  
+        surrenderRoads:
+          type:  array
+          items:
+            $ref: '#/components/schemas/measurement'  
+          description: surrendered roads with width detail
+        totalSurrenderRoadArea:
+          type: number
+          format: BigDecimal
+          description: For proposed road widening, surrendered road area.This area will be used to calculate FAR,setback and permissible buildup area  
+        distanceToExternalEntity:
+          $ref: '#/components/schemas/distanceToExternalEntity'            
+        errors:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+          description: Used to show drawing mistakes, General errors, mistakes in following layer/color coding standard etc        
+        reportOutput:
+          $ref: '#/components/schemas/reportOutput'           
+        noObjectionCertificates:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+          description: System will evaluate the list of noc's required based on the plan input
+          
     ExtractPlanReq:
       type: object
       description: This object contains data to be submitted for extracting a plan drawing.
       properties:
         tenantId:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
+        applicantName:
+          type: string
         requestInfo:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
         dxfFile:
