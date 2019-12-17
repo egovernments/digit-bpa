@@ -54,6 +54,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+//These are the declarations of the applicant in the plan using PLAN_INFO layer.
 public class PlanInformation implements Serializable {
 
     private static final String NA = "NA";
@@ -63,151 +64,109 @@ public class PlanInformation implements Serializable {
     @Id
     @GeneratedValue(generator = SEQ_EDCR_PLANINFO, strategy = GenerationType.SEQUENCE)
     private Long id;
-//Plot area
+    // Plot area defined in PLAN_INFO layer. Using the same to measure coverage and small plot condition.This is the declared plot area in the plan.
     private BigDecimal plotArea = BigDecimal.ZERO;
-//Owner Name
+    // Temporary field used to capture Owner Name
     private String ownerName;
-//
+    //Temporary field used to auto populate occupancy detail.
     private String occupancy;
-
+    //Temporary field used for service type.
     private String serviceType;
-
+    //Temporary field used to show amenities used in application.
     private String amenities;
-
+    //Save architect who submitted application mentioned in plan info.
     private String architectInformation;
-
-    private Long acchitectId;
-
+    // Applicant Name 
     private String applicantName;
-
+    // Extracted from Plan info. Whether plot present in CRZ zone. Expecting default value as NO. 
     private Boolean crzZoneArea = true;
-
-    private transient String crzZoneDesc = NA;
-
+    //Extracted from Plan info. Demolition area to be mentioned in the plan info.
     private BigDecimal demolitionArea = BigDecimal.ZERO;
-
+    //Extracted from Plan info. Depth cutting more than 1.5 Meter flag. 
     private transient Boolean depthCutting;
-
-    private transient String depthCuttingDesc = NA;
-
+    //Extracted from Plan info. Is building of type government or aided school.
     private transient Boolean governmentOrAidedSchool;
-
+    //Extracted from Plan info. Is plot comes under security zone flag.
     private transient Boolean securityZone = true;
-
-    private transient String securityZoneDesc = NA;
-
-    private transient BigDecimal accessWidth;
-
-    private transient BigDecimal noOfBeds;
-
-    // private transient Boolean nocToAbutSide = false;
-
-    private transient String nocToAbutSideDesc = NA;
-
-    // private transient Boolean nocToAbutRear = false;
-
-    private transient String nocToAbutRearDesc = NA;
-
-    private transient Boolean openingOnSide = false;
-
-    // private transient Boolean openingOnSideBelow2mts = false;
-
-    private transient String openingOnSideBelow2mtsDesc = NA;
-
-    // private transient Boolean openingOnSideAbove2mts = false;
-
-    private transient String openingOnSideAbove2mtsDesc = NA;
-
-    // private transient Boolean openingOnRearBelow2mts = false;
-
-    private transient String openingOnRearBelow2mtsDesc = NA;
-
-    // private transient Boolean openingOnRearAbove2mts = false;
-
-    private transient String openingOnRearAbove2mtsDesc = NA;
-
-    /*
-     * private transient Boolean nocToAbutAdjascentSide = false;
-     */
-    private transient Boolean openingOnRear = false;
-
-    private transient Boolean parkingToMainBuilding = false;
-
-    private transient Integer noOfSeats = 0;
-
-    private transient Integer noOfMechanicalParking = 0;
-
-    private transient Boolean singleFamilyBuilding;
-
+    //Extracted from Plan info.  Access width to the plot.
+	private transient BigDecimal accessWidth;
+    //Extracted from Plan info.  In case of medical occupancy, capture number of beds present in the building. Sanitation details are decided based on number of beds present.
+	private transient BigDecimal noOfBeds;
+	//Extracted from Plan info. NOC received from the side owner.
+	private transient String nocToAbutSideDesc = NA;
+	//Extracted from Plan info. NOC received from the rear owner.
+	private transient String nocToAbutRearDesc = NA;
+	//Extracted from Plan info. Any opening on sides of building.
+	private transient Boolean openingOnSide = false;
+	//Extracted from Plan info. Any opening on rear side of building.
+	private transient Boolean openingOnRear = false;
+	//Extracted from Plan info. Number of seats present in special occupancy 
+	private transient Integer noOfSeats = 0;
+	//Extracted from Plan info. Number of mechanical parking declared in the plan
+	private transient Integer noOfMechanicalParking = 0;
+	//Extracted from Plan info.Is plan belongs to single family building. There are few rules relaxed for single family building 
+	private transient Boolean singleFamilyBuilding;
+	//Extracted from Plan info. Revenue survey number declared in the plan
     private String reSurveyNo;
-
+    //Extracted from Plan info. Revenue ward name declared in the plan
     private String revenueWard;
-
+    //Extracted from Plan info. Desam name declared in the plan
     private String desam;
-
+    //Extracted from Plan info. Village name declared in the plan
     private String village;
-
-    private transient String zoneWise;
-
+    //Extracted from Plan info. Land Use zone. The value should be standard like RESIDENTIAL,COMMERCIAL,INDUSTRIAL,PUBLICANDSEMIPUBLIC etc.
     private transient String landUseZone;
-
+    //Extracted from Plan info. Village name declared in the plan
     private transient String leaseHoldLand;
-
+    //Extracted from Plan info. Road width declared in the plan.
     private BigDecimal roadWidth = BigDecimal.ZERO;
-
+    //Extracted from Plan info. Road length declared in the plan.
     private BigDecimal roadLength = BigDecimal.ZERO;
-
+    //Extracted from Plan info. Type of area. Whether old or new area.
     private String typeOfArea;
-
+    //Extracted from Plan info. Average plot depth.
     private BigDecimal depthOfPlot = BigDecimal.ZERO;
-
+    //Extracted from Plan info. Average plot width.
     private BigDecimal widthOfPlot = BigDecimal.ZERO;
-
+    //Extracted from Plan info. Is building near to monument.
     private transient String buildingNearMonument = NA;
-
+    //Extracted from Plan info. Is building near to government building
     private transient String buildingNearGovtBuilding = NA;
-
+    //Extracted from Plan info. Building near monument and permitted with NOC
     private transient String nocNearMonument = NA;
-
+    //Extracted from Plan info. Building near airport and permitted with airport authority
     private transient String nocNearAirport = NA;
-
+    //Extracted from Plan info. Building near defence aerodrome and permitted with NOC
     private transient String nocNearDefenceAerodomes = NA;
-
+    //Extracted from Plan info. Permitted with state Environmental impact assessment study report
     private transient String nocStateEnvImpact = NA;
-
+    //Extracted from Plan info. Permitted with railway NOC
     private transient String nocRailways = NA;
-
+    //Extracted from Plan info. Permitted with noc issued by collector on govt. land
     private transient String nocCollectorGvtLand = NA;
-
+    //Extracted from Plan info. Permitted with irrigation report NOC
     private transient String nocIrrigationDept = NA;
-
+    //Extracted from Plan info. Permitted with fire department NOC
     private transient String nocFireDept = NA;
-
+    //Extracted from Plan info. Building near the river flag
     private transient String buildingNearToRiver = NA;
-
+    //Extracted from Plan info. Barrier free access for physically handicapped person provided.
     private transient String barrierFreeAccessForPhyChlngdPpl = NA;
-
+    //Extracted from Plan info. Provision for green building and sustainability provided in plan.Rainwater harvesting,solar,segregation of waste etc.
     private transient String provisionsForGreenBuildingsAndSustainability = NA;
-
+    //Extracted from Plan info. Fire Protection And Fire Safety Requirements declared in the plan.
     private transient String fireProtectionAndFireSafetyRequirements = NA;
-
+    //Extracted from Plan info.Plot number.
     private String plotNo;
-
+    //Extracted from Plan info.Khata number.
     private String khataNo;
-
+    //Extracted from Plan info.Mauza number.
     private String mauza;
-
+    //Extracted from Plan info.District name.
     private String district;
-    
+    //Extracted from Plan info. Rain water declared in plan.
     private transient String rwhDeclared = NA;
 
-    public Boolean getParkingToMainBuilding() {
-        return parkingToMainBuilding;
-    }
-
-    public void setParkingToMainBuilding(Boolean parkingToMainBuilding) {
-        this.parkingToMainBuilding = parkingToMainBuilding;
-    }
 
     public Boolean getGovernmentOrAidedSchool() {
         return governmentOrAidedSchool;
@@ -263,14 +222,6 @@ public class PlanInformation implements Serializable {
 
     public void setArchitectInformation(String architectInformation) {
         this.architectInformation = architectInformation;
-    }
-
-    public Long getAcchitectId() {
-        return acchitectId;
-    }
-
-    public void setAcchitectId(Long acchitectId) {
-        this.acchitectId = acchitectId;
     }
 
     public String getOccupancy() {
@@ -449,54 +400,6 @@ public class PlanInformation implements Serializable {
         this.village = village;
     }
 
-    public String getCrzZoneDesc() {
-        return crzZoneDesc;
-    }
-
-    public void setCrzZoneDesc(String crzZoneDesc) {
-        this.crzZoneDesc = crzZoneDesc;
-    }
-
-    public String getSecurityZoneDesc() {
-        return securityZoneDesc;
-    }
-
-    public void setSecurityZoneDesc(String securityZoneDesc) {
-        this.securityZoneDesc = securityZoneDesc;
-    }
-
-    public String getOpeningOnSideBelow2mtsDesc() {
-        return openingOnSideBelow2mtsDesc;
-    }
-
-    public void setOpeningOnSideBelow2mtsDesc(String openingOnSideBelow2mtsDesc) {
-        this.openingOnSideBelow2mtsDesc = openingOnSideBelow2mtsDesc;
-    }
-
-    public String getOpeningOnSideAbove2mtsDesc() {
-        return openingOnSideAbove2mtsDesc;
-    }
-
-    public void setOpeningOnSideAbove2mtsDesc(String openingOnSideAbove2mtsDesc) {
-        this.openingOnSideAbove2mtsDesc = openingOnSideAbove2mtsDesc;
-    }
-
-    public String getOpeningOnRearBelow2mtsDesc() {
-        return openingOnRearBelow2mtsDesc;
-    }
-
-    public void setOpeningOnRearBelow2mtsDesc(String openingOnRearBelow2mtsDesc) {
-        this.openingOnRearBelow2mtsDesc = openingOnRearBelow2mtsDesc;
-    }
-
-    public String getOpeningOnRearAbove2mtsDesc() {
-        return openingOnRearAbove2mtsDesc;
-    }
-
-    public void setOpeningOnRearAbove2mtsDesc(String openingOnRearAbove2mtsDesc) {
-        this.openingOnRearAbove2mtsDesc = openingOnRearAbove2mtsDesc;
-    }
-
     public String getNocToAbutSideDesc() {
         return nocToAbutSideDesc;
     }
@@ -511,22 +414,6 @@ public class PlanInformation implements Serializable {
 
     public void setNocToAbutRearDesc(String nocToAbutRearDesc) {
         this.nocToAbutRearDesc = nocToAbutRearDesc;
-    }
-
-    public String getDepthCuttingDesc() {
-        return depthCuttingDesc;
-    }
-
-    public void setDepthCuttingDesc(String depthCuttingDesc) {
-        this.depthCuttingDesc = depthCuttingDesc;
-    }
-
-    public String getZoneWise() {
-        return zoneWise;
-    }
-
-    public void setZoneWise(String zoneWise) {
-        this.zoneWise = zoneWise;
     }
 
     public String getLandUseZone() {
