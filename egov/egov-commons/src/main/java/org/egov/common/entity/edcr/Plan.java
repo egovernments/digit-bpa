@@ -70,463 +70,474 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Plan implements Serializable {
 
-	private static final long serialVersionUID = 7276648029097296311L;
-	
-	/**
-	 * Plan scrutiny report status. Values true mean "Accepted" and False mean
-	 * "Not Accepted". Default value false. On plan scrutiny, if all the rules
-	 * are success then value is true.
-	 */
-	private Boolean edcrPassed = false;
-	// Submission date of plan scrutiny.
-	private Date applicationDate;
-	
-	/**
-	 * Planinformation captures the declarations of the plan.Plan information captures the boundary, building location details,surrounding building NOC's etc.
-	   User will assert the details about the plot. The same will be used to print in plan report. 
-	*/
-	private PlanInformation planInformation;
-	// Plot and Set back details.
-	private Plot plot;
-	
-	//Single plan contain multiple block/building information. Records Existing and proposed block information. 
-	private List<Block> blocks = new ArrayList<>();
-	
-	//Records Accessory building details. Building has outdoor structures such as attached or detached garages, sheds, storage building etc.This will not consider as another block. 
-	private List<AccessoryBlock> accessoryBlocks = new ArrayList<>();
-	
-	//Temporary building object used to validate rules based on overall plot/buildings details. Eg: Total buildup area of all the blocks, Unique occupancies present in this plot etc.
-	private VirtualBuilding virtualBuilding=new VirtualBuilding();
-	// List of electric lines which are passed through plot. 
-	private transient List<ElectricLine> electricLine = new ArrayList<>();
-	//Non notified road like municipal road etc which are present next to plot.
-	private transient List<NonNotifiedRoad> nonNotifiedRoads = new ArrayList<>();
-	//Notified road like highway road etc which are present next to plot.
-	private transient List<NotifiedRoad> notifiedRoads = new ArrayList<>();
-	//Irregular shape roads whic are present next to plot
-	private transient List<CulDeSacRoad> culdeSacRoads = new ArrayList<>();
-	//Lane road which are present next to plot.
-	private transient List<Lane> laneRoads = new ArrayList<>();
-	
-   //Travel distance to exit from the buildings.
-	private transient List<BigDecimal> travelDistancesToExit = new ArrayList<>();
-   //Parking facilities provided in the plot. Includes visitor, two wheeler, four wheeler etc
-	private transient ParkingDetails parkingDetails = new ParkingDetails();
-	//If canopy present, then distance from the plot boundary
-	private transient List<BigDecimal> canopyDistanceFromPlotBoundary;
+    private static final long serialVersionUID = 7276648029097296311L;
 
-    //List of occupancies present in the plot including all the blocks.
-	private List<Occupancy> occupancies = new ArrayList<>();
-	@JsonIgnore
-	private transient Map<Integer, org.egov.common.entity.bpa.Occupancy> occupanciesMaster = new HashMap<>();
-	@JsonIgnore
-	private transient Map<Integer, SubOccupancy> subOccupanciesMaster = new HashMap<>();
-	@JsonIgnore
-	private transient Map<Integer, Usage> usagesMaster = new HashMap<>();
-	@JsonIgnore
-	private transient Map<String, Integer> subFeatureColorCodesMaster = new HashMap<>();
-	
-	//Utilities of building like solar,waste disposal plant, watertank, rain water harvesting etc
-	private Utility utility = new Utility();
-	
-	//coverage Overall Coverage of all the block. Total area of all the floor/plot area.
-	private BigDecimal coverage = BigDecimal.ZERO;
-	
-	//Calculated Permissible FSI and provided FSI details   
-	private FarDetails farDetails;
-	
-	//Drawing standard parameters required to process dxf file. 
-	private DrawingPreference drawingPreference=new DrawingPreference();
-
-	@Transient
-	private Double parkingRequired;
-    //Septic tanks defined in the plan
-	private transient List<SepticTank> septicTanks = new ArrayList<>();
-	// Trees and plant defined in the plan
-	private transient Plantation plantation;
-	//Guard room details
-	private transient GuardRoom guardRoom;
-	// Segregated toilet facilities for visitors in Public Buildings (within the premises of the building, but outside the building block) 
-	private transient SegregatedToilet segregatedToilet;
-	//Roads which are surrendered by citizen
-	private transient List<Measurement> surrenderRoads = new ArrayList<>();
-	//For proposed road widening, surrendered road area.This area will be used to calculate FAR,setback and permissible buildup area.
-	private transient BigDecimal totalSurrenderRoadArea = BigDecimal.ZERO;
-	//Distance of plot with external entities like rive, lake, monuments, government building etc are grouped.
-	private DistanceToExternalEntity distanceToExternalEntity=new DistanceToExternalEntity();
-	
-	@Transient
-	@JsonIgnore
-	public StringBuffer additionsToDxf = new StringBuffer();
-	@Transient
-	private String dxfFileName;
-	
-	@Transient
-	@JsonIgnore
-	private List<EdcrPdfDetail> edcrPdfDetails;
-	
-	//Used to show drawing mistakes, General errors, mistakes in following layer/color coding standard etc 
-	private transient Map<String, String> errors = new LinkedHashMap<>();
     /**
-     * The report output object. Based on type of building and occupancies,the rules are validated and rules which are considered for the submitted plan are recorded in this object.
+     * Plan scrutiny report status. Values true mean "Accepted" and False mean "Not Accepted". Default value false. On plan
+     * scrutiny, if all the rules are success then value is true.
      */
-	private ReportOutput reportOutput = new ReportOutput();
-	//System will evaluate the list of noc's required based on the plan input
-	private transient Map<String, String> noObjectionCertificates = new HashMap<>();
-	private List<String> nocDeptCodes = new ArrayList<String>();
-
-
-	public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
-		return canopyDistanceFromPlotBoundary;
-	}
-
-	public void setCanopyDistanceFromPlotBoundary(List<BigDecimal> canopyDistanceFromPlotBoundary) {
-		this.canopyDistanceFromPlotBoundary = canopyDistanceFromPlotBoundary;
-	}
-
-	public List<BigDecimal> getTravelDistancesToExit() {
-		return travelDistancesToExit;
-	}
-
-	public void setTravelDistancesToExit(List<BigDecimal> travelDistancesToExit) {
-		this.travelDistancesToExit = travelDistancesToExit;
-	}
-
-	private List<BigDecimal> depthCuttings = new ArrayList<>();
-
-	public List<BigDecimal> getDepthCuttings() {
-		return depthCuttings;
-	}
-
-	public void setDepthCuttings(List<BigDecimal> depthCuttings) {
-		this.depthCuttings = depthCuttings;
-	}
-
-	public List<AccessoryBlock> getAccessoryBlocks() {
-		return accessoryBlocks;
-	}
-
-	public void setAccessoryBlocks(List<AccessoryBlock> accessoryBlocks) {
-		this.accessoryBlocks = accessoryBlocks;
-	}
-
-	public List<Occupancy> getOccupancies() {
-		return occupancies;
-	}
-
-	public void setOccupancies(List<Occupancy> occupancies) {
-		this.occupancies = occupancies;
-	}
-
-	public List<Block> getBlocks() {
-		return blocks;
-	}
-
-	public void setBlocks(List<Block> blocks) {
-		this.blocks = blocks;
-	}
-
-	public Block getBlockByName(String blockName) {
-		for (Block block : getBlocks()) {
-			if (block.getName().equalsIgnoreCase(blockName))
-				return block;
-		}
-		return null;
-	}
-
-	public Map<String, String> getNoObjectionCertificates() {
-		return noObjectionCertificates;
-	}
-
-	public void setNoObjectionCertificates(Map<String, String> noObjectionCertificates) {
-		this.noObjectionCertificates = noObjectionCertificates;
-	}
-
-	public List<CulDeSacRoad> getCuldeSacRoads() {
-		return culdeSacRoads;
-	}
-
-	public void setCuldeSacRoads(List<CulDeSacRoad> culdeSacRoads) {
-		this.culdeSacRoads = culdeSacRoads;
-	}
-
-	public List<Lane> getLaneRoads() {
-		return laneRoads;
-	}
-
-	public void setLaneRoads(List<Lane> laneRoads) {
-		this.laneRoads = laneRoads;
-	}
-
-	public List<ElectricLine> getElectricLine() {
-		return electricLine;
-	}
-
-	public void setElectricLine(List<ElectricLine> electricLine) {
-		this.electricLine = electricLine;
-	}
-
-	public Boolean getEdcrPassed() {
-		return edcrPassed;
-	}
-
-	public void setEdcrPassed(Boolean edcrPassed) {
-		this.edcrPassed = edcrPassed;
-	}
-
-	public Date getApplicationDate() {
-		return applicationDate;
-	}
-
-	public void setApplicationDate(Date applicationDate) {
-		this.applicationDate = applicationDate;
-	}
-
-	public List<NonNotifiedRoad> getNonNotifiedRoads() {
-		return nonNotifiedRoads;
-	}
-
-	public void setNonNotifiedRoads(List<NonNotifiedRoad> nonNotifiedRoads) {
-		this.nonNotifiedRoads = nonNotifiedRoads;
-	}
-
-	public List<NotifiedRoad> getNotifiedRoads() {
-		return notifiedRoads;
-	}
-
-	public void setNotifiedRoads(List<NotifiedRoad> notifiedRoads) {
-		this.notifiedRoads = notifiedRoads;
-	}
-
-	 
-	public void addErrors(Map<String, String> errors) {
-		if (errors != null)
-			getErrors().putAll(errors);
-	}
-
-	public void addNocs(Map<String, String> nocs) {
-		if (noObjectionCertificates != null)
-			getNoObjectionCertificates().putAll(nocs);
-	}
-
-	public void addNoc(String key, String value) {
-
-		if (noObjectionCertificates != null)
-			getNoObjectionCertificates().put(key, value);
-	}
-
-	public void addError(String key, String value) {
-
-		if (errors != null)
-			getErrors().put(key, value);
-	}
-
-	public Map<String, String> getErrors() {
-		return errors;
-	}
-
-	public void setErrors(Map<String, String> errors) {
-		this.errors = errors;
-	}
-
-	public PlanInformation getPlanInformation() {
-		return planInformation;
-	}
-
-	public void setPlanInformation(PlanInformation planInformation) {
-		this.planInformation = planInformation;
-	}
-
-	public Plot getPlot() {
-		return plot;
-	}
-
-	public void setPlot(Plot plot) {
-		this.plot = plot;
-	}
-
-	public VirtualBuilding getVirtualBuilding() {
-		return virtualBuilding;
-	}
-
-	public void setVirtualBuilding(VirtualBuilding virtualBuilding) {
-		this.virtualBuilding = virtualBuilding;
-	}
-
-	public Utility getUtility() {
-		return utility;
-	}
-
-	public void setUtility(Utility utility) {
-		this.utility = utility;
-	}
-
-	public BigDecimal getCoverage() {
-		return coverage;
-	}
-
-	public void setCoverage(BigDecimal coverage) {
-		this.coverage = coverage;
-	}
-
-	public void sortBlockByName() {
-		if (!blocks.isEmpty())
-			Collections.sort(blocks, Comparator.comparing(Block::getNumber));
-	}
-
-	public void sortSetBacksByLevel() {
-		for (Block block : blocks)
-			Collections.sort(block.getSetBacks(), Comparator.comparing(SetBack::getLevel));
-	}
-
-	public ParkingDetails getParkingDetails() {
-		return parkingDetails;
-	}
-
-	public void setParkingDetails(ParkingDetails parkingDetails) {
-		this.parkingDetails = parkingDetails;
-	}
-
-	public Map<Integer, org.egov.common.entity.bpa.Occupancy> getOccupanciesMaster() {
-		return occupanciesMaster;
-	}
-
-	public void setOccupanciesMaster(Map<Integer, org.egov.common.entity.bpa.Occupancy> occupanciesMaster) {
-		this.occupanciesMaster = occupanciesMaster;
-	}
-
-	public Map<Integer, SubOccupancy> getSubOccupanciesMaster() {
-		return subOccupanciesMaster;
-	}
-
-	public void setSubOccupanciesMaster(Map<Integer, SubOccupancy> subOccupanciesMaster) {
-		this.subOccupanciesMaster = subOccupanciesMaster;
-	}
-
-	public Map<Integer, Usage> getUsagesMaster() {
-		return usagesMaster;
-	}
-
-	public void setUsagesMaster(Map<Integer, Usage> usagesMaster) {
-		this.usagesMaster = usagesMaster;
-	}
-
-	public Map<String, Integer> getSubFeatureColorCodesMaster() {
-		return subFeatureColorCodesMaster;
-	}
-
-	public void setSubFeatureColorCodesMaster(Map<String, Integer> subFeatureColorCodesMaster) {
-		this.subFeatureColorCodesMaster = subFeatureColorCodesMaster;
-	}
-
-	
-	public StringBuffer getAdditionsToDxf() {
-		return additionsToDxf;
-	}
-
-	public void addToAdditionsToDxf(String s) {
-		additionsToDxf.append(s);
-	}
-
-	public void setAdditionsToDxf(StringBuffer additionsToDxf) {
-		this.additionsToDxf = additionsToDxf;
-	}
-
-	public String getDxfFileName() {
-		return dxfFileName;
-	}
-
-	public void setDxfFileName(String dxfFileName) {
-		this.dxfFileName = dxfFileName;
-	}
-
-	public List<EdcrPdfDetail> getEdcrPdfDetails() {
-		return edcrPdfDetails;
-	}
-
-	public void setEdcrPdfDetails(List<EdcrPdfDetail> edcrPdfDetails) {
-		this.edcrPdfDetails = edcrPdfDetails;
-	}
-
-	public ReportOutput getReportOutput() {
-		return reportOutput;
-	}
-
-	public void setReportOutput(ReportOutput reportOutput) {
-		this.reportOutput = reportOutput;
-	}
-
-	public List<SepticTank> getSepticTanks() {
-		return septicTanks;
-	}
-
-	public void setSepticTanks(List<SepticTank> septicTanks) {
-		this.septicTanks = septicTanks;
-	}
-
-	public Plantation getPlantation() {
-		return plantation;
-	}
-
-	public void setPlantation(Plantation plantation) {
-		this.plantation = plantation;
-	}
-
-	public GuardRoom getGuardRoom() {
-		return guardRoom;
-	}
-
-	public void setGuardRoom(GuardRoom guardRoom) {
-		this.guardRoom = guardRoom;
-	}
-
-	public SegregatedToilet getSegregatedToilet() {
-		return segregatedToilet;
-	}
-
-	public void setSegregatedToilet(SegregatedToilet segregatedToilet) {
-		this.segregatedToilet = segregatedToilet;
-	}
-
-	public FarDetails getFarDetails() {
-		return farDetails;
-	}
-
-	public void setFarDetails(FarDetails farDetails) {
-		this.farDetails = farDetails;
-	}
-
-	public DrawingPreference getDrawingPreference() {
-		return drawingPreference;
-	}
-
-	public void setDrawingPreference(DrawingPreference drawingPreference) {
-		this.drawingPreference = drawingPreference;
-	}
-
-		public List<Measurement> getSurrenderRoads() {
-            return surrenderRoads;
+    Map<String, String> planInfoProperties = new HashMap<>();
+
+    private Boolean edcrPassed = false;
+    // Submission date of plan scrutiny.
+    private Date applicationDate;
+
+    /**
+     * Planinformation captures the declarations of the plan.Plan information captures the boundary, building location
+     * details,surrounding building NOC's etc. User will assert the details about the plot. The same will be used to print in plan
+     * report.
+     */
+    private PlanInformation planInformation;
+    // Plot and Set back details.
+    private Plot plot;
+
+    // Single plan contain multiple block/building information. Records Existing and proposed block information.
+    private List<Block> blocks = new ArrayList<>();
+
+    // Records Accessory building details. Building has outdoor structures such as attached or detached garages, sheds, storage
+    // building etc.This will not consider as another block.
+    private List<AccessoryBlock> accessoryBlocks = new ArrayList<>();
+
+    // Temporary building object used to validate rules based on overall plot/buildings details. Eg: Total buildup area of all the
+    // blocks, Unique occupancies present in this plot etc.
+    private VirtualBuilding virtualBuilding = new VirtualBuilding();
+    // List of electric lines which are passed through plot.
+    private transient List<ElectricLine> electricLine = new ArrayList<>();
+    // Non notified road like municipal road etc which are present next to plot.
+    private transient List<NonNotifiedRoad> nonNotifiedRoads = new ArrayList<>();
+    // Notified road like highway road etc which are present next to plot.
+    private transient List<NotifiedRoad> notifiedRoads = new ArrayList<>();
+    // Irregular shape roads whic are present next to plot
+    private transient List<CulDeSacRoad> culdeSacRoads = new ArrayList<>();
+    // Lane road which are present next to plot.
+    private transient List<Lane> laneRoads = new ArrayList<>();
+
+    // Travel distance to exit from the buildings.
+    private transient List<BigDecimal> travelDistancesToExit = new ArrayList<>();
+    // Parking facilities provided in the plot. Includes visitor, two wheeler, four wheeler etc
+    private transient ParkingDetails parkingDetails = new ParkingDetails();
+    // If canopy present, then distance from the plot boundary
+    private transient List<BigDecimal> canopyDistanceFromPlotBoundary;
+
+    // List of occupancies present in the plot including all the blocks.
+    private List<Occupancy> occupancies = new ArrayList<>();
+    @JsonIgnore
+    private transient Map<Integer, org.egov.common.entity.bpa.Occupancy> occupanciesMaster = new HashMap<>();
+    @JsonIgnore
+    private transient Map<Integer, SubOccupancy> subOccupanciesMaster = new HashMap<>();
+    @JsonIgnore
+    private transient Map<Integer, Usage> usagesMaster = new HashMap<>();
+    @JsonIgnore
+    private transient Map<String, Integer> subFeatureColorCodesMaster = new HashMap<>();
+
+    // Utilities of building like solar,waste disposal plant, watertank, rain water harvesting etc
+    private Utility utility = new Utility();
+
+    // coverage Overall Coverage of all the block. Total area of all the floor/plot area.
+    private BigDecimal coverage = BigDecimal.ZERO;
+
+    // Calculated Permissible FSI and provided FSI details
+    private FarDetails farDetails;
+
+    // Drawing standard parameters required to process dxf file.
+    private DrawingPreference drawingPreference = new DrawingPreference();
+
+    @Transient
+    private Double parkingRequired;
+    // Septic tanks defined in the plan
+    private transient List<SepticTank> septicTanks = new ArrayList<>();
+    // Trees and plant defined in the plan
+    private transient Plantation plantation;
+    // Guard room details
+    private transient GuardRoom guardRoom;
+    // Segregated toilet facilities for visitors in Public Buildings (within the premises of the building, but outside the
+    // building block)
+    private transient SegregatedToilet segregatedToilet;
+    // Roads which are surrendered by citizen
+    private transient List<Measurement> surrenderRoads = new ArrayList<>();
+    // For proposed road widening, surrendered road area.This area will be used to calculate FAR,setback and permissible buildup
+    // area.
+    private transient BigDecimal totalSurrenderRoadArea = BigDecimal.ZERO;
+    // Distance of plot with external entities like rive, lake, monuments, government building etc are grouped.
+    private DistanceToExternalEntity distanceToExternalEntity = new DistanceToExternalEntity();
+
+    @Transient
+    @JsonIgnore
+    public StringBuffer additionsToDxf = new StringBuffer();
+    @Transient
+    private String dxfFileName;
+
+    @Transient
+    @JsonIgnore
+    private List<EdcrPdfDetail> edcrPdfDetails;
+
+    // Used to show drawing mistakes, General errors, mistakes in following layer/color coding standard etc
+    private transient Map<String, String> errors = new LinkedHashMap<>();
+    /**
+     * The report output object. Based on type of building and occupancies,the rules are validated and rules which are considered
+     * for the submitted plan are recorded in this object.
+     */
+    private ReportOutput reportOutput = new ReportOutput();
+    // System will evaluate the list of noc's required based on the plan input
+    private transient Map<String, String> noObjectionCertificates = new HashMap<>();
+    private List<String> nocDeptCodes = new ArrayList<String>();
+
+    public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
+        return canopyDistanceFromPlotBoundary;
+    }
+
+    public void setCanopyDistanceFromPlotBoundary(List<BigDecimal> canopyDistanceFromPlotBoundary) {
+        this.canopyDistanceFromPlotBoundary = canopyDistanceFromPlotBoundary;
+    }
+
+    public List<BigDecimal> getTravelDistancesToExit() {
+        return travelDistancesToExit;
+    }
+
+    public void setTravelDistancesToExit(List<BigDecimal> travelDistancesToExit) {
+        this.travelDistancesToExit = travelDistancesToExit;
+    }
+
+    private List<BigDecimal> depthCuttings = new ArrayList<>();
+
+    public List<BigDecimal> getDepthCuttings() {
+        return depthCuttings;
+    }
+
+    public void setDepthCuttings(List<BigDecimal> depthCuttings) {
+        this.depthCuttings = depthCuttings;
+    }
+
+    public List<AccessoryBlock> getAccessoryBlocks() {
+        return accessoryBlocks;
+    }
+
+    public void setAccessoryBlocks(List<AccessoryBlock> accessoryBlocks) {
+        this.accessoryBlocks = accessoryBlocks;
+    }
+
+    public List<Occupancy> getOccupancies() {
+        return occupancies;
+    }
+
+    public void setOccupancies(List<Occupancy> occupancies) {
+        this.occupancies = occupancies;
+    }
+
+    public List<Block> getBlocks() {
+        return blocks;
+    }
+
+    public void setBlocks(List<Block> blocks) {
+        this.blocks = blocks;
+    }
+
+    public Block getBlockByName(String blockName) {
+        for (Block block : getBlocks()) {
+            if (block.getName().equalsIgnoreCase(blockName))
+                return block;
         }
-    
-        public void setSurrenderRoads(List<Measurement> surrenderRoads) {
-            this.surrenderRoads = surrenderRoads;
-        }
+        return null;
+    }
 
-        public BigDecimal getTotalSurrenderRoadArea() {
-            return totalSurrenderRoadArea;
-        }
+    public Map<String, String> getNoObjectionCertificates() {
+        return noObjectionCertificates;
+    }
 
-        public void setTotalSurrenderRoadArea(BigDecimal surrenderRoadArea) {
-            this.totalSurrenderRoadArea = surrenderRoadArea;
-        }
+    public void setNoObjectionCertificates(Map<String, String> noObjectionCertificates) {
+        this.noObjectionCertificates = noObjectionCertificates;
+    }
 
-		public DistanceToExternalEntity getDistanceToExternalEntity() {
-			return distanceToExternalEntity;
-		}
+    public List<CulDeSacRoad> getCuldeSacRoads() {
+        return culdeSacRoads;
+    }
 
-		public void setDistanceToExternalEntity(DistanceToExternalEntity distanceToExternalEntity) {
-			this.distanceToExternalEntity = distanceToExternalEntity;
-		}
+    public void setCuldeSacRoads(List<CulDeSacRoad> culdeSacRoads) {
+        this.culdeSacRoads = culdeSacRoads;
+    }
 
-	
+    public List<Lane> getLaneRoads() {
+        return laneRoads;
+    }
+
+    public void setLaneRoads(List<Lane> laneRoads) {
+        this.laneRoads = laneRoads;
+    }
+
+    public List<ElectricLine> getElectricLine() {
+        return electricLine;
+    }
+
+    public void setElectricLine(List<ElectricLine> electricLine) {
+        this.electricLine = electricLine;
+    }
+
+    public Boolean getEdcrPassed() {
+        return edcrPassed;
+    }
+
+    public void setEdcrPassed(Boolean edcrPassed) {
+        this.edcrPassed = edcrPassed;
+    }
+
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
+    }
+
+    public List<NonNotifiedRoad> getNonNotifiedRoads() {
+        return nonNotifiedRoads;
+    }
+
+    public void setNonNotifiedRoads(List<NonNotifiedRoad> nonNotifiedRoads) {
+        this.nonNotifiedRoads = nonNotifiedRoads;
+    }
+
+    public List<NotifiedRoad> getNotifiedRoads() {
+        return notifiedRoads;
+    }
+
+    public void setNotifiedRoads(List<NotifiedRoad> notifiedRoads) {
+        this.notifiedRoads = notifiedRoads;
+    }
+
+    public void addErrors(Map<String, String> errors) {
+        if (errors != null)
+            getErrors().putAll(errors);
+    }
+
+    public void addNocs(Map<String, String> nocs) {
+        if (noObjectionCertificates != null)
+            getNoObjectionCertificates().putAll(nocs);
+    }
+
+    public void addNoc(String key, String value) {
+
+        if (noObjectionCertificates != null)
+            getNoObjectionCertificates().put(key, value);
+    }
+
+    public void addError(String key, String value) {
+
+        if (errors != null)
+            getErrors().put(key, value);
+    }
+
+    public Map<String, String> getErrors() {
+        return errors;
+    }
+
+    public void setErrors(Map<String, String> errors) {
+        this.errors = errors;
+    }
+
+    public PlanInformation getPlanInformation() {
+        return planInformation;
+    }
+
+    public void setPlanInformation(PlanInformation planInformation) {
+        this.planInformation = planInformation;
+    }
+
+    public Plot getPlot() {
+        return plot;
+    }
+
+    public void setPlot(Plot plot) {
+        this.plot = plot;
+    }
+
+    public VirtualBuilding getVirtualBuilding() {
+        return virtualBuilding;
+    }
+
+    public void setVirtualBuilding(VirtualBuilding virtualBuilding) {
+        this.virtualBuilding = virtualBuilding;
+    }
+
+    public Utility getUtility() {
+        return utility;
+    }
+
+    public void setUtility(Utility utility) {
+        this.utility = utility;
+    }
+
+    public BigDecimal getCoverage() {
+        return coverage;
+    }
+
+    public void setCoverage(BigDecimal coverage) {
+        this.coverage = coverage;
+    }
+
+    public void sortBlockByName() {
+        if (!blocks.isEmpty())
+            Collections.sort(blocks, Comparator.comparing(Block::getNumber));
+    }
+
+    public void sortSetBacksByLevel() {
+        for (Block block : blocks)
+            Collections.sort(block.getSetBacks(), Comparator.comparing(SetBack::getLevel));
+    }
+
+    public ParkingDetails getParkingDetails() {
+        return parkingDetails;
+    }
+
+    public void setParkingDetails(ParkingDetails parkingDetails) {
+        this.parkingDetails = parkingDetails;
+    }
+
+    public Map<Integer, org.egov.common.entity.bpa.Occupancy> getOccupanciesMaster() {
+        return occupanciesMaster;
+    }
+
+    public void setOccupanciesMaster(Map<Integer, org.egov.common.entity.bpa.Occupancy> occupanciesMaster) {
+        this.occupanciesMaster = occupanciesMaster;
+    }
+
+    public Map<Integer, SubOccupancy> getSubOccupanciesMaster() {
+        return subOccupanciesMaster;
+    }
+
+    public void setSubOccupanciesMaster(Map<Integer, SubOccupancy> subOccupanciesMaster) {
+        this.subOccupanciesMaster = subOccupanciesMaster;
+    }
+
+    public Map<Integer, Usage> getUsagesMaster() {
+        return usagesMaster;
+    }
+
+    public void setUsagesMaster(Map<Integer, Usage> usagesMaster) {
+        this.usagesMaster = usagesMaster;
+    }
+
+    public Map<String, Integer> getSubFeatureColorCodesMaster() {
+        return subFeatureColorCodesMaster;
+    }
+
+    public void setSubFeatureColorCodesMaster(Map<String, Integer> subFeatureColorCodesMaster) {
+        this.subFeatureColorCodesMaster = subFeatureColorCodesMaster;
+    }
+
+    public StringBuffer getAdditionsToDxf() {
+        return additionsToDxf;
+    }
+
+    public void addToAdditionsToDxf(String s) {
+        additionsToDxf.append(s);
+    }
+
+    public void setAdditionsToDxf(StringBuffer additionsToDxf) {
+        this.additionsToDxf = additionsToDxf;
+    }
+
+    public String getDxfFileName() {
+        return dxfFileName;
+    }
+
+    public void setDxfFileName(String dxfFileName) {
+        this.dxfFileName = dxfFileName;
+    }
+
+    public List<EdcrPdfDetail> getEdcrPdfDetails() {
+        return edcrPdfDetails;
+    }
+
+    public void setEdcrPdfDetails(List<EdcrPdfDetail> edcrPdfDetails) {
+        this.edcrPdfDetails = edcrPdfDetails;
+    }
+
+    public ReportOutput getReportOutput() {
+        return reportOutput;
+    }
+
+    public void setReportOutput(ReportOutput reportOutput) {
+        this.reportOutput = reportOutput;
+    }
+
+    public List<SepticTank> getSepticTanks() {
+        return septicTanks;
+    }
+
+    public void setSepticTanks(List<SepticTank> septicTanks) {
+        this.septicTanks = septicTanks;
+    }
+
+    public Plantation getPlantation() {
+        return plantation;
+    }
+
+    public void setPlantation(Plantation plantation) {
+        this.plantation = plantation;
+    }
+
+    public GuardRoom getGuardRoom() {
+        return guardRoom;
+    }
+
+    public void setGuardRoom(GuardRoom guardRoom) {
+        this.guardRoom = guardRoom;
+    }
+
+    public SegregatedToilet getSegregatedToilet() {
+        return segregatedToilet;
+    }
+
+    public void setSegregatedToilet(SegregatedToilet segregatedToilet) {
+        this.segregatedToilet = segregatedToilet;
+    }
+
+    public FarDetails getFarDetails() {
+        return farDetails;
+    }
+
+    public void setFarDetails(FarDetails farDetails) {
+        this.farDetails = farDetails;
+    }
+
+    public DrawingPreference getDrawingPreference() {
+        return drawingPreference;
+    }
+
+    public void setDrawingPreference(DrawingPreference drawingPreference) {
+        this.drawingPreference = drawingPreference;
+    }
+
+    public List<Measurement> getSurrenderRoads() {
+        return surrenderRoads;
+    }
+
+    public void setSurrenderRoads(List<Measurement> surrenderRoads) {
+        this.surrenderRoads = surrenderRoads;
+    }
+
+    public BigDecimal getTotalSurrenderRoadArea() {
+        return totalSurrenderRoadArea;
+    }
+
+    public void setTotalSurrenderRoadArea(BigDecimal surrenderRoadArea) {
+        this.totalSurrenderRoadArea = surrenderRoadArea;
+    }
+
+    public DistanceToExternalEntity getDistanceToExternalEntity() {
+        return distanceToExternalEntity;
+    }
+
+    public void setDistanceToExternalEntity(DistanceToExternalEntity distanceToExternalEntity) {
+        this.distanceToExternalEntity = distanceToExternalEntity;
+    }
+
+    public Map<String, String> getPlanInfoProperties() {
+        return planInfoProperties;
+    }
+
+    public void setPlanInfoProperties(Map<String, String> planInfoProperties) {
+        this.planInfoProperties = planInfoProperties;
+    }
+
 }
