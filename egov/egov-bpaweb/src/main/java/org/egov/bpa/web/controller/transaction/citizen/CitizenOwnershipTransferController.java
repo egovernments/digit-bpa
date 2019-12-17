@@ -155,7 +155,7 @@ public class CitizenOwnershipTransferController extends BpaGenericApplicationCon
                     WF_NEW_STATE, ownershipTransfer.getApplication().getApplicationType().getName());
             if (wfMatrix != null)
                 approvalPosition = bpaUtils.getUserPositionIdByZone(wfMatrix.getNextDesignation(),
-                        bpaUtils.getBoundaryForWorkflow(ownershipTransfer.getParent().getApplication().getSiteDetail().get(0)).getId());
+                        bpaUtils.getBoundaryForWorkflow(ownershipTransfer.getApplication().getSiteDetail().get(0)).getId());
             wfBean.setApproverPositionId(approvalPosition);
         }
         Boolean onlinePaymentEnable = request.getParameter(ONLINE_PAYMENT_ENABLE) != null
