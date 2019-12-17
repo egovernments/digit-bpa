@@ -151,37 +151,49 @@ public class EdcrRestService {
         edcrDetail.setTransactionNumber(edcrApplication.getTransactionNumber());
         edcrDetail.setEdcrNumber(edcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber());
         edcrDetail.setStatus(edcrApplication.getStatus());
-        edcrDetail.setDxfFile(
-                format(getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId().getFileStoreId())));
-        edcrDetail.setUpdatedDxfFile(
-                format(getFileDownloadUrl(
-                        edcrApplication.getEdcrApplicationDetails().get(0).getScrutinizedDxfFileId().getFileStoreId())));
-        edcrDetail.setPlanReport(format(
-                getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId())));
 
-        File file = fileStoreService.fetch(
-                edcrApplication.getEdcrApplicationDetails().get(0).getPlanDetailFileStore().getFileStoreId(),
-                DcrConstants.APPLICATION_MODULE_TYPE);
-        if (LOG.isInfoEnabled())
-            LOG.info("**************** End - Reading Plan detail file **************" + file);
-        try {
-            if (file != null) {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                Plan pl1 = mapper.readValue(file, Plan.class);
-                pl1.getPlanInformation().setApplicantName(edcrApplication.getApplicantName());
-                if (LOG.isInfoEnabled())
-                    LOG.info("**************** Plan detail object **************" + pl1);
-                edcrDetail.setPlanDetail(pl1);
+        if (edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId() != null)
+            edcrDetail.setDxfFile(
+                    format(getFileDownloadUrl(
+                            edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId().getFileStoreId())));
+
+        if (edcrApplication.getEdcrApplicationDetails().get(0).getScrutinizedDxfFileId() != null)
+            edcrDetail.setUpdatedDxfFile(
+                    format(getFileDownloadUrl(
+                            edcrApplication.getEdcrApplicationDetails().get(0).getScrutinizedDxfFileId().getFileStoreId())));
+
+        if (edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId() != null)
+            edcrDetail.setPlanReport(format(
+                    getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId())));
+
+        if (edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId() != null) {
+            File file = fileStoreService.fetch(
+                    edcrApplication.getEdcrApplicationDetails().get(0).getPlanDetailFileStore().getFileStoreId(),
+                    DcrConstants.APPLICATION_MODULE_TYPE);
+            if (LOG.isInfoEnabled())
+                LOG.info("**************** End - Reading Plan detail file **************" + file);
+            try {
+                if (file != null) {
+                    ObjectMapper mapper = new ObjectMapper();
+                    mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+                    Plan pl1 = mapper.readValue(file, Plan.class);
+                    pl1.getPlanInformation().setApplicantName(edcrApplication.getApplicantName());
+                    if (LOG.isInfoEnabled())
+                        LOG.info("**************** Plan detail object **************" + pl1);
+                    edcrDetail.setPlanDetail(pl1);
+                }
+            } catch (IOException e) {
+                LOG.log(Level.ERROR, e);
             }
-        } catch (IOException e) {
-            LOG.log(Level.ERROR, e);
         }
 
+        if(edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId() != null)
         planPdfs.add(
                 format(getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getDxfFileId().getFileStoreId())));
-        planPdfs.add(format(
-                getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId())));
+        
+        if (edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId() != null)
+            planPdfs.add(format(
+                    getFileDownloadUrl(edcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId())));
 
         edcrDetail.setPlanPdfs(planPdfs);
         edcrDetail.setTenantId(tenantId);
@@ -190,7 +202,7 @@ public class EdcrRestService {
             edcrDetail.setStatus(edcrApplication.getStatus());
 
         return edcrDetail;
-    }
+        }
 
     public List<EdcrDetail> fetchEdcr(final String edcrNumber, final String transactionNumber, String tenantId) {
         List<EdcrApplication> edcrDetails = new ArrayList<>();
