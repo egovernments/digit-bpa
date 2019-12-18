@@ -47,6 +47,11 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.DxfFileConstants.A_AF;
+import static org.egov.edcr.constants.DxfFileConstants.A_SA;
+import static org.egov.edcr.constants.DxfFileConstants.B;
+import static org.egov.edcr.constants.DxfFileConstants.D;
+import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.ROUNDMODE_MEASUREMENTS;
 
@@ -61,91 +66,90 @@ import org.egov.common.entity.edcr.Measurement;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
-import org.egov.infra.utils.StringUtils;
 import org.springframework.stereotype.Service;
 
 @Service
 public class Plantation extends FeatureProcess {
 
-	private static final Logger LOGGER = Logger.getLogger(Parking.class);
-	private static final String RULE_32 = "32";
-	public static final String PLANTATION_TREECOVER_DESCRIPTION = "Plantation tree cover";
+    private static final Logger LOGGER = Logger.getLogger(Plantation.class);
+    private static final String RULE_32 = "32";
+    public static final String PLANTATION_TREECOVER_DESCRIPTION = "Plantation tree cover";
 
-	@Override
-	public Plan validate(Plan pl) {
-		return null;
-	}
+    @Override
+    public Plan validate(Plan pl) {
+        return null;
+    }
 
-	@Override
-	public Plan process(Plan pl) {
-		validate(pl);
-		scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Plantation");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
-		Map<String, String> details = new HashMap<>();
-		details.put(RULE_NO, RULE_32);
-		details.put(DESCRIPTION, PLANTATION_TREECOVER_DESCRIPTION);
+    @Override
+    public Plan process(Plan pl) {
+        validate(pl);
+        scrutinyDetail = new ScrutinyDetail();
+        scrutinyDetail.setKey("Common_Plantation");
+        scrutinyDetail.addColumnHeading(1, RULE_NO);
+        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+        scrutinyDetail.addColumnHeading(3, REQUIRED);
+        scrutinyDetail.addColumnHeading(4, PROVIDED);
+        scrutinyDetail.addColumnHeading(5, STATUS);
+        Map<String, String> details = new HashMap<>();
+        details.put(RULE_NO, RULE_32);
+        details.put(DESCRIPTION, PLANTATION_TREECOVER_DESCRIPTION);
 
-		BigDecimal totalArea = BigDecimal.ZERO;
-		BigDecimal plotArea = BigDecimal.ZERO;
-		BigDecimal plantationPer =BigDecimal.ZERO;
-		String subType = null;
-		if (pl.getPlantation() != null && pl.getPlantation().getPlantations() != null
-				&& !pl.getPlantation().getPlantations().isEmpty()) {
-			for (Measurement m : pl.getPlantation().getPlantations()) {
-				totalArea = totalArea.add(m.getArea());
-			}
-			
+        BigDecimal totalArea = BigDecimal.ZERO;
+        BigDecimal plotArea = BigDecimal.ZERO;
+        BigDecimal plantationPer = BigDecimal.ZERO;
+        String type = "";
+        String subType = "";
+        if (pl.getPlantation() != null && pl.getPlantation().getPlantations() != null
+                && !pl.getPlantation().getPlantations().isEmpty()) {
+            for (Measurement m : pl.getPlantation().getPlantations()) {
+                totalArea = totalArea.add(m.getArea());
+            }
 
-			if (pl.getPlot() != null)
-				plotArea = pl.getPlot().getArea();
+            if (pl.getPlot() != null)
+                plotArea = pl.getPlot().getArea();
 
-			if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper()!=null && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null)
-				subType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
-			if(totalArea.intValue()>0 && plotArea!=null && plotArea.intValue()>0)
-			  plantationPer = totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
-			if (StringUtils.isNotEmpty(subType) && DxfFileConstants.A_R.equals(subType)) {
+            if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
+                    && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null) {
+                type = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode();
+                subType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype().getCode();
+            }
+            if (totalArea.intValue() > 0 && plotArea != null && plotArea.intValue() > 0)
+                plantationPer = totalArea.divide(plotArea, DECIMALDIGITS_MEASUREMENTS, ROUNDMODE_MEASUREMENTS);
+            if (A_AF.equals(subType) || A_SA.equals(subType) || B.equals(type) || D.equals(type) || G.equals(type)) {
+                if (plantationPer.compareTo(new BigDecimal("0.10")) < 0) {
+                    details.put(REQUIRED, ">= 10%");
+                    details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+                    details.put(STATUS, Result.Not_Accepted.getResultVal());
+                    scrutinyDetail.getDetail().add(details);
+                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                } else {
+                    details.put(REQUIRED, ">= 10%");
+                    details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+                    details.put(STATUS, Result.Accepted.getResultVal());
+                    scrutinyDetail.getDetail().add(details);
+                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                }
+            } else {
+                if (plantationPer.compareTo(new BigDecimal("0.05")) < 0) {
+                    details.put(REQUIRED, ">= 5%");
+                    details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+                    details.put(STATUS, Result.Not_Accepted.getResultVal());
+                    scrutinyDetail.getDetail().add(details);
+                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                } else {
+                    details.put(REQUIRED, ">= 5%");
+                    details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
+                    details.put(STATUS, Result.Accepted.getResultVal());
+                    scrutinyDetail.getDetail().add(details);
+                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                }
+            }
+        }
+        return pl;
+    }
 
-				if (plantationPer.compareTo(new BigDecimal("0.05")) < 0) {
-					details.put(REQUIRED, ">= 5%");
-					details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-					details.put(STATUS, Result.Not_Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
-					details.put(REQUIRED, ">= 5%");
-					details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				}
-
-			} else {
-				if (plantationPer.compareTo(new BigDecimal("0.10")) < 0) {
-					details.put(REQUIRED, ">= 10%");
-					details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-					details.put(STATUS, Result.Not_Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				} else {
-					details.put(REQUIRED, ">= 10%");
-					details.put(PROVIDED, plantationPer.multiply(new BigDecimal(100)).toString() + "%");
-					details.put(STATUS, Result.Accepted.getResultVal());
-					scrutinyDetail.getDetail().add(details);
-					pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-				}
-			}
-		}
-		return pl;
-	}
-
-	@Override
-	public Map<String, Date> getAmendments() {
-		return new LinkedHashMap<>();
-	}
+    @Override
+    public Map<String, Date> getAmendments() {
+        return new LinkedHashMap<>();
+    }
 }
