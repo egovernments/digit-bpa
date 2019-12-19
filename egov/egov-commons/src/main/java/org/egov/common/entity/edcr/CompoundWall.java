@@ -47,6 +47,32 @@
 
 package org.egov.common.entity.edcr;
 
-public class CompoundWallUtility extends Utility {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CompoundWall implements Serializable {
+
     private static final long serialVersionUID = 52L;
+
+    // Only name, height and color code values are available for declared sides
+    private List<Measurement> wallHeights = new ArrayList<>();
+    // Only name, height and color code values are available for declared sides
+    private List<Measurement> railingHeights = new ArrayList<>();
+
+    public void setWallHeights(List<Measurement> wallHeights) {
+        this.wallHeights = wallHeights;
+    }
+
+    public List<Measurement> getWallHeights() {
+        return wallHeights;
+    }
+
+    public void setRailingHeights(List<Measurement> railingHeights) {
+        this.railingHeights = railingHeights;
+    }
+
+    public List<Measurement> getRailingHeights() {
+        return railingHeights;
+    }
 }
