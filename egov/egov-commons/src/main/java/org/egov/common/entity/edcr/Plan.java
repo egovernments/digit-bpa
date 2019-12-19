@@ -128,7 +128,7 @@ public class Plan implements Serializable {
     @JsonIgnore
     private transient Map<Integer, Usage> usagesMaster = new HashMap<>();
     @JsonIgnore
-    private transient Map<String, Integer> subFeatureColorCodesMaster = new HashMap<>();
+    private transient Map<String, Map<String, Integer>> subFeatureColorCodesMaster = new HashMap<>();
 
     // Utilities of building like solar,waste disposal plant, watertank, rain water harvesting etc
     private Utility utility = new Utility();
@@ -418,11 +418,11 @@ public class Plan implements Serializable {
         this.usagesMaster = usagesMaster;
     }
 
-    public Map<String, Integer> getSubFeatureColorCodesMaster() {
+    public Map<String, Map<String, Integer>> getSubFeatureColorCodesMaster() {
         return subFeatureColorCodesMaster;
     }
 
-    public void setSubFeatureColorCodesMaster(Map<String, Integer> subFeatureColorCodesMaster) {
+    public void setSubFeatureColorCodesMaster(Map<String, Map<String, Integer>> subFeatureColorCodesMaster) {
         this.subFeatureColorCodesMaster = subFeatureColorCodesMaster;
     }
 
@@ -537,11 +537,11 @@ public class Plan implements Serializable {
     public void setCompoundWall(CompoundWall compoundWall) {
         this.compoundWall = compoundWall;
     }
-    
+
     public CompoundWall getCompoundWall() {
         return compoundWall;
     }
-    
+
     public Map<String, String> getPlanInfoProperties() {
         return planInfoProperties;
     }

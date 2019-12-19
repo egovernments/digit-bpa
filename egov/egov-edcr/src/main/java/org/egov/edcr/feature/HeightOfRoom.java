@@ -47,10 +47,8 @@
 
 package org.egov.edcr.feature;
 
-import static org.egov.edcr.constants.DxfFileConstants.A_AF;
-import static org.egov.edcr.constants.DxfFileConstants.A_R;
-import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.A;
+import static org.egov.edcr.constants.DxfFileConstants.F;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -59,7 +57,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Floor;
@@ -101,13 +98,16 @@ public class HeightOfRoom extends FeatureProcess {
 
     @Override
     public Plan process(Plan pl) {
+        Map<String, Integer> heightOfRoomFeaturesColor = pl.getSubFeatureColorCodesMaster().get("HeightOfRoom");
         validate(pl);
         HashMap<String, String> errors = new HashMap<>();
         if (pl != null && pl.getBlocks() != null) {
-            OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null ? pl.getVirtualBuilding().getMostRestrictiveFarHelper(): null ;
-            if (mostRestrictiveOccupancy!=null && mostRestrictiveOccupancy.getType() != null
+            OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null
+                    ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+                    : null;
+            if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getType() != null
                     && (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
-                    || F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))) {
+                            || F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))) {
                 for (Block block : pl.getBlocks()) {
                     if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
                         scrutinyDetail = new ScrutinyDetail();
@@ -129,29 +129,25 @@ public class HeightOfRoom extends FeatureProcess {
                             String subRule = null;
                             String subRuleDesc = null;
                             String color = "";
-                            
+
                             if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
                                 color = DxfFileConstants.COLOR_RESIDENTIAL_ROOM;
                             else
                                 color = DxfFileConstants.COLOR_COMMERCIAL_ROOM;
-                                
-                            
+
                             if (floor.getAcRoom() != null) {
                                 List<BigDecimal> residentialAcRoomHeights = new ArrayList<>();
                                 List<RoomHeight> acHeights = floor.getAcRoom().getHeights();
                                 List<Measurement> acRooms = floor.getAcRoom().getRooms();
 
                                 for (RoomHeight roomHeight : acHeights) {
-                                    if (pl.getSubFeatureColorCodesMaster()
-                                            .get(color) == roomHeight
-                                                    .getColorCode()) {
+                                    if (heightOfRoomFeaturesColor.get(color) == roomHeight.getColorCode()) {
                                         residentialAcRoomHeights.add(roomHeight.getHeight());
                                     }
                                 }
 
                                 for (Measurement acRoom : acRooms) {
-                                    if (pl.getSubFeatureColorCodesMaster().get(color) == acRoom
-                                            .getColorCode()) {
+                                    if (heightOfRoomFeaturesColor.get(color) == acRoom.getColorCode()) {
                                         roomAreas.add(acRoom.getArea());
                                         roomWidths.add(acRoom.getWidth());
                                     }
@@ -185,16 +181,13 @@ public class HeightOfRoom extends FeatureProcess {
                                 List<Measurement> rooms = floor.getRegularRoom().getRooms();
 
                                 for (RoomHeight roomHeight : heights) {
-                                    if (pl.getSubFeatureColorCodesMaster()
-                                            .get(color) == roomHeight
-                                                    .getColorCode()) {
+                                    if (heightOfRoomFeaturesColor.get(color) == roomHeight.getColorCode()) {
                                         residentialRoomHeights.add(roomHeight.getHeight());
                                     }
                                 }
 
                                 for (Measurement room : rooms) {
-                                    if (pl.getSubFeatureColorCodesMaster().get(color) == room
-                                            .getColorCode()) {
+                                    if (heightOfRoomFeaturesColor.get(color) == room.getColorCode()) {
                                         roomAreas.add(room.getArea());
                                         roomWidths.add(room.getWidth());
                                     }
