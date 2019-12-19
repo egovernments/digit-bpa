@@ -79,49 +79,33 @@ public class WasteDisposal extends FeatureProcess {
 
     @Override
     public Plan validate(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
-        // waste disposal defined or not
-        if (pl != null && pl.getUtility() != null) {
-            if (pl.getUtility().getLiquidWasteTreatementPlant().isEmpty()) {
-                if (pl.getUtility().getWasteDisposalUnits().isEmpty()) {
-                    errors.put(WASTEDISPOSAL,
-                            edcrMessageSource.getMessage(OBJECTNOTDEFINED,
-                                    new String[] { WASTEDISPOSAL }, LocaleContextHolder.getLocale()));
-                    pl.addErrors(errors);
-                }
-            }
-        }
+        /*
+         * HashMap<String, String> errors = new HashMap<>(); // waste disposal defined or not if (pl != null && pl.getUtility() !=
+         * null) { if (pl.getUtility().getLiquidWasteTreatementPlant().isEmpty()) { if
+         * (pl.getUtility().getWasteDisposalUnits().isEmpty()) { errors.put(WASTEDISPOSAL,
+         * edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { WASTEDISPOSAL }, LocaleContextHolder.getLocale()));
+         * pl.addErrors(errors); } } }
+         */
         return pl;
     }
 
     @Override
-    public Plan process(Plan pl) {
-        validate(pl);
-        scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
-        scrutinyDetail.setKey("Common_Waste Disposal");
-        if (pl.getUtility().getLiquidWasteTreatementPlant().isEmpty()) {
-            if (!pl.getUtility().getWasteDisposalUnits().isEmpty()) {
-                setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_26A, SUB_RULE_26A_DESCRIPTION, "",
-                        OBJECTDEFINED_DESC, Result.Accepted.getResultVal());
-
-                if (pl.getUtility().getWells().isEmpty()) {
-                    for (org.egov.common.entity.edcr.WasteDisposal wasteDisposal : pl.getUtility().getWasteDisposalUnits()) {
-                        if (wasteDisposal.getType().equals(DcrConstants.PROPOSED)) {
-                            printOutputForProposedWasteDisposal(pl);
-                        }
-                    }
-                }
-
-            } else {
-                setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_26A, SUB_RULE_26A_DESCRIPTION, "",
-                        OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal());
-            }
-        }
+    public Plan process(Plan pl) {/*
+                                   * validate(pl); scrutinyDetail = new ScrutinyDetail(); scrutinyDetail.addColumnHeading(1,
+                                   * RULE_NO); scrutinyDetail.addColumnHeading(2, DESCRIPTION); scrutinyDetail.addColumnHeading(3,
+                                   * REQUIRED); scrutinyDetail.addColumnHeading(4, PROVIDED); scrutinyDetail.addColumnHeading(5,
+                                   * STATUS); scrutinyDetail.setKey("Common_Waste Disposal"); if
+                                   * (pl.getUtility().getLiquidWasteTreatementPlant().isEmpty()) { if
+                                   * (!pl.getUtility().getWasteDisposalUnits().isEmpty()) {
+                                   * setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_26A, SUB_RULE_26A_DESCRIPTION, "",
+                                   * OBJECTDEFINED_DESC, Result.Accepted.getResultVal()); if
+                                   * (pl.getUtility().getWells().isEmpty()) { for (org.egov.common.entity.edcr.WasteDisposal
+                                   * wasteDisposal : pl.getUtility().getWasteDisposalUnits()) { if
+                                   * (wasteDisposal.getType().equals(DcrConstants.PROPOSED)) {
+                                   * printOutputForProposedWasteDisposal(pl); } } } } else {
+                                   * setReportOutputDetailsWithoutOccupancy(pl, SUB_RULE_26A, SUB_RULE_26A_DESCRIPTION, "",
+                                   * OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal()); } }
+                                   */
         return pl;
     }
 

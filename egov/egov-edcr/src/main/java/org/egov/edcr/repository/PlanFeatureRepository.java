@@ -51,15 +51,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.common.entity.edcr.PlanFeature;
+import org.egov.edcr.feature.AccessoryBuildingService;
 import org.egov.edcr.feature.AdditionalFeature;
 import org.egov.edcr.feature.Balcony;
 import org.egov.edcr.feature.Basement;
 import org.egov.edcr.feature.BathRoom;
 import org.egov.edcr.feature.BathRoomWaterClosets;
+import org.egov.edcr.feature.BiometricWasteManagement;
 import org.egov.edcr.feature.BlockDistancesService;
+import org.egov.edcr.feature.BuildingHeight;
 import org.egov.edcr.feature.Chimney;
 import org.egov.edcr.feature.CommonFeature;
 import org.egov.edcr.feature.Coverage;
+import org.egov.edcr.feature.DepthCuttingService;
+import org.egov.edcr.feature.DistanceToRoad;
+import org.egov.edcr.feature.ExitWidth;
 import org.egov.edcr.feature.Far;
 import org.egov.edcr.feature.FireStair;
 import org.egov.edcr.feature.FireTenderMovement;
@@ -72,31 +78,42 @@ import org.egov.edcr.feature.Kitchen;
 import org.egov.edcr.feature.LandUse;
 import org.egov.edcr.feature.LiftService;
 import org.egov.edcr.feature.LocationPlan;
+import org.egov.edcr.feature.MeanOfAccess;
 import org.egov.edcr.feature.MezzanineFloorService;
 import org.egov.edcr.feature.MonumentDistance;
 import org.egov.edcr.feature.NorthDirection;
+import org.egov.edcr.feature.OpenStairService;
 import org.egov.edcr.feature.OverHangs;
 import org.egov.edcr.feature.OverheadElectricalLineService;
 import org.egov.edcr.feature.Parapet;
 import org.egov.edcr.feature.Parking;
+import org.egov.edcr.feature.PetrolFillingStation;
 import org.egov.edcr.feature.PlanInfoFeature;
 import org.egov.edcr.feature.Plantation;
 import org.egov.edcr.feature.PlantationGreenStrip;
 import org.egov.edcr.feature.RainWaterHarvesting;
 import org.egov.edcr.feature.RampService;
+import org.egov.edcr.feature.RecreationalSpace;
+import org.egov.edcr.feature.RecycleWasteWater;
 import org.egov.edcr.feature.RiverDistance;
 import org.egov.edcr.feature.RoofTank;
+import org.egov.edcr.feature.Sanitation;
 import org.egov.edcr.feature.SegregatedToilet;
 import org.egov.edcr.feature.SegregationOfWaste;
 import org.egov.edcr.feature.SepticTank;
 import org.egov.edcr.feature.SetBackService;
 import org.egov.edcr.feature.Solar;
 import org.egov.edcr.feature.SolarWaterHeating;
+import org.egov.edcr.feature.SolidLiquidWasteTreatment;
 import org.egov.edcr.feature.SpiralStair;
 import org.egov.edcr.feature.StairCover;
 import org.egov.edcr.feature.SurrenderRoad;
+import org.egov.edcr.feature.TravelDistanceToExit;
+import org.egov.edcr.feature.WasteDisposal;
 import org.egov.edcr.feature.WaterClosets;
 import org.egov.edcr.feature.WaterTankCapacity;
+import org.egov.edcr.feature.WaterTreatmentPlant;
+import org.egov.edcr.feature.Well;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -104,154 +121,196 @@ public class PlanFeatureRepository {
 
     public List<PlanFeature> getFeatures() {
         ArrayList<PlanFeature> features = new ArrayList<>();
+
         PlanFeature pf = new PlanFeature(PlanInfoFeature.class);
         features.add(pf);
+
         pf = new PlanFeature(Far.class);
         features.add(pf);
+
         pf = new PlanFeature(Coverage.class);
         features.add(pf);
+
         pf = new PlanFeature(SetBackService.class);
         features.add(pf);
+
         pf = new PlanFeature(MezzanineFloorService.class);
         features.add(pf);
+
         pf = new PlanFeature(Parking.class);
         features.add(pf);
+
         pf = new PlanFeature(MonumentDistance.class);
         features.add(pf);
+
         pf = new PlanFeature(BlockDistancesService.class);
         features.add(pf);
+
         pf = new PlanFeature(GovtBuildingDistance.class);
         features.add(pf);
+
         pf = new PlanFeature(LandUse.class);
         features.add(pf);
+
         pf = new PlanFeature(RiverDistance.class);
         features.add(pf);
+
         pf = new PlanFeature(SepticTank.class);
         features.add(pf);
+
         pf = new PlanFeature(Plantation.class);
         features.add(pf);
+
         pf = new PlanFeature(GuardRoom.class);
         features.add(pf);
+
         pf = new PlanFeature(SpiralStair.class);
         features.add(pf);
+
         pf = new PlanFeature(FireStair.class);
         features.add(pf);
+
         pf = new PlanFeature(Balcony.class);
         features.add(pf);
-        pf = new PlanFeature(OverHangs.class);
-        features.add(pf);
+
         pf = new PlanFeature(PlantationGreenStrip.class);
         features.add(pf);
+
         pf = new PlanFeature(RoofTank.class);
         features.add(pf);
+
         pf = new PlanFeature(StairCover.class);
         features.add(pf);
+
         pf = new PlanFeature(Chimney.class);
         features.add(pf);
+
         pf = new PlanFeature(HeightOfRoom.class);
         features.add(pf);
+
         pf = new PlanFeature(Kitchen.class);
         features.add(pf);
+
         pf = new PlanFeature(BathRoom.class);
         features.add(pf);
+
         pf = new PlanFeature(BathRoomWaterClosets.class);
         features.add(pf);
+
         pf = new PlanFeature(WaterClosets.class);
         features.add(pf);
+
         pf = new PlanFeature(Parapet.class);
         features.add(pf);
+
         pf = new PlanFeature(LiftService.class);
         features.add(pf);
+
         pf = new PlanFeature(GeneralStair.class);
         features.add(pf);
+
         pf = new PlanFeature(RampService.class);
         features.add(pf);
+
         pf = new PlanFeature(CommonFeature.class);
         features.add(pf);
+
         pf = new PlanFeature(Basement.class);
         features.add(pf);
+
         pf = new PlanFeature(SolarWaterHeating.class);
         features.add(pf);
+
         pf = new PlanFeature(SegregationOfWaste.class);
         features.add(pf);
+
         pf = new PlanFeature(Solar.class);
         features.add(pf);
-        /*
-         * pf = new PlanFeature(ExitWidth.class); features.add(pf);
-         */
+
+        pf = new PlanFeature(ExitWidth.class);
+        features.add(pf);
+
         pf = new PlanFeature(SegregatedToilet.class);
         features.add(pf);
 
-        /*
-         * pf = new PlanFeature(Sanitation.class); features.add(pf);
-         */
-        /*
-         * pf = ne PlanFeature(MeanOfAccess.class); features.add(pf);
-         */
-        /*
-         * pf = new PlanFeature(BuildingHeight.class); features.add(pf);
-         */
-        /*
-         * pf = new PlanFeature(DistanceToRoad.class); features.add(pf); pf = new PlanFeature(Parking.class); features.add(pf); pf
-         * = new PlanFeature(ExitWidth.class); features.add(pf); pf = new PlanFeature(WasteDisposal.class); features.add(pf); pf =
-         * new PlanFeature(WaterTreatmentPlant.class); features.add(pf); pf = new PlanFeature(RecycleWasteWater.class);
-         * features.add(pf); pf = new PlanFeature(Well.class); features.add(pf); pf = new PlanFeature(Solar.class);
-         * features.add(pf); pf = new PlanFeature(RainWaterHarvesting.class); features.add(pf); pf = new
-         * PlanFeature(BiometricWasteManagement.class); features.add(pf); pf = new PlanFeature(SolidLiquidWasteTreatment.class);
-         * features.add(pf);
-         */
+        pf = new PlanFeature(Sanitation.class);
+        features.add(pf);
+
+        pf = new PlanFeature(MeanOfAccess.class);
+        features.add(pf);
+
+        pf = new PlanFeature(BuildingHeight.class);
+        features.add(pf);
+
+        pf = new PlanFeature(DistanceToRoad.class);
+        features.add(pf);
+
+        pf = new PlanFeature(WasteDisposal.class);
+        features.add(pf);
+
+        pf = new PlanFeature(WaterTreatmentPlant.class);
+        features.add(pf);
+
+        pf = new PlanFeature(RecycleWasteWater.class);
+        features.add(pf);
+
+        pf = new PlanFeature(Well.class);
+        features.add(pf);
+
+        pf = new PlanFeature(BiometricWasteManagement.class);
+        features.add(pf);
+
+        pf = new PlanFeature(SolidLiquidWasteTreatment.class);
+        features.add(pf);
 
         pf = new PlanFeature(OverheadElectricalLineService.class);
         features.add(pf);
+
         pf = new PlanFeature(RainWaterHarvesting.class);
         features.add(pf);
-        /*
-         * pf = new PlanFeature(MezzanineFloorService.class); features.add(pf); pf = new PlanFeature(RecreationalSpace.class);
-         * features.add(pf); pf = new PlanFeature(TravelDistanceToExit.class); features.add(pf);
-         */
+
+        pf = new PlanFeature(RecreationalSpace.class);
+        features.add(pf);
+
+        pf = new PlanFeature(TravelDistanceToExit.class);
+        features.add(pf);
+
         pf = new PlanFeature(AdditionalFeature.class);
         features.add(pf);
 
         pf = new PlanFeature(FireTenderMovement.class);
         features.add(pf);
+
         pf = new PlanFeature(SurrenderRoad.class);
         features.add(pf);
+
         pf = new PlanFeature(WaterTankCapacity.class);
         features.add(pf);
 
         pf = new PlanFeature(NorthDirection.class);
         features.add(pf);
+
         pf = new PlanFeature(LocationPlan.class);
         features.add(pf);
+
         pf = new PlanFeature(HeadRoom.class);
         features.add(pf);
 
-        /*
-         * pf = new PlanFeature(OverHangs.class); features.add(pf); pf = new PlanFeature(FireStairService.class);
-         * features.add(pf); pf = new PlanFeature(GeneralStairService.class); features.add(pf); pf = new
-         * PlanFeature(SpiralStairService.class); features.add(pf); pf = new PlanFeature(RampService.class); features.add(pf); pf
-         * = new PlanFeature(LiftService.class); features.add(pf);
-         */
+        pf = new PlanFeature(OverHangs.class);
+        features.add(pf);
 
-        /*
-         * pf = new PlanFeature(HeightOfRoom.class); features.add(pf);
-         */
-        /*
-         * pf = new PlanFeature(AdditionalFeature.class); features.add(pf); pf = new PlanFeature(AccessoryBuildingService.class);
-         * features.add(pf); pf = new PlanFeature(DepthCutting.class); features.add(pf);
-         */
+        pf = new PlanFeature(AccessoryBuildingService.class);
+        features.add(pf);
 
-        /*
-         * pf = new PlanFeature(PetrolFillingStation.class); features.add(pf);
-         */
-        /*
-         * pf = new PlanFeature(CommonFeature.class); features.add(pf); pf = new PlanFeature(DxfToPdfConverter.class);
-         * features.add(pf); pf = new PlanFeature(OpenStairs.class); features.add(pf);
-         */
+        pf = new PlanFeature(DepthCuttingService.class);
+        features.add(pf);
 
-        /*
-         * pf = new PlanFeature(DxfToPdfConverter.class); features.add(pf);
-         */
+        pf = new PlanFeature(PetrolFillingStation.class);
+        features.add(pf);
+
+        pf = new PlanFeature(OpenStairService.class);
+        features.add(pf);
+
         return features;
     }
 

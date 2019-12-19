@@ -99,227 +99,135 @@ public class DistanceToRoad extends FeatureProcess {
     private static final String RULE_ACTUAL_KEY = "meanofaccess.actual";
 
     @Override
-    public Plan validate(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
-
-        boolean shortestDistanceDefined = false;
-
-        if ((pl.getNotifiedRoads().isEmpty() && pl.getCuldeSacRoads().isEmpty() && pl.getLaneRoads().isEmpty() &&
-                pl.getNonNotifiedRoads().isEmpty())) {
-            errors.put(DcrConstants.ROAD,
-                    getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.ROAD));
-            pl.addErrors(errors);
-        }
-
-        if (!pl.getNotifiedRoads().isEmpty())
-            for (NotifiedRoad notifiedRoad : pl.getNotifiedRoads()) {
-                for (BigDecimal shortestDistanceToRoad : notifiedRoad.getShortestDistanceToRoad()) {
-                    if (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) {
-                        shortestDistanceDefined = true;
-                        continue;
-                    }
-                }
-            }
-        if (!pl.getNonNotifiedRoads().isEmpty())
-            for (NonNotifiedRoad nonNotifiedRoad : pl.getNonNotifiedRoads()) {
-                for (BigDecimal shortestDistanceToRoad : nonNotifiedRoad.getShortestDistanceToRoad())
-                    if (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) {
-                        shortestDistanceDefined = true;
-                        continue;
-                    }
-            }
-        if (!pl.getLaneRoads().isEmpty())
-            for (Lane laneRoad : pl.getLaneRoads()) {
-                for (BigDecimal shortestDistanceToRoad : laneRoad.getShortestDistanceToRoad())
-                    if (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) {
-                        shortestDistanceDefined = true;
-                        continue;
-                    }
-            }
-        if (!pl.getCuldeSacRoads().isEmpty())
-            for (CulDeSacRoad culdSac : pl.getCuldeSacRoads()) {
-                for (BigDecimal shortestDistanceToRoad : culdSac.getShortestDistanceToRoad())
-                    if (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) {
-                        shortestDistanceDefined = true;
-                        continue;
-
-                    }
-            }
-
-        if (!shortestDistanceDefined) {
-            errors.put(DcrConstants.SHORTESTDISTINCTTOROAD, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED,
-                    DcrConstants.SHORTESTDISTINCTTOROAD));
-            pl.addErrors(errors);
-        }
-
-        // Distance from center of road mandatory if road defined.
-        /*
-         * For building not more than 3 floor, with less than or equal to 125 plot area, occupancy either residential or
-         * commercial are exempted from "Distance from center road" check
-         */
-        if (!ProcessHelper.isSmallPlot(pl)) {
-            if (!pl.getNotifiedRoads().isEmpty() && pl.getNotifiedRoads().get(0).getDistancesFromCenterToPlot().isEmpty()) {
-                errors.put(DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER,
-                        getLocaleMessage(OBJECTNOTDEFINED, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER));
-                pl.addErrors(errors);
-            }
-            if (!pl.getNonNotifiedRoads().isEmpty() && pl.getNonNotifiedRoads().get(0).getDistancesFromCenterToPlot().isEmpty()) {
-                errors.put(DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER,
-                        getLocaleMessage(OBJECTNOTDEFINED, DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER));
-                pl.addErrors(errors);
-            }
-            BigDecimal minimumHeightOfBuilding = BigDecimal.ZERO;
-            for (Block block : pl.getBlocks()) {
-                if (minimumHeightOfBuilding.compareTo(BigDecimal.ZERO) == 0 ||
-                        block.getBuilding().getBuildingHeight().compareTo(minimumHeightOfBuilding) < 0) {
-                    minimumHeightOfBuilding = block.getBuilding().getBuildingHeight();
-                }
-            }
-
-            if (minimumHeightOfBuilding != null && minimumHeightOfBuilding.compareTo(BigDecimal.valueOf(7)) > 0) {
-                if (!pl.getCuldeSacRoads().isEmpty() && pl.getCuldeSacRoads().get(0).getDistancesFromCenterToPlot().isEmpty()) {
-                    errors.put(DcrConstants.CULDESAC_SHORTESTDISTINCTTOROADFROMCENTER,
-                            getLocaleMessage(OBJECTNOTDEFINED, DcrConstants.CULDESAC_SHORTESTDISTINCTTOROADFROMCENTER));
-                    pl.addErrors(errors);
-                }
-                if (!pl.getLaneRoads().isEmpty() && pl.getLaneRoads().get(0).getDistancesFromCenterToPlot().isEmpty()) {
-                    errors.put(DcrConstants.LANE_SHORTESTDISTINCTTOROADFROMCENTER,
-                            getLocaleMessage(OBJECTNOTDEFINED, DcrConstants.LANE_SHORTESTDISTINCTTOROADFROMCENTER));
-                    pl.addErrors(errors);
-                }
-            }
-        }
+    public Plan validate(Plan pl) {/*
+                                    * HashMap<String, String> errors = new HashMap<>(); boolean shortestDistanceDefined = false;
+                                    * if ((pl.getNotifiedRoads().isEmpty() && pl.getCuldeSacRoads().isEmpty() &&
+                                    * pl.getLaneRoads().isEmpty() && pl.getNonNotifiedRoads().isEmpty())) {
+                                    * errors.put(DcrConstants.ROAD, getLocaleMessage(DcrConstants.OBJECTNOTDEFINED,
+                                    * DcrConstants.ROAD)); pl.addErrors(errors); } if (!pl.getNotifiedRoads().isEmpty()) for
+                                    * (NotifiedRoad notifiedRoad : pl.getNotifiedRoads()) { for (BigDecimal shortestDistanceToRoad
+                                    * : notifiedRoad.getShortestDistanceToRoad()) { if
+                                    * (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) { shortestDistanceDefined = true;
+                                    * continue; } } } if (!pl.getNonNotifiedRoads().isEmpty()) for (NonNotifiedRoad
+                                    * nonNotifiedRoad : pl.getNonNotifiedRoads()) { for (BigDecimal shortestDistanceToRoad :
+                                    * nonNotifiedRoad.getShortestDistanceToRoad()) if
+                                    * (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) { shortestDistanceDefined = true;
+                                    * continue; } } if (!pl.getLaneRoads().isEmpty()) for (Lane laneRoad : pl.getLaneRoads()) {
+                                    * for (BigDecimal shortestDistanceToRoad : laneRoad.getShortestDistanceToRoad()) if
+                                    * (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) { shortestDistanceDefined = true;
+                                    * continue; } } if (!pl.getCuldeSacRoads().isEmpty()) for (CulDeSacRoad culdSac :
+                                    * pl.getCuldeSacRoads()) { for (BigDecimal shortestDistanceToRoad :
+                                    * culdSac.getShortestDistanceToRoad()) if (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) >
+                                    * 0) { shortestDistanceDefined = true; continue; } } if (!shortestDistanceDefined) {
+                                    * errors.put(DcrConstants.SHORTESTDISTINCTTOROAD,
+                                    * getLocaleMessage(DcrConstants.OBJECTNOTDEFINED, DcrConstants.SHORTESTDISTINCTTOROAD));
+                                    * pl.addErrors(errors); } // Distance from center of road mandatory if road defined. For
+                                    * building not more than 3 floor, with less than or equal to 125 plot area, occupancy either
+                                    * residential or commercial are exempted from "Distance from center road" check if
+                                    * (!ProcessHelper.isSmallPlot(pl)) { if (!pl.getNotifiedRoads().isEmpty() &&
+                                    * pl.getNotifiedRoads().get(0).getDistancesFromCenterToPlot().isEmpty()) {
+                                    * errors.put(DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER,
+                                    * getLocaleMessage(OBJECTNOTDEFINED, DcrConstants.NOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER));
+                                    * pl.addErrors(errors); } if (!pl.getNonNotifiedRoads().isEmpty() &&
+                                    * pl.getNonNotifiedRoads().get(0).getDistancesFromCenterToPlot().isEmpty()) {
+                                    * errors.put(DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER,
+                                    * getLocaleMessage(OBJECTNOTDEFINED,
+                                    * DcrConstants.NONNOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER)); pl.addErrors(errors); }
+                                    * BigDecimal minimumHeightOfBuilding = BigDecimal.ZERO; for (Block block : pl.getBlocks()) {
+                                    * if (minimumHeightOfBuilding.compareTo(BigDecimal.ZERO) == 0 ||
+                                    * block.getBuilding().getBuildingHeight().compareTo(minimumHeightOfBuilding) < 0) {
+                                    * minimumHeightOfBuilding = block.getBuilding().getBuildingHeight(); } } if
+                                    * (minimumHeightOfBuilding != null && minimumHeightOfBuilding.compareTo(BigDecimal.valueOf(7))
+                                    * > 0) { if (!pl.getCuldeSacRoads().isEmpty() &&
+                                    * pl.getCuldeSacRoads().get(0).getDistancesFromCenterToPlot().isEmpty()) {
+                                    * errors.put(DcrConstants.CULDESAC_SHORTESTDISTINCTTOROADFROMCENTER,
+                                    * getLocaleMessage(OBJECTNOTDEFINED, DcrConstants.CULDESAC_SHORTESTDISTINCTTOROADFROMCENTER));
+                                    * pl.addErrors(errors); } if (!pl.getLaneRoads().isEmpty() &&
+                                    * pl.getLaneRoads().get(0).getDistancesFromCenterToPlot().isEmpty()) {
+                                    * errors.put(DcrConstants.LANE_SHORTESTDISTINCTTOROADFROMCENTER,
+                                    * getLocaleMessage(OBJECTNOTDEFINED, DcrConstants.LANE_SHORTESTDISTINCTTOROADFROMCENTER));
+                                    * pl.addErrors(errors); } } }
+                                    */
         return pl;
     }
 
     @Override
-    public Plan process(Plan pl) {
-
-        validate(pl);
-        BigDecimal exptectedDistance;
-
-        scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Distance to Road");
-        // detail.setHeading("Distance to Road");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
-
-        BigDecimal minimumHeightOfBuilding = BigDecimal.ZERO;
-        for (Block block : pl.getBlocks()) {
-            if (minimumHeightOfBuilding.compareTo(BigDecimal.ZERO) == 0 ||
-                    block.getBuilding().getBuildingHeight().compareTo(minimumHeightOfBuilding) < 0) {
-                minimumHeightOfBuilding = block.getBuilding().getBuildingHeight();
-            }
-        }
-
-        // validating minimum distance in notified roads minimum 5m
-        if (pl.getNotifiedRoads() != null && !pl.getNotifiedRoads().isEmpty()) {
-
-            exptectedDistance = FIVE;
-            if (!ProcessHelper.isSmallPlot(pl)) {
-                if (pl.getNotifiedRoads().get(0).getDistancesFromCenterToPlot() != null &&
-                        !pl.getNotifiedRoads().get(0).getDistancesFromCenterToPlot().isEmpty())
-                    checkBuildingDistanceFromRoad(pl, exptectedDistance,
-                            pl.getNotifiedRoads().get(0).getDistancesFromCenterToPlot(),
-                            NOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER, SUB_RULE_25_1, SUB_RULE_25_1,
-                            NOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER);// SUB_RULE_25_1_DESCRIPTION
-            }
-            if (pl.getNotifiedRoads().get(0).getShortestDistanceToRoad() != null
-                    && !pl.getNotifiedRoads().get(0).getShortestDistanceToRoad().isEmpty()) {
-
-                checkBuildingDistanceFromRoad(pl, THREE,
-                        pl.getNotifiedRoads().get(0).getShortestDistanceToRoad(),
-                        NOTIFIED_SHORTESTDISTINCTTOROAD, SUB_RULE_26, SUB_RULE_26, NOTIFIED_ROAD + SUB_RULE_26_DESCRIPTION);
-
-            }
-        }
-        // validating minimum distance in non-notified roads minimum 5m
-        if (pl.getNonNotifiedRoads() != null && !pl.getNonNotifiedRoads().isEmpty()) {
-            exptectedDistance = FIVE;
-            if (!ProcessHelper.isSmallPlot(pl)) {
-                if (pl.getNonNotifiedRoads().get(0).getDistancesFromCenterToPlot() != null &&
-                        !pl.getNonNotifiedRoads().get(0).getDistancesFromCenterToPlot().isEmpty())
-                    checkBuildingDistanceFromRoad(pl, exptectedDistance,
-                            pl.getNonNotifiedRoads().get(0).getDistancesFromCenterToPlot(),
-                            NONNOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER, SUB_RULE_25_1, SUB_RULE_25_1,
-                            NONNOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER);
-            }
-            if (pl.getNonNotifiedRoads().get(0).getShortestDistanceToRoad() != null &&
-                    !pl.getNonNotifiedRoads().get(0).getShortestDistanceToRoad().isEmpty()) {
-
-                if (ProcessHelper.isSmallPlot(pl)) {
-                    checkBuildingDistanceFromRoad(pl, TWO,
-                            pl.getNonNotifiedRoads().get(0).getShortestDistanceToRoad(),
-                            NONNOTIFIED_SHORTESTDISTINCTTOROAD, RULE_62, SUB_RULE_62_1, SUB_RULE_62_1DESCRIPTION);
-                } else
-                    checkBuildingDistanceFromRoad(pl, THREE,
-                            pl.getNonNotifiedRoads().get(0).getShortestDistanceToRoad(),
-                            NONNOTIFIED_SHORTESTDISTINCTTOROAD, SUB_RULE_25_1, SUB_RULE_25_1,
-                            NONNOTIFIED_ROAD + SUB_RULE_25_1_PROVISIO_DESC);
-
-            }
-        }
-        // validating minimum distance in culd_sac_road minimum 2 or 3 based on height of building
-        if (pl.getCuldeSacRoads() != null && !pl.getCuldeSacRoads().isEmpty()) {
-            if (ProcessHelper.isSmallPlot(pl)) {
-                exptectedDistance = TWO;
-            } else {
-                if (minimumHeightOfBuilding.compareTo(SEVEN) <= 0)
-                    exptectedDistance = TWO;
-                else
-                    exptectedDistance = THREE;
-            }
-            if (pl.getCuldeSacRoads().get(0).getShortestDistanceToRoad() != null
-                    && !pl.getCuldeSacRoads().get(0).getShortestDistanceToRoad().isEmpty())
-                checkBuildingDistanceFromRoad(pl, exptectedDistance, pl.getCuldeSacRoads().get(0).getShortestDistanceToRoad(),
-                        CULD_SAC_SHORTESTDISTINCTTOROAD, SUB_RULE_25_1_PROVISIO, SUB_RULE_25_1_PROVISIO,
-                        CULDESAC_ROAD + SUB_RULE_25_1_PROVISIO_DESC);
-
-            if (minimumHeightOfBuilding.compareTo(SEVEN) > 0) {
-                exptectedDistance = FIVE;
-                if (!ProcessHelper.isSmallPlot(pl)) {
-                    if (pl.getCuldeSacRoads().get(0).getDistancesFromCenterToPlot() != null &&
-                            !pl.getCuldeSacRoads().get(0).getDistancesFromCenterToPlot().isEmpty())
-                        checkBuildingDistanceFromRoad(pl, exptectedDistance,
-                                pl.getCuldeSacRoads().get(0).getDistancesFromCenterToPlot(),
-                                CULDESAC_SHORTESTDISTINCTTOROADFROMCENTER, SUB_RULE_25_1, SUB_RULE_25_1,
-                                CULDESAC_SHORTESTDISTINCTTOROADFROMCENTER);
-                }
-            }
-        }
-
-        // validating minimum distance in lane roads minimum 5m
-        if (pl.getLaneRoads() != null && !pl.getLaneRoads().isEmpty()) {
-            if (ProcessHelper.isSmallPlot(pl)) {
-                exptectedDistance = ONEPOINTFIVE;
-            } else {
-                if (minimumHeightOfBuilding.compareTo(SEVEN) <= 0)
-                    exptectedDistance = ONEPOINTFIVE;
-                else
-                    exptectedDistance = THREE;
-            }
-            if (pl.getLaneRoads().get(0).getShortestDistanceToRoad() != null
-                    && !pl.getLaneRoads().get(0).getShortestDistanceToRoad().isEmpty())
-                checkBuildingDistanceFromRoad(pl, exptectedDistance,
-                        pl.getLaneRoads().get(0).getShortestDistanceToRoad(),
-                        LANE_SHORTESTDISTINCTTOROAD, SUB_RULE_25_1_PROVISIO, SUB_RULE_25_1_PROVISIO,
-                        LANE_ROAD + SUB_RULE_25_1_PROVISIO_DESC);
-            if (minimumHeightOfBuilding.compareTo(SEVEN) > 0) {
-                exptectedDistance = FIVE;
-                if (!ProcessHelper.isSmallPlot(pl)) {
-                    if (pl.getLaneRoads().get(0).getDistancesFromCenterToPlot() != null &&
-                            !pl.getLaneRoads().get(0).getDistancesFromCenterToPlot().isEmpty())
-                        checkBuildingDistanceFromRoad(pl, exptectedDistance,
-                                pl.getLaneRoads().get(0).getDistancesFromCenterToPlot(),
-                                LANE_SHORTESTDISTINCTTOROADFROMCENTER, SUB_RULE_25_1, SUB_RULE_25_1,
-                                LANE_SHORTESTDISTINCTTOROADFROMCENTER);
-                }
-            }
-        }
-
+    public Plan process(Plan pl) {/*
+                                   * validate(pl); BigDecimal exptectedDistance; scrutinyDetail = new ScrutinyDetail();
+                                   * scrutinyDetail.setKey("Common_Distance to Road"); // detail.setHeading("Distance to Road");
+                                   * scrutinyDetail.addColumnHeading(1, RULE_NO); scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+                                   * scrutinyDetail.addColumnHeading(3, REQUIRED); scrutinyDetail.addColumnHeading(4, PROVIDED);
+                                   * scrutinyDetail.addColumnHeading(5, STATUS); BigDecimal minimumHeightOfBuilding =
+                                   * BigDecimal.ZERO; for (Block block : pl.getBlocks()) { if
+                                   * (minimumHeightOfBuilding.compareTo(BigDecimal.ZERO) == 0 ||
+                                   * block.getBuilding().getBuildingHeight().compareTo(minimumHeightOfBuilding) < 0) {
+                                   * minimumHeightOfBuilding = block.getBuilding().getBuildingHeight(); } } // validating minimum
+                                   * distance in notified roads minimum 5m if (pl.getNotifiedRoads() != null &&
+                                   * !pl.getNotifiedRoads().isEmpty()) { exptectedDistance = FIVE; if
+                                   * (!ProcessHelper.isSmallPlot(pl)) { if
+                                   * (pl.getNotifiedRoads().get(0).getDistancesFromCenterToPlot() != null &&
+                                   * !pl.getNotifiedRoads().get(0).getDistancesFromCenterToPlot().isEmpty())
+                                   * checkBuildingDistanceFromRoad(pl, exptectedDistance,
+                                   * pl.getNotifiedRoads().get(0).getDistancesFromCenterToPlot(),
+                                   * NOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER, SUB_RULE_25_1, SUB_RULE_25_1,
+                                   * NOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER);// SUB_RULE_25_1_DESCRIPTION } if
+                                   * (pl.getNotifiedRoads().get(0).getShortestDistanceToRoad() != null &&
+                                   * !pl.getNotifiedRoads().get(0).getShortestDistanceToRoad().isEmpty()) {
+                                   * checkBuildingDistanceFromRoad(pl, THREE,
+                                   * pl.getNotifiedRoads().get(0).getShortestDistanceToRoad(), NOTIFIED_SHORTESTDISTINCTTOROAD,
+                                   * SUB_RULE_26, SUB_RULE_26, NOTIFIED_ROAD + SUB_RULE_26_DESCRIPTION); } } // validating minimum
+                                   * distance in non-notified roads minimum 5m if (pl.getNonNotifiedRoads() != null &&
+                                   * !pl.getNonNotifiedRoads().isEmpty()) { exptectedDistance = FIVE; if
+                                   * (!ProcessHelper.isSmallPlot(pl)) { if
+                                   * (pl.getNonNotifiedRoads().get(0).getDistancesFromCenterToPlot() != null &&
+                                   * !pl.getNonNotifiedRoads().get(0).getDistancesFromCenterToPlot().isEmpty())
+                                   * checkBuildingDistanceFromRoad(pl, exptectedDistance,
+                                   * pl.getNonNotifiedRoads().get(0).getDistancesFromCenterToPlot(),
+                                   * NONNOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER, SUB_RULE_25_1, SUB_RULE_25_1,
+                                   * NONNOTIFIED_SHORTESTDISTINCTTOROADFROMCENTER); } if
+                                   * (pl.getNonNotifiedRoads().get(0).getShortestDistanceToRoad() != null &&
+                                   * !pl.getNonNotifiedRoads().get(0).getShortestDistanceToRoad().isEmpty()) { if
+                                   * (ProcessHelper.isSmallPlot(pl)) { checkBuildingDistanceFromRoad(pl, TWO,
+                                   * pl.getNonNotifiedRoads().get(0).getShortestDistanceToRoad(),
+                                   * NONNOTIFIED_SHORTESTDISTINCTTOROAD, RULE_62, SUB_RULE_62_1, SUB_RULE_62_1DESCRIPTION); } else
+                                   * checkBuildingDistanceFromRoad(pl, THREE,
+                                   * pl.getNonNotifiedRoads().get(0).getShortestDistanceToRoad(),
+                                   * NONNOTIFIED_SHORTESTDISTINCTTOROAD, SUB_RULE_25_1, SUB_RULE_25_1, NONNOTIFIED_ROAD +
+                                   * SUB_RULE_25_1_PROVISIO_DESC); } } // validating minimum distance in culd_sac_road minimum 2
+                                   * or 3 based on height of building if (pl.getCuldeSacRoads() != null &&
+                                   * !pl.getCuldeSacRoads().isEmpty()) { if (ProcessHelper.isSmallPlot(pl)) { exptectedDistance =
+                                   * TWO; } else { if (minimumHeightOfBuilding.compareTo(SEVEN) <= 0) exptectedDistance = TWO;
+                                   * else exptectedDistance = THREE; } if
+                                   * (pl.getCuldeSacRoads().get(0).getShortestDistanceToRoad() != null &&
+                                   * !pl.getCuldeSacRoads().get(0).getShortestDistanceToRoad().isEmpty())
+                                   * checkBuildingDistanceFromRoad(pl, exptectedDistance,
+                                   * pl.getCuldeSacRoads().get(0).getShortestDistanceToRoad(), CULD_SAC_SHORTESTDISTINCTTOROAD,
+                                   * SUB_RULE_25_1_PROVISIO, SUB_RULE_25_1_PROVISIO, CULDESAC_ROAD + SUB_RULE_25_1_PROVISIO_DESC);
+                                   * if (minimumHeightOfBuilding.compareTo(SEVEN) > 0) { exptectedDistance = FIVE; if
+                                   * (!ProcessHelper.isSmallPlot(pl)) { if
+                                   * (pl.getCuldeSacRoads().get(0).getDistancesFromCenterToPlot() != null &&
+                                   * !pl.getCuldeSacRoads().get(0).getDistancesFromCenterToPlot().isEmpty())
+                                   * checkBuildingDistanceFromRoad(pl, exptectedDistance,
+                                   * pl.getCuldeSacRoads().get(0).getDistancesFromCenterToPlot(),
+                                   * CULDESAC_SHORTESTDISTINCTTOROADFROMCENTER, SUB_RULE_25_1, SUB_RULE_25_1,
+                                   * CULDESAC_SHORTESTDISTINCTTOROADFROMCENTER); } } } // validating minimum distance in lane
+                                   * roads minimum 5m if (pl.getLaneRoads() != null && !pl.getLaneRoads().isEmpty()) { if
+                                   * (ProcessHelper.isSmallPlot(pl)) { exptectedDistance = ONEPOINTFIVE; } else { if
+                                   * (minimumHeightOfBuilding.compareTo(SEVEN) <= 0) exptectedDistance = ONEPOINTFIVE; else
+                                   * exptectedDistance = THREE; } if (pl.getLaneRoads().get(0).getShortestDistanceToRoad() != null
+                                   * && !pl.getLaneRoads().get(0).getShortestDistanceToRoad().isEmpty())
+                                   * checkBuildingDistanceFromRoad(pl, exptectedDistance,
+                                   * pl.getLaneRoads().get(0).getShortestDistanceToRoad(), LANE_SHORTESTDISTINCTTOROAD,
+                                   * SUB_RULE_25_1_PROVISIO, SUB_RULE_25_1_PROVISIO, LANE_ROAD + SUB_RULE_25_1_PROVISIO_DESC); if
+                                   * (minimumHeightOfBuilding.compareTo(SEVEN) > 0) { exptectedDistance = FIVE; if
+                                   * (!ProcessHelper.isSmallPlot(pl)) { if
+                                   * (pl.getLaneRoads().get(0).getDistancesFromCenterToPlot() != null &&
+                                   * !pl.getLaneRoads().get(0).getDistancesFromCenterToPlot().isEmpty())
+                                   * checkBuildingDistanceFromRoad(pl, exptectedDistance,
+                                   * pl.getLaneRoads().get(0).getDistancesFromCenterToPlot(),
+                                   * LANE_SHORTESTDISTINCTTOROADFROMCENTER, SUB_RULE_25_1, SUB_RULE_25_1,
+                                   * LANE_SHORTESTDISTINCTTOROADFROMCENTER); } } }
+                                   */
         return pl;
 
     }

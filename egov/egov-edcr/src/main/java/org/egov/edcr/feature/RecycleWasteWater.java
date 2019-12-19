@@ -72,60 +72,43 @@ public class RecycleWasteWater extends FeatureProcess {
     private static final BigDecimal TWOTHOUSANDFIVEHUNDER = BigDecimal.valueOf(2500);
 
     @Override
-    public Plan validate(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
-        if (pl != null && pl.getUtility() != null) {
-            // waste water recycle plant defined or not
-            if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
-                for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
-                    if (checkOccupancyTypeEqualsToNonConditionalOccupancyTypes(occupancyType)
-                            && pl.getUtility().getWasteWaterRecyclePlant().isEmpty()) {
-                        errors.put(SUB_RULE_53_6_DESCRIPTION,
-                                edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                        SUB_RULE_53_6_DESCRIPTION }, LocaleContextHolder.getLocale()));
-                        pl.addErrors(errors);
-                        break;
-                    } else if (checkOccupancyTypeEqualsToConditionalOccupancyTypes(occupancyType)
-                            && pl.getVirtualBuilding().getTotalBuitUpArea() != null
-                            && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(ONETHOUSANDFIVEHUNDER) > 0
-                            && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(TWOTHOUSANDFIVEHUNDER) < 0
-                            && pl.getUtility().getWasteWaterRecyclePlant().isEmpty()) {
-                        errors.put(SUB_RULE_53_6_DESCRIPTION,
-                                edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                        SUB_RULE_53_6_DESCRIPTION }, LocaleContextHolder.getLocale()));
-                        break;
-                    }
-
-                }
-            }
-        }
+    public Plan validate(Plan pl) {/*
+                                    * HashMap<String, String> errors = new HashMap<>(); if (pl != null && pl.getUtility() != null)
+                                    * { // waste water recycle plant defined or not if (pl.getVirtualBuilding() != null &&
+                                    * !pl.getVirtualBuilding().getOccupancies().isEmpty()) { for (OccupancyType occupancyType :
+                                    * pl.getVirtualBuilding().getOccupancies()) { if
+                                    * (checkOccupancyTypeEqualsToNonConditionalOccupancyTypes(occupancyType) &&
+                                    * pl.getUtility().getWasteWaterRecyclePlant().isEmpty()) {
+                                    * errors.put(SUB_RULE_53_6_DESCRIPTION, edcrMessageSource.getMessage(OBJECTNOTDEFINED, new
+                                    * String[] { SUB_RULE_53_6_DESCRIPTION }, LocaleContextHolder.getLocale()));
+                                    * pl.addErrors(errors); break; } else if
+                                    * (checkOccupancyTypeEqualsToConditionalOccupancyTypes(occupancyType) &&
+                                    * pl.getVirtualBuilding().getTotalBuitUpArea() != null &&
+                                    * pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(ONETHOUSANDFIVEHUNDER) > 0 &&
+                                    * pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(TWOTHOUSANDFIVEHUNDER) < 0 &&
+                                    * pl.getUtility().getWasteWaterRecyclePlant().isEmpty()) {
+                                    * errors.put(SUB_RULE_53_6_DESCRIPTION, edcrMessageSource.getMessage(OBJECTNOTDEFINED, new
+                                    * String[] { SUB_RULE_53_6_DESCRIPTION }, LocaleContextHolder.getLocale())); break; } } } }
+                                    */
         return pl;
     }
 
     @Override
-    public Plan process(Plan pl) {
-        validate(pl);
-        scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
-        scrutinyDetail.setKey("Common_Waste Water Recycle Plant");
-        if (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
-            for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
-                if (checkOccupancyTypeEqualsToNonConditionalOccupancyTypes(occupancyType)) {
-                    processWasteWaterRecyclePlant(pl);
-                    break;
-                } else if (checkOccupancyTypeEqualsToConditionalOccupancyTypes(occupancyType)
-                        && pl.getVirtualBuilding().getTotalBuitUpArea() != null
-                        && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(ONETHOUSANDFIVEHUNDER) > 0
-                        && pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(TWOTHOUSANDFIVEHUNDER) < 0) {
-                    processWasteWaterRecyclePlant(pl);
-                    break;
-                }
-            }
-        }
+    public Plan process(Plan pl) {/*
+                                   * validate(pl); scrutinyDetail = new ScrutinyDetail(); scrutinyDetail.addColumnHeading(1,
+                                   * RULE_NO); scrutinyDetail.addColumnHeading(2, DESCRIPTION); scrutinyDetail.addColumnHeading(3,
+                                   * REQUIRED); scrutinyDetail.addColumnHeading(4, PROVIDED); scrutinyDetail.addColumnHeading(5,
+                                   * STATUS); scrutinyDetail.setKey("Common_Waste Water Recycle Plant"); if
+                                   * (pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
+                                   * for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) { if
+                                   * (checkOccupancyTypeEqualsToNonConditionalOccupancyTypes(occupancyType)) {
+                                   * processWasteWaterRecyclePlant(pl); break; } else if
+                                   * (checkOccupancyTypeEqualsToConditionalOccupancyTypes(occupancyType) &&
+                                   * pl.getVirtualBuilding().getTotalBuitUpArea() != null &&
+                                   * pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(ONETHOUSANDFIVEHUNDER) > 0 &&
+                                   * pl.getVirtualBuilding().getTotalBuitUpArea().compareTo(TWOTHOUSANDFIVEHUNDER) < 0) {
+                                   * processWasteWaterRecyclePlant(pl); break; } } }
+                                   */
 
         return pl;
     }

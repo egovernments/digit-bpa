@@ -69,54 +69,43 @@ public class PetrolFillingStation extends FeatureProcess {
     private static final String SUBRULE_59_10_DESC = "Minimum distance from canopy to plot boundary";
 
     @Override
-    public Plan validate(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
-        if (pl != null && pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty() &&
-                pl.getVirtualBuilding().getOccupancies().contains(OccupancyType.OCCUPANCY_F4) &&
-                pl.getVirtualBuilding().getOccupancies().contains(OccupancyType.OCCUPANCY_I2)
-                && pl.getCanopyDistanceFromPlotBoundary().isEmpty()) {
-            errors.put(CANOPY_DISTANCE,
-                    edcrMessageSource.getMessage(OBJECTNOTDEFINED,
-                            new String[] { CANOPY_DISTANCE }, LocaleContextHolder.getLocale()));
-            pl.addErrors(errors);
-        }
+    public Plan validate(Plan pl) {/*
+                                    * HashMap<String, String> errors = new HashMap<>(); if (pl != null && pl.getVirtualBuilding()
+                                    * != null && !pl.getVirtualBuilding().getOccupancies().isEmpty() &&
+                                    * pl.getVirtualBuilding().getOccupancies().contains(OccupancyType.OCCUPANCY_F4) &&
+                                    * pl.getVirtualBuilding().getOccupancies().contains(OccupancyType.OCCUPANCY_I2) &&
+                                    * pl.getCanopyDistanceFromPlotBoundary().isEmpty()) { errors.put(CANOPY_DISTANCE,
+                                    * edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { CANOPY_DISTANCE },
+                                    * LocaleContextHolder.getLocale())); pl.addErrors(errors); }
+                                    */
         return pl;
     }
 
     @Override
-    public Plan process(Plan pl) {
-        validate(pl);
-        Boolean valid = false;
-        scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Petrol Filling Station");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
-        if (pl != null && pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty() &&
-                pl.getVirtualBuilding().getOccupancies().contains(OccupancyType.OCCUPANCY_F4) &&
-                pl.getVirtualBuilding().getOccupancies().contains(OccupancyType.OCCUPANCY_I2)
-                && !pl.getCanopyDistanceFromPlotBoundary().isEmpty()) {
-            BigDecimal minimumCanopyDistanceFromPlotBoundary = pl.getCanopyDistanceFromPlotBoundary().get(0);
-            for (BigDecimal canopyDistanceFromPlotBoundary : pl.getCanopyDistanceFromPlotBoundary()) {
-                if (canopyDistanceFromPlotBoundary.compareTo(minimumCanopyDistanceFromPlotBoundary) < 0) {
-                    minimumCanopyDistanceFromPlotBoundary = canopyDistanceFromPlotBoundary;
-                }
-            }
-            minimumCanopyDistanceFromPlotBoundary = BigDecimal.valueOf(
-                    Math.round(minimumCanopyDistanceFromPlotBoundary.doubleValue() * Double.valueOf(100)) / Double.valueOf(100));
-            if (minimumCanopyDistanceFromPlotBoundary.compareTo(BigDecimal.valueOf(3)) >= 0) {
-                valid = true;
-            }
-            if (valid) {
-                setReportOutputDetails(pl, SUBRULE_59_10, SUBRULE_59_10_DESC, String.valueOf(3),
-                        minimumCanopyDistanceFromPlotBoundary.toString(), Result.Accepted.getResultVal());
-            } else {
-                setReportOutputDetails(pl, SUBRULE_59_10, SUBRULE_59_10_DESC, String.valueOf(3),
-                        minimumCanopyDistanceFromPlotBoundary.toString(), Result.Not_Accepted.getResultVal());
-            }
-        }
+    public Plan process(Plan pl) {/*
+                                   * validate(pl); Boolean valid = false; scrutinyDetail = new ScrutinyDetail();
+                                   * scrutinyDetail.setKey("Common_Petrol Filling Station"); scrutinyDetail.addColumnHeading(1,
+                                   * RULE_NO); scrutinyDetail.addColumnHeading(2, DESCRIPTION); scrutinyDetail.addColumnHeading(3,
+                                   * REQUIRED); scrutinyDetail.addColumnHeading(4, PROVIDED); scrutinyDetail.addColumnHeading(5,
+                                   * STATUS); if (pl != null && pl.getVirtualBuilding() != null &&
+                                   * !pl.getVirtualBuilding().getOccupancies().isEmpty() &&
+                                   * pl.getVirtualBuilding().getOccupancies().contains(OccupancyType.OCCUPANCY_F4) &&
+                                   * pl.getVirtualBuilding().getOccupancies().contains(OccupancyType.OCCUPANCY_I2) &&
+                                   * !pl.getCanopyDistanceFromPlotBoundary().isEmpty()) { BigDecimal
+                                   * minimumCanopyDistanceFromPlotBoundary = pl.getCanopyDistanceFromPlotBoundary().get(0); for
+                                   * (BigDecimal canopyDistanceFromPlotBoundary : pl.getCanopyDistanceFromPlotBoundary()) { if
+                                   * (canopyDistanceFromPlotBoundary.compareTo(minimumCanopyDistanceFromPlotBoundary) < 0) {
+                                   * minimumCanopyDistanceFromPlotBoundary = canopyDistanceFromPlotBoundary; } }
+                                   * minimumCanopyDistanceFromPlotBoundary = BigDecimal.valueOf(
+                                   * Math.round(minimumCanopyDistanceFromPlotBoundary.doubleValue() * Double.valueOf(100)) /
+                                   * Double.valueOf(100)); if
+                                   * (minimumCanopyDistanceFromPlotBoundary.compareTo(BigDecimal.valueOf(3)) >= 0) { valid = true;
+                                   * } if (valid) { setReportOutputDetails(pl, SUBRULE_59_10, SUBRULE_59_10_DESC,
+                                   * String.valueOf(3), minimumCanopyDistanceFromPlotBoundary.toString(),
+                                   * Result.Accepted.getResultVal()); } else { setReportOutputDetails(pl, SUBRULE_59_10,
+                                   * SUBRULE_59_10_DESC, String.valueOf(3), minimumCanopyDistanceFromPlotBoundary.toString(),
+                                   * Result.Not_Accepted.getResultVal()); } }
+                                   */
         return pl;
     }
 

@@ -91,157 +91,105 @@ public class Well extends FeatureProcess {
     private static final BigDecimal ONE_ANDHALF_MTR = BigDecimal.valueOf(1.5);
 
     @Override
-    public Plan validate(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
-        if (pl != null && pl.getUtility() != null) {
-            if (!pl.getUtility().getWells().isEmpty()) {
-                if (!pl.getUtility().getWasteDisposalUnits().isEmpty()) {
-                    if (pl.getUtility().getWells().get(0).getType() != null
-                            && pl.getUtility().getWasteDisposalUnits().get(0).getType() != null) {
-                        if (pl.getUtility().getWells().get(0).getType() != null
-                                && pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED)
-                                && pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.PROPOSED)) {
-                            if (pl.getUtility().getWellDistance().stream()
-                                    .noneMatch(roadOutput -> roadOutput.colourCode.equals(String.valueOf(7)))) {
-                                errors.put(SUB_RULE_104_2_DESCRIPTION,
-                                        edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                                SUB_RULE_104_2_DESCRIPTION }, LocaleContextHolder.getLocale()));
-                                pl.addErrors(errors);
-                            }
-                            if (pl.getUtility().getWellDistance().stream()
-                                    .noneMatch(roadOutput -> roadOutput.colourCode.equals(String.valueOf(8)))) {
-                                errors.put(SUB_RULE_104_4_DESCRIPTION,
-                                        edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                                SUB_RULE_104_4_DESCRIPTION }, LocaleContextHolder.getLocale()));
-                                pl.addErrors(errors);
-                            }
-                            if (pl.getUtility().getWellDistance().stream()
-                                    .noneMatch(roadOutput -> roadOutput.colourCode.equals(String.valueOf(9)))) {
-                                errors.put(SUB_RULE_104_4_PLOT_DESCRIPTION,
-                                        edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                                SUB_RULE_104_4_PLOT_DESCRIPTION }, LocaleContextHolder.getLocale()));
-                                pl.addErrors(errors);
-                            }
-                            if (pl.getUtility().getWellDistance().stream()
-                                    .noneMatch(roadOutput -> roadOutput.colourCode.equals(String.valueOf(1))
-                                            || roadOutput.colourCode.equals(String.valueOf(2))
-                                            || roadOutput.colourCode.equals(String.valueOf(5)) ||
-                                            roadOutput.colourCode.equals(String.valueOf(6)))) {
-                                errors.put(WELL_DISTANCE_FROM_ROAD,
-                                        edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                                WELL_DISTANCE_FROM_ROAD }, LocaleContextHolder.getLocale()));
-                                pl.addErrors(errors);
-                            }
-                        } else if (pl.getUtility().getWells().get(0).getType() != null
-                                && pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED)
-                                && pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.EXISTING)) {
-                            if (pl.getUtility().getWellDistance().stream()
-                                    .noneMatch(roadOutput -> roadOutput.colourCode.equals(String.valueOf(7)))) {
-                                errors.put(SUB_RULE_104_2_DESCRIPTION,
-                                        edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                                SUB_RULE_104_2_DESCRIPTION }, LocaleContextHolder.getLocale()));
-                                pl.addErrors(errors);
-                            }
-                            if (pl.getUtility().getWellDistance().stream()
-                                    .noneMatch(roadOutput -> roadOutput.colourCode.equals(String.valueOf(8)))) {
-                                errors.put(SUB_RULE_104_4_DESCRIPTION,
-                                        edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                                SUB_RULE_104_4_DESCRIPTION }, LocaleContextHolder.getLocale()));
-                                pl.addErrors(errors);
-                            }
-                            if (pl.getUtility().getWellDistance().stream()
-                                    .noneMatch(roadOutput -> roadOutput.colourCode.equals(String.valueOf(1))
-                                            || roadOutput.colourCode.equals(String.valueOf(2))
-                                            || roadOutput.colourCode.equals(String.valueOf(5)) ||
-                                            roadOutput.colourCode.equals(String.valueOf(6)))) {
-                                errors.put(WELL_DISTANCE_FROM_ROAD,
-                                        edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                                WELL_DISTANCE_FROM_ROAD }, LocaleContextHolder.getLocale()));
-                                pl.addErrors(errors);
-                            }
-
-                        } else if (pl.getUtility().getWells().get(0).getType() != null
-                                && pl.getUtility().getWells().get(0).getType().equals(DcrConstants.EXISTING)
-                                && pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.PROPOSED)) {
-                            if (pl.getUtility().getWellDistance().stream()
-                                    .noneMatch(roadOutput -> roadOutput.colourCode.equals(String.valueOf(8)))) {
-                                errors.put(SUB_RULE_104_4_DESCRIPTION,
-                                        edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                                SUB_RULE_104_4_DESCRIPTION }, LocaleContextHolder.getLocale()));
-                                pl.addErrors(errors);
-                            }
-                            if (pl.getUtility().getWellDistance().stream()
-                                    .noneMatch(roadOutput -> roadOutput.colourCode.equals(String.valueOf(9)))) {
-                                errors.put(SUB_RULE_104_4_PLOT_DESCRIPTION,
-                                        edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                                SUB_RULE_104_4_PLOT_DESCRIPTION }, LocaleContextHolder.getLocale()));
-                                pl.addErrors(errors);
-                            }
-                        }
-                    }
-
-                } else {
-                    if (pl.getUtility().getWells().get(0).getType() != null
-                            && pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED)) {
-                        if (pl.getUtility().getWellDistance().stream()
-                                .noneMatch(roadOutput -> roadOutput.colourCode.equals(String.valueOf(7)))) {
-                            errors.put(SUB_RULE_104_2_DESCRIPTION,
-                                    edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                            SUB_RULE_104_2_DESCRIPTION }, LocaleContextHolder.getLocale()));
-                            pl.addErrors(errors);
-                        }
-                        if (pl.getUtility().getWellDistance().stream()
-                                .noneMatch(roadOutput -> roadOutput.colourCode.equals(String.valueOf(1))
-                                        || roadOutput.colourCode.equals(String.valueOf(2))
-                                        || roadOutput.colourCode.equals(String.valueOf(5)) ||
-                                        roadOutput.colourCode.equals(String.valueOf(6)))) {
-                            errors.put(WELL_DISTANCE_FROM_ROAD,
-                                    edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] {
-                                            WELL_DISTANCE_FROM_ROAD }, LocaleContextHolder.getLocale()));
-                            pl.addErrors(errors);
-                        }
-                    }
-                }
-            }
-        }
+    public Plan validate(Plan pl) {/*
+                                    * HashMap<String, String> errors = new HashMap<>(); if (pl != null && pl.getUtility() != null)
+                                    * { if (!pl.getUtility().getWells().isEmpty()) { if
+                                    * (!pl.getUtility().getWasteDisposalUnits().isEmpty()) { if
+                                    * (pl.getUtility().getWells().get(0).getType() != null &&
+                                    * pl.getUtility().getWasteDisposalUnits().get(0).getType() != null) { if
+                                    * (pl.getUtility().getWells().get(0).getType() != null &&
+                                    * pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED) &&
+                                    * pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.PROPOSED)) { if
+                                    * (pl.getUtility().getWellDistance().stream() .noneMatch(roadOutput ->
+                                    * roadOutput.colourCode.equals(String.valueOf(7)))) { errors.put(SUB_RULE_104_2_DESCRIPTION,
+                                    * edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { SUB_RULE_104_2_DESCRIPTION },
+                                    * LocaleContextHolder.getLocale())); pl.addErrors(errors); } if
+                                    * (pl.getUtility().getWellDistance().stream() .noneMatch(roadOutput ->
+                                    * roadOutput.colourCode.equals(String.valueOf(8)))) { errors.put(SUB_RULE_104_4_DESCRIPTION,
+                                    * edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { SUB_RULE_104_4_DESCRIPTION },
+                                    * LocaleContextHolder.getLocale())); pl.addErrors(errors); } if
+                                    * (pl.getUtility().getWellDistance().stream() .noneMatch(roadOutput ->
+                                    * roadOutput.colourCode.equals(String.valueOf(9)))) {
+                                    * errors.put(SUB_RULE_104_4_PLOT_DESCRIPTION, edcrMessageSource.getMessage(OBJECTNOTDEFINED,
+                                    * new String[] { SUB_RULE_104_4_PLOT_DESCRIPTION }, LocaleContextHolder.getLocale()));
+                                    * pl.addErrors(errors); } if (pl.getUtility().getWellDistance().stream() .noneMatch(roadOutput
+                                    * -> roadOutput.colourCode.equals(String.valueOf(1)) ||
+                                    * roadOutput.colourCode.equals(String.valueOf(2)) ||
+                                    * roadOutput.colourCode.equals(String.valueOf(5)) ||
+                                    * roadOutput.colourCode.equals(String.valueOf(6)))) { errors.put(WELL_DISTANCE_FROM_ROAD,
+                                    * edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { WELL_DISTANCE_FROM_ROAD },
+                                    * LocaleContextHolder.getLocale())); pl.addErrors(errors); } } else if
+                                    * (pl.getUtility().getWells().get(0).getType() != null &&
+                                    * pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED) &&
+                                    * pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.EXISTING)) { if
+                                    * (pl.getUtility().getWellDistance().stream() .noneMatch(roadOutput ->
+                                    * roadOutput.colourCode.equals(String.valueOf(7)))) { errors.put(SUB_RULE_104_2_DESCRIPTION,
+                                    * edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { SUB_RULE_104_2_DESCRIPTION },
+                                    * LocaleContextHolder.getLocale())); pl.addErrors(errors); } if
+                                    * (pl.getUtility().getWellDistance().stream() .noneMatch(roadOutput ->
+                                    * roadOutput.colourCode.equals(String.valueOf(8)))) { errors.put(SUB_RULE_104_4_DESCRIPTION,
+                                    * edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { SUB_RULE_104_4_DESCRIPTION },
+                                    * LocaleContextHolder.getLocale())); pl.addErrors(errors); } if
+                                    * (pl.getUtility().getWellDistance().stream() .noneMatch(roadOutput ->
+                                    * roadOutput.colourCode.equals(String.valueOf(1)) ||
+                                    * roadOutput.colourCode.equals(String.valueOf(2)) ||
+                                    * roadOutput.colourCode.equals(String.valueOf(5)) ||
+                                    * roadOutput.colourCode.equals(String.valueOf(6)))) { errors.put(WELL_DISTANCE_FROM_ROAD,
+                                    * edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { WELL_DISTANCE_FROM_ROAD },
+                                    * LocaleContextHolder.getLocale())); pl.addErrors(errors); } } else if
+                                    * (pl.getUtility().getWells().get(0).getType() != null &&
+                                    * pl.getUtility().getWells().get(0).getType().equals(DcrConstants.EXISTING) &&
+                                    * pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.PROPOSED)) { if
+                                    * (pl.getUtility().getWellDistance().stream() .noneMatch(roadOutput ->
+                                    * roadOutput.colourCode.equals(String.valueOf(8)))) { errors.put(SUB_RULE_104_4_DESCRIPTION,
+                                    * edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { SUB_RULE_104_4_DESCRIPTION },
+                                    * LocaleContextHolder.getLocale())); pl.addErrors(errors); } if
+                                    * (pl.getUtility().getWellDistance().stream() .noneMatch(roadOutput ->
+                                    * roadOutput.colourCode.equals(String.valueOf(9)))) {
+                                    * errors.put(SUB_RULE_104_4_PLOT_DESCRIPTION, edcrMessageSource.getMessage(OBJECTNOTDEFINED,
+                                    * new String[] { SUB_RULE_104_4_PLOT_DESCRIPTION }, LocaleContextHolder.getLocale()));
+                                    * pl.addErrors(errors); } } } } else { if (pl.getUtility().getWells().get(0).getType() != null
+                                    * && pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED)) { if
+                                    * (pl.getUtility().getWellDistance().stream() .noneMatch(roadOutput ->
+                                    * roadOutput.colourCode.equals(String.valueOf(7)))) { errors.put(SUB_RULE_104_2_DESCRIPTION,
+                                    * edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { SUB_RULE_104_2_DESCRIPTION },
+                                    * LocaleContextHolder.getLocale())); pl.addErrors(errors); } if
+                                    * (pl.getUtility().getWellDistance().stream() .noneMatch(roadOutput ->
+                                    * roadOutput.colourCode.equals(String.valueOf(1)) ||
+                                    * roadOutput.colourCode.equals(String.valueOf(2)) ||
+                                    * roadOutput.colourCode.equals(String.valueOf(5)) ||
+                                    * roadOutput.colourCode.equals(String.valueOf(6)))) { errors.put(WELL_DISTANCE_FROM_ROAD,
+                                    * edcrMessageSource.getMessage(OBJECTNOTDEFINED, new String[] { WELL_DISTANCE_FROM_ROAD },
+                                    * LocaleContextHolder.getLocale())); pl.addErrors(errors); } } } } }
+                                    */
         return pl;
     }
 
     @Override
-    public Plan process(Plan pl) {
-        validate(pl);
-        scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
-        scrutinyDetail.setKey("Common_Well");
-        if (!pl.getUtility().getWells().isEmpty()) {
-            if (!pl.getUtility().getWasteDisposalUnits().isEmpty()) {
-                if (pl.getUtility().getWells().get(0).getType() != null
-                        && pl.getUtility().getWasteDisposalUnits().get(0).getType() != null) {
-                    if (pl.getUtility().getWells().get(0).getType() != null
-                            && pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED)
-                            && pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.PROPOSED)) {
-                        printOutputForProposedWellAndProposedWasteDisposal(pl);
-                    } else if (pl.getUtility().getWells().get(0).getType() != null
-                            && pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED)
-                            && pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.EXISTING)) {
-                        printOutputForProposedWellAndExistingWasteDisposal(pl);
-                    } else if (pl.getUtility().getWells().get(0).getType() != null
-                            && pl.getUtility().getWells().get(0).getType().equals(DcrConstants.EXISTING)
-                            && pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.PROPOSED)) {
-                        printOutputForExistingWellAndProposedWasteDisposal(pl);
-                    }
-                }
-            } else {
-                if (pl.getUtility().getWells().get(0).getType() != null
-                        && pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED)) {
-                    printOutputForProposedWellWithNoWasteDisposalDefined(pl);
-                }
-            }
-        }
+    public Plan process(Plan pl) {/*
+                                   * validate(pl); scrutinyDetail = new ScrutinyDetail(); scrutinyDetail.addColumnHeading(1,
+                                   * RULE_NO); scrutinyDetail.addColumnHeading(2, DESCRIPTION); scrutinyDetail.addColumnHeading(3,
+                                   * REQUIRED); scrutinyDetail.addColumnHeading(4, PROVIDED); scrutinyDetail.addColumnHeading(5,
+                                   * STATUS); scrutinyDetail.setKey("Common_Well"); if (!pl.getUtility().getWells().isEmpty()) {
+                                   * if (!pl.getUtility().getWasteDisposalUnits().isEmpty()) { if
+                                   * (pl.getUtility().getWells().get(0).getType() != null &&
+                                   * pl.getUtility().getWasteDisposalUnits().get(0).getType() != null) { if
+                                   * (pl.getUtility().getWells().get(0).getType() != null &&
+                                   * pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED) &&
+                                   * pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.PROPOSED)) {
+                                   * printOutputForProposedWellAndProposedWasteDisposal(pl); } else if
+                                   * (pl.getUtility().getWells().get(0).getType() != null &&
+                                   * pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED) &&
+                                   * pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.EXISTING)) {
+                                   * printOutputForProposedWellAndExistingWasteDisposal(pl); } else if
+                                   * (pl.getUtility().getWells().get(0).getType() != null &&
+                                   * pl.getUtility().getWells().get(0).getType().equals(DcrConstants.EXISTING) &&
+                                   * pl.getUtility().getWasteDisposalUnits().get(0).getType().equals(DcrConstants.PROPOSED)) {
+                                   * printOutputForExistingWellAndProposedWasteDisposal(pl); } } } else { if
+                                   * (pl.getUtility().getWells().get(0).getType() != null &&
+                                   * pl.getUtility().getWells().get(0).getType().equals(DcrConstants.PROPOSED)) {
+                                   * printOutputForProposedWellWithNoWasteDisposalDefined(pl); } } }
+                                   */
         return pl;
     }
 

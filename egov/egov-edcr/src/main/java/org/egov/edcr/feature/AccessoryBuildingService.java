@@ -83,61 +83,34 @@ public class AccessoryBuildingService extends FeatureProcess{
     private static final String SUBRULE_88_5_DESC = "Minimum distance from accessory block %s to plot boundary";
 
     @Override
-    public Plan validate(Plan plan) {
-        HashMap<String, String> errors = new HashMap<>();
-        if (plan != null && !plan.getAccessoryBlocks().isEmpty()) {
-            for (AccessoryBlock accessoryBlock : plan.getAccessoryBlocks()) {
-                if (accessoryBlock.getAccessoryBuilding() != null && accessoryBlock.getAccessoryBuilding().getHeight().compareTo(BigDecimal.valueOf(0)) == 0) {
-                    errors.put(String.format(DcrConstants.ACCESSORRY_BLK_HGHT, accessoryBlock.getNumber()),
-                            edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                    new String[]{String.format(DcrConstants.ACCESSORRY_BLK_HGHT, accessoryBlock.getNumber())},
-                                    LocaleContextHolder.getLocale()));
-                    plan.addErrors(errors);
-
-                }
-            }
-            boolean shortestDistanceDefined = false;
-            if (!plan.getNotifiedRoads().isEmpty())
-                for (NotifiedRoad notifiedRoad : plan.getNotifiedRoads()) {
-                    for (BigDecimal shortestDistanceToRoad : notifiedRoad.getDistanceFromAccessoryBlock()) {
-                        if (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) {
-                            shortestDistanceDefined = true;
-                            break;
-                        }
-                    }
-                }
-            if (!plan.getNonNotifiedRoads().isEmpty())
-                for (NonNotifiedRoad nonNotifiedRoad : plan.getNonNotifiedRoads()) {
-                    for (BigDecimal shortestDistanceToRoad : nonNotifiedRoad.getDistanceFromAccessoryBlock())
-                        if (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) {
-                            shortestDistanceDefined = true;
-                            break;
-                        }
-                }
-            if (!plan.getLaneRoads().isEmpty())
-                for (Lane laneRoad : plan.getLaneRoads()) {
-                    for (BigDecimal shortestDistanceToRoad : laneRoad.getDistanceFromAccessoryBlock())
-                        if (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) {
-                            shortestDistanceDefined = true;
-                            break;
-                        }
-                }
-            if (!plan.getCuldeSacRoads().isEmpty())
-                for (CulDeSacRoad culdSac : plan.getCuldeSacRoads()) {
-                    for (BigDecimal shortestDistanceToRoad : culdSac.getDistanceFromAccessoryBlock())
-                        if (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) {
-                            shortestDistanceDefined = true;
-                            break;
-                        }
-                }
-
-            if (!shortestDistanceDefined) {
-                errors.put(DcrConstants.SHORTESTDISTANCETOROAD, 
-                		DcrConstants.SHORTESTDISTANCETOROAD + " not defined ");
-                plan.addErrors(errors);
-            }
-        }
-        validateMinimumDistanceOfAccBlkToPlotBndry(plan, errors);
+    public Plan validate(Plan plan) {/*
+                                      * HashMap<String, String> errors = new HashMap<>(); if (plan != null &&
+                                      * !plan.getAccessoryBlocks().isEmpty()) { for (AccessoryBlock accessoryBlock :
+                                      * plan.getAccessoryBlocks()) { if (accessoryBlock.getAccessoryBuilding() != null &&
+                                      * accessoryBlock.getAccessoryBuilding().getHeight().compareTo(BigDecimal.valueOf(0)) == 0) {
+                                      * errors.put(String.format(DcrConstants.ACCESSORRY_BLK_HGHT, accessoryBlock.getNumber()),
+                                      * edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new
+                                      * String[]{String.format(DcrConstants.ACCESSORRY_BLK_HGHT, accessoryBlock.getNumber())},
+                                      * LocaleContextHolder.getLocale())); plan.addErrors(errors); } } boolean
+                                      * shortestDistanceDefined = false; if (!plan.getNotifiedRoads().isEmpty()) for (NotifiedRoad
+                                      * notifiedRoad : plan.getNotifiedRoads()) { for (BigDecimal shortestDistanceToRoad :
+                                      * notifiedRoad.getDistanceFromAccessoryBlock()) { if
+                                      * (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) { shortestDistanceDefined = true;
+                                      * break; } } } if (!plan.getNonNotifiedRoads().isEmpty()) for (NonNotifiedRoad
+                                      * nonNotifiedRoad : plan.getNonNotifiedRoads()) { for (BigDecimal shortestDistanceToRoad :
+                                      * nonNotifiedRoad.getDistanceFromAccessoryBlock()) if
+                                      * (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) { shortestDistanceDefined = true;
+                                      * break; } } if (!plan.getLaneRoads().isEmpty()) for (Lane laneRoad : plan.getLaneRoads()) {
+                                      * for (BigDecimal shortestDistanceToRoad : laneRoad.getDistanceFromAccessoryBlock()) if
+                                      * (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) { shortestDistanceDefined = true;
+                                      * break; } } if (!plan.getCuldeSacRoads().isEmpty()) for (CulDeSacRoad culdSac :
+                                      * plan.getCuldeSacRoads()) { for (BigDecimal shortestDistanceToRoad :
+                                      * culdSac.getDistanceFromAccessoryBlock()) if
+                                      * (shortestDistanceToRoad.compareTo(BigDecimal.ZERO) > 0) { shortestDistanceDefined = true;
+                                      * break; } } if (!shortestDistanceDefined) { errors.put(DcrConstants.SHORTESTDISTANCETOROAD,
+                                      * DcrConstants.SHORTESTDISTANCETOROAD + " not defined "); plan.addErrors(errors); } }
+                                      * validateMinimumDistanceOfAccBlkToPlotBndry(plan, errors);
+                                      */
         return plan;
     }
 
@@ -157,12 +130,11 @@ public class AccessoryBuildingService extends FeatureProcess{
 
 
     @Override
-    public Plan process(Plan plan) {
-        validate(plan);
-        processAreaOfAccessoryBlock(plan);
-        processHeightOfAccessoryBlock(plan);
-        processShortestDistanceOfAccBlkFromRoad(plan);
-        processShortestDistanceOfAccBlkFromPlotBoundary(plan);
+    public Plan process(Plan plan) {/*
+                                     * validate(plan); processAreaOfAccessoryBlock(plan); processHeightOfAccessoryBlock(plan);
+                                     * processShortestDistanceOfAccBlkFromRoad(plan);
+                                     * processShortestDistanceOfAccBlkFromPlotBoundary(plan);
+                                     */
         return plan;
     }
 

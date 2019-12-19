@@ -70,68 +70,39 @@ public class TravelDistanceToExit extends FeatureProcess {
     public static final BigDecimal VAL_30 = BigDecimal.valueOf(30);
 
     @Override
-    public Plan validate(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
-        if (pl != null) {
-            if (pl.getTravelDistancesToExit().isEmpty()) {
-                errors.put(DcrConstants.TRAVEL_DIST_EXIT,
-                        edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
-                                new String[] { DcrConstants.TRAVEL_DIST_EXIT },
-                                LocaleContextHolder.getLocale()));
-                pl.addErrors(errors);
-            }
-        }
+    public Plan validate(Plan pl) {/*
+                                    * HashMap<String, String> errors = new HashMap<>(); if (pl != null) { if
+                                    * (pl.getTravelDistancesToExit().isEmpty()) { errors.put(DcrConstants.TRAVEL_DIST_EXIT,
+                                    * edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[] {
+                                    * DcrConstants.TRAVEL_DIST_EXIT }, LocaleContextHolder.getLocale())); pl.addErrors(errors); }
+                                    * }
+                                    */
         return pl;
     }
 
     @Override
-    public Plan process(Plan pl) {
-        Boolean exemption = Boolean.FALSE;
-        if (pl != null && pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()
-                && !pl.getBlocks().isEmpty()) {
-            boolean floorsAboveGroundLessThanOrEqualTo3ForAllBlks = true;
-            for (Block block : pl.getBlocks()) {
-                if (block.getBuilding() != null && block.getBuilding().getFloorsAboveGround() != null &&
-                        block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) > 0) {
-                    floorsAboveGroundLessThanOrEqualTo3ForAllBlks = false;
-                    break;
-                }
-            }
-            if ((pl.getVirtualBuilding().getResidentialBuilding().equals(Boolean.TRUE)
-                    && floorsAboveGroundLessThanOrEqualTo3ForAllBlks == true)
-                    || (ProcessHelper.isSmallPlot(pl))) {
-                exemption = Boolean.TRUE;
-            }
-        }
-        if (!exemption) {
-            validate(pl);
-            String subRule = SUBRULE_43_2;
-            String subRuleDesc = SUBRULE_43_2_DESC;
-            scrutinyDetail = new ScrutinyDetail();
-            scrutinyDetail.setKey("Common_Travel Distance To Emergency Exits");
-            scrutinyDetail.addColumnHeading(1, RULE_NO);
-            scrutinyDetail.addColumnHeading(2, REQUIRED);
-            scrutinyDetail.addColumnHeading(3, PROVIDED);
-            scrutinyDetail.addColumnHeading(4, STATUS);
-            scrutinyDetail.setSubHeading(SUBRULE_43_2_DESC);
-            if (pl != null) {
-                for (BigDecimal maximumTravelDistance : pl.getTravelDistancesToExit()) {
-                    boolean valid = false;
-                    if (maximumTravelDistance.compareTo(VAL_30) <= 0) {
-                        valid = true;
-                    }
-                    if (valid) {
-                        setReportOutputDetails(pl, subRule, VAL_30 + DcrConstants.IN_METER,
-                                maximumTravelDistance + DcrConstants.IN_METER, Result.Accepted.getResultVal());
-                    } else {
-                        setReportOutputDetails(pl, subRule, VAL_30 + DcrConstants.IN_METER,
-                                maximumTravelDistance + DcrConstants.IN_METER, Result.Not_Accepted.getResultVal());
-
-                    }
-                }
-            }
-        }
-
+    public Plan process(Plan pl) {/*
+                                   * Boolean exemption = Boolean.FALSE; if (pl != null && pl.getVirtualBuilding() != null &&
+                                   * !pl.getVirtualBuilding().getOccupancies().isEmpty() && !pl.getBlocks().isEmpty()) { boolean
+                                   * floorsAboveGroundLessThanOrEqualTo3ForAllBlks = true; for (Block block : pl.getBlocks()) { if
+                                   * (block.getBuilding() != null && block.getBuilding().getFloorsAboveGround() != null &&
+                                   * block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) > 0) {
+                                   * floorsAboveGroundLessThanOrEqualTo3ForAllBlks = false; break; } } if
+                                   * ((pl.getVirtualBuilding().getResidentialBuilding().equals(Boolean.TRUE) &&
+                                   * floorsAboveGroundLessThanOrEqualTo3ForAllBlks == true) || (ProcessHelper.isSmallPlot(pl))) {
+                                   * exemption = Boolean.TRUE; } } if (!exemption) { validate(pl); String subRule = SUBRULE_43_2;
+                                   * String subRuleDesc = SUBRULE_43_2_DESC; scrutinyDetail = new ScrutinyDetail();
+                                   * scrutinyDetail.setKey("Common_Travel Distance To Emergency Exits");
+                                   * scrutinyDetail.addColumnHeading(1, RULE_NO); scrutinyDetail.addColumnHeading(2, REQUIRED);
+                                   * scrutinyDetail.addColumnHeading(3, PROVIDED); scrutinyDetail.addColumnHeading(4, STATUS);
+                                   * scrutinyDetail.setSubHeading(SUBRULE_43_2_DESC); if (pl != null) { for (BigDecimal
+                                   * maximumTravelDistance : pl.getTravelDistancesToExit()) { boolean valid = false; if
+                                   * (maximumTravelDistance.compareTo(VAL_30) <= 0) { valid = true; } if (valid) {
+                                   * setReportOutputDetails(pl, subRule, VAL_30 + DcrConstants.IN_METER, maximumTravelDistance +
+                                   * DcrConstants.IN_METER, Result.Accepted.getResultVal()); } else { setReportOutputDetails(pl,
+                                   * subRule, VAL_30 + DcrConstants.IN_METER, maximumTravelDistance + DcrConstants.IN_METER,
+                                   * Result.Not_Accepted.getResultVal()); } } } }
+                                   */
         return pl;
     }
 

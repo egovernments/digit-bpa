@@ -70,30 +70,19 @@ public class DepthCuttingService extends FeatureProcess {
 	}
 
 	@Override
-	public Plan process(Plan pl) {
-		boolean valid = false;
-		scrutinyDetail = new ScrutinyDetail();
-		scrutinyDetail.setKey("Common_Depth Cutting");
-		scrutinyDetail.addColumnHeading(1, RULE_NO);
-		scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-		scrutinyDetail.addColumnHeading(3, REQUIRED);
-		scrutinyDetail.addColumnHeading(4, PROVIDED);
-		scrutinyDetail.addColumnHeading(5, STATUS);
-		if (pl.getPlanInformation() != null && pl.getPlanInformation().getDepthCutting() != null) {
-			if (!pl.getPlanInformation().getDepthCutting()) {
-				valid = true;
-			}
-			if (valid) {
-				setReportOutputDetails(pl, SUBRULE_11_A, SUBRULE_11_A_DESC,
-						BigDecimal.valueOf(1.5).toString() + DcrConstants.IN_METER,
-						"Less Than Or Equal To 1.5" + DcrConstants.IN_METER, Result.Accepted.getResultVal());
-			} else {
-				setReportOutputDetails(pl, SUBRULE_11_A, SUBRULE_11_A_DESC,
-						BigDecimal.valueOf(1.5).toString() + DcrConstants.IN_METER,
-						"More Than 1.5" + DcrConstants.IN_METER, Result.Verify.getResultVal());
-			}
-		}
-
+    public Plan process(Plan pl) {/*
+                                   * boolean valid = false; scrutinyDetail = new ScrutinyDetail();
+                                   * scrutinyDetail.setKey("Common_Depth Cutting"); scrutinyDetail.addColumnHeading(1, RULE_NO);
+                                   * scrutinyDetail.addColumnHeading(2, DESCRIPTION); scrutinyDetail.addColumnHeading(3,
+                                   * REQUIRED); scrutinyDetail.addColumnHeading(4, PROVIDED); scrutinyDetail.addColumnHeading(5,
+                                   * STATUS); if (pl.getPlanInformation() != null && pl.getPlanInformation().getDepthCutting() !=
+                                   * null) { if (!pl.getPlanInformation().getDepthCutting()) { valid = true; } if (valid) {
+                                   * setReportOutputDetails(pl, SUBRULE_11_A, SUBRULE_11_A_DESC,
+                                   * BigDecimal.valueOf(1.5).toString() + DcrConstants.IN_METER, "Less Than Or Equal To 1.5" +
+                                   * DcrConstants.IN_METER, Result.Accepted.getResultVal()); } else { setReportOutputDetails(pl,
+                                   * SUBRULE_11_A, SUBRULE_11_A_DESC, BigDecimal.valueOf(1.5).toString() + DcrConstants.IN_METER,
+                                   * "More Than 1.5" + DcrConstants.IN_METER, Result.Verify.getResultVal()); } }
+                                   */
 		return pl;
 	}
 

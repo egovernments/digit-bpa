@@ -70,55 +70,45 @@ public class BiometricWasteManagement extends FeatureProcess {
     private static final String SUBRULE_54_4 = "54-4";
 
     @Override
-    public Plan validate(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
-        // biometric waste treatment defined or not
-        if (pl != null && pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
-            for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
-                if ((occupancyType.equals(OccupancyType.OCCUPANCY_C) || occupancyType.equals(OccupancyType.OCCUPANCY_C1) ||
-                        occupancyType.equals(OccupancyType.OCCUPANCY_C2) || occupancyType.equals(OccupancyType.OCCUPANCY_C3)) &&
-                        pl.getUtility() != null && pl.getUtility().getBiometricWasteTreatment().isEmpty()) {
-                    errors.put(BIOMETRIC_WASTE_TREATMENT,
-                            edcrMessageSource.getMessage(OBJECTNOTDEFINED,
-                                    new String[] { BIOMETRIC_WASTE_TREATMENT }, LocaleContextHolder.getLocale()));
-                    pl.addErrors(errors);
-                    break;
-                }
-            }
-        }
+    public Plan validate(Plan pl) {/*
+                                    * HashMap<String, String> errors = new HashMap<>(); // biometric waste treatment defined or
+                                    * not if (pl != null && pl.getVirtualBuilding() != null &&
+                                    * !pl.getVirtualBuilding().getOccupancies().isEmpty()) { for (OccupancyType occupancyType :
+                                    * pl.getVirtualBuilding().getOccupancies()) { if
+                                    * ((occupancyType.equals(OccupancyType.OCCUPANCY_C) ||
+                                    * occupancyType.equals(OccupancyType.OCCUPANCY_C1) ||
+                                    * occupancyType.equals(OccupancyType.OCCUPANCY_C2) ||
+                                    * occupancyType.equals(OccupancyType.OCCUPANCY_C3)) && pl.getUtility() != null &&
+                                    * pl.getUtility().getBiometricWasteTreatment().isEmpty()) {
+                                    * errors.put(BIOMETRIC_WASTE_TREATMENT, edcrMessageSource.getMessage(OBJECTNOTDEFINED, new
+                                    * String[] { BIOMETRIC_WASTE_TREATMENT }, LocaleContextHolder.getLocale()));
+                                    * pl.addErrors(errors); break; } } }
+                                    */
 
         return pl;
 
     }
 
     @Override
-    public Plan process(Plan pl) {
-        validate(pl);
-        scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, REQUIRED);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
-        scrutinyDetail.setKey("Common_Biometric Waste Treatment");
-        String subRule = SUBRULE_54_4;
-        if (pl != null && pl.getVirtualBuilding() != null && !pl.getVirtualBuilding().getOccupancies().isEmpty()) {
-            for (OccupancyType occupancyType : pl.getVirtualBuilding().getOccupancies()) {
-                if ((occupancyType.equals(OccupancyType.OCCUPANCY_C) || occupancyType.equals(OccupancyType.OCCUPANCY_C1) ||
-                        occupancyType.equals(OccupancyType.OCCUPANCY_C2) || occupancyType.equals(OccupancyType.OCCUPANCY_C3)) &&
-                        pl.getUtility() != null) {
-                    if (!pl.getUtility().getBiometricWasteTreatment().isEmpty()) {
-                        setReportOutputDetailsWithoutOccupancy(pl, subRule, SUBRULE_54_4_DESC, "",
-                                OBJECTDEFINED_DESC, Result.Accepted.getResultVal());
-                        break;
-                    } else if (pl.getUtility().getBiometricWasteTreatment().isEmpty()) {
-                        setReportOutputDetailsWithoutOccupancy(pl, subRule, SUBRULE_54_4_DESC, "",
-                                OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal());
-                        break;
-                    }
-                }
-            }
-        }
+    public Plan process(Plan pl) {/*
+                                   * validate(pl); scrutinyDetail = new ScrutinyDetail(); scrutinyDetail.addColumnHeading(1,
+                                   * RULE_NO); scrutinyDetail.addColumnHeading(2, DESCRIPTION); scrutinyDetail.addColumnHeading(3,
+                                   * REQUIRED); scrutinyDetail.addColumnHeading(4, PROVIDED); scrutinyDetail.addColumnHeading(5,
+                                   * STATUS); scrutinyDetail.setKey("Common_Biometric Waste Treatment"); String subRule =
+                                   * SUBRULE_54_4; if (pl != null && pl.getVirtualBuilding() != null &&
+                                   * !pl.getVirtualBuilding().getOccupancies().isEmpty()) { for (OccupancyType occupancyType :
+                                   * pl.getVirtualBuilding().getOccupancies()) { if
+                                   * ((occupancyType.equals(OccupancyType.OCCUPANCY_C) ||
+                                   * occupancyType.equals(OccupancyType.OCCUPANCY_C1) ||
+                                   * occupancyType.equals(OccupancyType.OCCUPANCY_C2) ||
+                                   * occupancyType.equals(OccupancyType.OCCUPANCY_C3)) && pl.getUtility() != null) { if
+                                   * (!pl.getUtility().getBiometricWasteTreatment().isEmpty()) {
+                                   * setReportOutputDetailsWithoutOccupancy(pl, subRule, SUBRULE_54_4_DESC, "",
+                                   * OBJECTDEFINED_DESC, Result.Accepted.getResultVal()); break; } else if
+                                   * (pl.getUtility().getBiometricWasteTreatment().isEmpty()) {
+                                   * setReportOutputDetailsWithoutOccupancy(pl, subRule, SUBRULE_54_4_DESC, "",
+                                   * OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal()); break; } } } }
+                                   */
         return pl;
     }
 

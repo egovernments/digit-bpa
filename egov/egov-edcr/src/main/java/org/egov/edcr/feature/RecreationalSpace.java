@@ -82,45 +82,23 @@ public class RecreationalSpace extends FeatureProcess {
     public static final BigDecimal THREE = BigDecimal.valueOf(3);
 
     @Override
-    public Plan validate(Plan pl) {
-
-        HashMap<String, String> errors = new HashMap<>();
-
-        for (Block block : pl.getBlocks()) {
-            BigDecimal totalRecreationArea = BigDecimal.ZERO;
-            int numberOfUnitsInBlock = 0;
-
-            if (block.getBuilding() != null) {
-
-                if (block.getBuilding().getFloorsAboveGround() != null
-                        && block.getBuilding().getFloorsAboveGround().compareTo(THREE) > 0) {
-                    if (!block.getBuilding().getOccupancies().isEmpty()
-                            && checkOccupancyPresent(block.getBuilding().getOccupancies(), OccupancyType.OCCUPANCY_A4)) {
-                        for (Floor floor : block.getBuilding().getFloors()) {
-                            for (FloorUnit unit : floor.getUnits()) {
-                                if (OccupancyType.OCCUPANCY_A4.equals(unit.getOccupancy().getType())) {
-                                    numberOfUnitsInBlock++;
-                                }
-                            }
-                            for (Occupancy occ : floor.getOccupancies()) {
-                                if (OccupancyType.OCCUPANCY_A4.equals(occ.getType())) {
-                                    for (Measurement measure : occ.getRecreationalSpace()) {
-                                        totalRecreationArea = totalRecreationArea.add(measure.getArea());
-
-                                    }
-                                }
-                            }
-                        }
-
-                    }
-                    if (numberOfUnitsInBlock > TOTALNUMBEROFUNITS && totalRecreationArea.compareTo(BigDecimal.ZERO) <= 0) {
-                        errors.put(RECREATIONSPACE_DESC,
-                                getLocaleMessage(OBJECTNOTDEFINED, RECREATIONSPACE_DESC) + " for block " + block.getNumber());
-                        pl.addErrors(errors);
-                    }
-                }
-            }
-        }
+    public Plan validate(Plan pl) {/*
+                                    * HashMap<String, String> errors = new HashMap<>(); for (Block block : pl.getBlocks()) {
+                                    * BigDecimal totalRecreationArea = BigDecimal.ZERO; int numberOfUnitsInBlock = 0; if
+                                    * (block.getBuilding() != null) { if (block.getBuilding().getFloorsAboveGround() != null &&
+                                    * block.getBuilding().getFloorsAboveGround().compareTo(THREE) > 0) { if
+                                    * (!block.getBuilding().getOccupancies().isEmpty() &&
+                                    * checkOccupancyPresent(block.getBuilding().getOccupancies(), OccupancyType.OCCUPANCY_A4)) {
+                                    * for (Floor floor : block.getBuilding().getFloors()) { for (FloorUnit unit :
+                                    * floor.getUnits()) { if (OccupancyType.OCCUPANCY_A4.equals(unit.getOccupancy().getType())) {
+                                    * numberOfUnitsInBlock++; } } for (Occupancy occ : floor.getOccupancies()) { if
+                                    * (OccupancyType.OCCUPANCY_A4.equals(occ.getType())) { for (Measurement measure :
+                                    * occ.getRecreationalSpace()) { totalRecreationArea =
+                                    * totalRecreationArea.add(measure.getArea()); } } } } } if (numberOfUnitsInBlock >
+                                    * TOTALNUMBEROFUNITS && totalRecreationArea.compareTo(BigDecimal.ZERO) <= 0) {
+                                    * errors.put(RECREATIONSPACE_DESC, getLocaleMessage(OBJECTNOTDEFINED, RECREATIONSPACE_DESC) +
+                                    * " for block " + block.getNumber()); pl.addErrors(errors); } } } }
+                                    */
 
         return pl;
     }
@@ -133,96 +111,47 @@ public class RecreationalSpace extends FeatureProcess {
         return false;
     }
 
-    public Plan process(Plan pl) {
-        validate(pl);
-        for (Block block : pl.getBlocks()) {
-
-            scrutinyDetail = new ScrutinyDetail();
-            scrutinyDetail.addColumnHeading(1, RULE_NO);
-            scrutinyDetail.addColumnHeading(2, FIELDVERIFIED);
-            scrutinyDetail.addColumnHeading(3, REQUIRED);
-            scrutinyDetail.addColumnHeading(4, PROVIDED);
-            scrutinyDetail.addColumnHeading(5, STATUS);
-
-            scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Recreational space");
-
-            BigDecimal totalRecreationArea = BigDecimal.ZERO;
-            BigDecimal totalRecreationAreaInGroundFloor = BigDecimal.ZERO;
-            BigDecimal totalFloorArea = BigDecimal.ZERO;
-            int numberOfUnitsInBlock = 0;
-
-            if (block.getBuilding() != null && block.getBuilding().getFloorsAboveGround() != null
-                    && block.getBuilding().getFloorsAboveGround().compareTo(THREE) > 0) {
-                if (!block.getBuilding().getOccupancies().isEmpty()
-                        && checkOccupancyPresent(block.getBuilding().getOccupancies(), OccupancyType.OCCUPANCY_A4)) {
-                    for (Floor floor : block.getBuilding().getFloors()) {
-                        for (FloorUnit unit : floor.getUnits()) {
-                            if (OccupancyType.OCCUPANCY_A4.equals(unit.getOccupancy().getType())) {
-                                numberOfUnitsInBlock++;
-                            }
-                        }
-                        for (Occupancy occ : floor.getOccupancies()) {
-
-                            if (OccupancyType.OCCUPANCY_A4.equals(occ.getType())) {
-
-                                if (occ.getFloorArea() != null) {
-                                    totalFloorArea = totalFloorArea.add(occ.getFloorArea());
-                                }
-                                for (Measurement measure : occ.getRecreationalSpace()) {
-                                    if (floor.getNumber() == 0) {
-                                        totalRecreationAreaInGroundFloor = totalRecreationAreaInGroundFloor
-                                                .add(measure.getArea());
-                                    }
-                                    totalRecreationArea = totalRecreationArea.add(measure.getArea());
-
-                                }
-                            }
-                        }
-                    }
-
-                }
-                if (numberOfUnitsInBlock > TOTALNUMBEROFUNITS && totalRecreationArea.compareTo(BigDecimal.ZERO) > 0) {
-                    double requiredArea = (totalFloorArea.doubleValue() * 6) / 100;
-                    BigDecimal totalRecArea = totalRecreationArea.divide(totalFloorArea, 3, ROUNDMODE_MEASUREMENTS)
-                            .multiply(BigDecimal.valueOf(100)).setScale(3, ROUNDMODE_MEASUREMENTS);
-
-                    Map<String, String> details = new HashMap<>();
-                    details.put(RULE_NO, SUB_RULE_50_2);
-                    details.put(FIELDVERIFIED, "Minimum 6% recreational space should be provided of total floor area");
-                    details.put(REQUIRED, "6%");
-                    details.put(PROVIDED, totalRecArea + "%");
-
-                    if (totalRecreationArea.doubleValue() > requiredArea) {
-                        details.put(STATUS, Result.Accepted.getResultVal());
-                    } else {
-                        details.put(STATUS, Result.Not_Accepted.getResultVal());
-                    }
-                    scrutinyDetail.getDetail().add(details);
-
-                    // requiredArea = (totalFloorArea.doubleValue() * 35) / 100;
-
-                    Map<String, String> details1 = new HashMap<>();
-                    details1.put(RULE_NO, SUB_RULE_50_2);
-                    details1.put(FIELDVERIFIED, "Minimum 35% recreational space should be provided in ground floor");
-                    details1.put(REQUIRED, "35%");
-                    BigDecimal totalRecArea1 = (totalRecreationAreaInGroundFloor
-                            .divide(BigDecimal.valueOf(requiredArea), 5, ROUNDMODE_MEASUREMENTS)
-                            .multiply(BigDecimal.valueOf(100)))
-                                    .setScale(2, ROUNDMODE_MEASUREMENTS);
-                    details1.put(PROVIDED, totalRecArea1 + "%");
-
-                    if (totalRecArea1.doubleValue() >= 35) {
-                        details1.put(STATUS, Result.Accepted.getResultVal());
-                    } else {
-                        details1.put(STATUS, Result.Not_Accepted.getResultVal());
-                    }
-                    scrutinyDetail.getDetail().add(details1);
-                    pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
-                }
-            }
-        }
-
+    public Plan process(Plan pl) {/*
+                                   * validate(pl); for (Block block : pl.getBlocks()) { scrutinyDetail = new ScrutinyDetail();
+                                   * scrutinyDetail.addColumnHeading(1, RULE_NO); scrutinyDetail.addColumnHeading(2,
+                                   * FIELDVERIFIED); scrutinyDetail.addColumnHeading(3, REQUIRED);
+                                   * scrutinyDetail.addColumnHeading(4, PROVIDED); scrutinyDetail.addColumnHeading(5, STATUS);
+                                   * scrutinyDetail.setKey("Block_" + block.getName() + "_" + "Recreational space"); BigDecimal
+                                   * totalRecreationArea = BigDecimal.ZERO; BigDecimal totalRecreationAreaInGroundFloor =
+                                   * BigDecimal.ZERO; BigDecimal totalFloorArea = BigDecimal.ZERO; int numberOfUnitsInBlock = 0;
+                                   * if (block.getBuilding() != null && block.getBuilding().getFloorsAboveGround() != null &&
+                                   * block.getBuilding().getFloorsAboveGround().compareTo(THREE) > 0) { if
+                                   * (!block.getBuilding().getOccupancies().isEmpty() &&
+                                   * checkOccupancyPresent(block.getBuilding().getOccupancies(), OccupancyType.OCCUPANCY_A4)) {
+                                   * for (Floor floor : block.getBuilding().getFloors()) { for (FloorUnit unit : floor.getUnits())
+                                   * { if (OccupancyType.OCCUPANCY_A4.equals(unit.getOccupancy().getType())) {
+                                   * numberOfUnitsInBlock++; } } for (Occupancy occ : floor.getOccupancies()) { if
+                                   * (OccupancyType.OCCUPANCY_A4.equals(occ.getType())) { if (occ.getFloorArea() != null) {
+                                   * totalFloorArea = totalFloorArea.add(occ.getFloorArea()); } for (Measurement measure :
+                                   * occ.getRecreationalSpace()) { if (floor.getNumber() == 0) { totalRecreationAreaInGroundFloor
+                                   * = totalRecreationAreaInGroundFloor .add(measure.getArea()); } totalRecreationArea =
+                                   * totalRecreationArea.add(measure.getArea()); } } } } } if (numberOfUnitsInBlock >
+                                   * TOTALNUMBEROFUNITS && totalRecreationArea.compareTo(BigDecimal.ZERO) > 0) { double
+                                   * requiredArea = (totalFloorArea.doubleValue() * 6) / 100; BigDecimal totalRecArea =
+                                   * totalRecreationArea.divide(totalFloorArea, 3, ROUNDMODE_MEASUREMENTS)
+                                   * .multiply(BigDecimal.valueOf(100)).setScale(3, ROUNDMODE_MEASUREMENTS); Map<String, String>
+                                   * details = new HashMap<>(); details.put(RULE_NO, SUB_RULE_50_2); details.put(FIELDVERIFIED,
+                                   * "Minimum 6% recreational space should be provided of total floor area");
+                                   * details.put(REQUIRED, "6%"); details.put(PROVIDED, totalRecArea + "%"); if
+                                   * (totalRecreationArea.doubleValue() > requiredArea) { details.put(STATUS,
+                                   * Result.Accepted.getResultVal()); } else { details.put(STATUS,
+                                   * Result.Not_Accepted.getResultVal()); } scrutinyDetail.getDetail().add(details); //
+                                   * requiredArea = (totalFloorArea.doubleValue() * 35) / 100; Map<String, String> details1 = new
+                                   * HashMap<>(); details1.put(RULE_NO, SUB_RULE_50_2); details1.put(FIELDVERIFIED,
+                                   * "Minimum 35% recreational space should be provided in ground floor"); details1.put(REQUIRED,
+                                   * "35%"); BigDecimal totalRecArea1 = (totalRecreationAreaInGroundFloor
+                                   * .divide(BigDecimal.valueOf(requiredArea), 5, ROUNDMODE_MEASUREMENTS)
+                                   * .multiply(BigDecimal.valueOf(100))) .setScale(2, ROUNDMODE_MEASUREMENTS);
+                                   * details1.put(PROVIDED, totalRecArea1 + "%"); if (totalRecArea1.doubleValue() >= 35) {
+                                   * details1.put(STATUS, Result.Accepted.getResultVal()); } else { details1.put(STATUS,
+                                   * Result.Not_Accepted.getResultVal()); } scrutinyDetail.getDetail().add(details1);
+                                   * pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail); } } }
+                                   */
         return pl;
     }
 

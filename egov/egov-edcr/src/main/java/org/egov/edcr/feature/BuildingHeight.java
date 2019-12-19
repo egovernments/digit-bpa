@@ -89,45 +89,29 @@ public class BuildingHeight extends FeatureProcess {
 
     @Override
     public Plan validate(Plan pl) {
-        HashMap<String, String> errors = new HashMap<>();
-        if (!ProcessHelper.isSmallPlot(pl)) {
-            for (Block block : pl.getBlocks()) {
-                if (!block.getCompletelyExisting()) {
-                    if (block.getBuilding() != null && (block.getBuilding().getBuildingHeight() == null ||
-                            block.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO) <= 0)) {
-                        errors.put(BUILDING_HEIGHT + block.getNumber(),
-                                getLocaleMessage(OBJECTNOTDEFINED, BUILDING_HEIGHT + " for block " + block.getNumber()));
-                        pl.addErrors(errors);
-                    }
-                    // distance from end of road to foot print is mandatory.
-                    if (block.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd().isEmpty()) {
-                        errors.put(SHORTESTDISTINACETOBUILDINGFOOTPRINT + block.getNumber(),
-                                getLocaleMessage(OBJECTNOTDEFINED,
-                                        SHORTESTDISTINACETOBUILDINGFOOTPRINT + " for block " + block.getNumber()));
-                        pl.addErrors(errors);
-                    }
-                }
-            }
-        }
+        /*
+         * HashMap<String, String> errors = new HashMap<>(); if (!ProcessHelper.isSmallPlot(pl)) { for (Block block :
+         * pl.getBlocks()) { if (!block.getCompletelyExisting()) { if (block.getBuilding() != null &&
+         * (block.getBuilding().getBuildingHeight() == null || block.getBuilding().getBuildingHeight().compareTo(BigDecimal.ZERO)
+         * <= 0)) { errors.put(BUILDING_HEIGHT + block.getNumber(), getLocaleMessage(OBJECTNOTDEFINED, BUILDING_HEIGHT +
+         * " for block " + block.getNumber())); pl.addErrors(errors); } // distance from end of road to foot print is mandatory.
+         * if (block.getBuilding().getDistanceFromBuildingFootPrintToRoadEnd().isEmpty()) {
+         * errors.put(SHORTESTDISTINACETOBUILDINGFOOTPRINT + block.getNumber(), getLocaleMessage(OBJECTNOTDEFINED,
+         * SHORTESTDISTINACETOBUILDINGFOOTPRINT + " for block " + block.getNumber())); pl.addErrors(errors); } } } }
+         */
         return pl;
     }
 
     @Override
     public Plan process(Plan Plan) {
 
-        validate(Plan);
-        scrutinyDetail = new ScrutinyDetail();
-        scrutinyDetail.setKey("Common_Height of Building");
-        scrutinyDetail.addColumnHeading(1, RULE_NO);
-        scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-        scrutinyDetail.addColumnHeading(3, UPTO);
-        scrutinyDetail.addColumnHeading(4, PROVIDED);
-        scrutinyDetail.addColumnHeading(5, STATUS);
-
-        if (!ProcessHelper.isSmallPlot(Plan)) {
-            checkBuildingHeight(Plan);
-        }
-        checkBuildingInSecurityZoneArea(Plan);
+        /*
+         * validate(Plan); scrutinyDetail = new ScrutinyDetail(); scrutinyDetail.setKey("Common_Height of Building");
+         * scrutinyDetail.addColumnHeading(1, RULE_NO); scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+         * scrutinyDetail.addColumnHeading(3, UPTO); scrutinyDetail.addColumnHeading(4, PROVIDED);
+         * scrutinyDetail.addColumnHeading(5, STATUS); if (!ProcessHelper.isSmallPlot(Plan)) { checkBuildingHeight(Plan); }
+         * checkBuildingInSecurityZoneArea(Plan);
+         */
         return Plan;
     }
 

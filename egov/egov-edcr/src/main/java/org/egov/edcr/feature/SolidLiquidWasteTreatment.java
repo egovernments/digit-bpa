@@ -75,8 +75,9 @@ public class SolidLiquidWasteTreatment extends FeatureProcess {
 
     @Override
     public Plan process(Plan pl) {
-        validate(pl);
-        processSolidLiquidWasteTreat(pl);
+        /*
+         * validate(pl); processSolidLiquidWasteTreat(pl);
+         */
         return pl;
     }
 
