@@ -74,6 +74,7 @@ import org.egov.edcr.feature.GovtBuildingDistance;
 import org.egov.edcr.feature.GuardRoom;
 import org.egov.edcr.feature.HeadRoom;
 import org.egov.edcr.feature.HeightOfRoom;
+import org.egov.edcr.feature.InteriorOpenSpaceService;
 import org.egov.edcr.feature.Kitchen;
 import org.egov.edcr.feature.LandUse;
 import org.egov.edcr.feature.LiftService;
@@ -109,6 +110,8 @@ import org.egov.edcr.feature.SpiralStair;
 import org.egov.edcr.feature.StairCover;
 import org.egov.edcr.feature.SurrenderRoad;
 import org.egov.edcr.feature.TravelDistanceToExit;
+import org.egov.edcr.feature.Ventilation;
+import org.egov.edcr.feature.Verandah;
 import org.egov.edcr.feature.WasteDisposal;
 import org.egov.edcr.feature.WaterClosets;
 import org.egov.edcr.feature.WaterTankCapacity;
@@ -311,6 +314,13 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(OpenStairService.class);
         features.add(pf);
 
+		pf = new PlanFeature(Ventilation.class);
+		features.add(pf);
+		pf = new PlanFeature(Verandah.class);
+		features.add(pf);
+		pf = new PlanFeature(InteriorOpenSpaceService.class);
+		features.add(pf);
+         
         return features;
     }
 

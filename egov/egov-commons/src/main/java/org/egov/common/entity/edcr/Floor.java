@@ -65,7 +65,7 @@ public class Floor extends Measurement {
     private List<Lift> lifts = new ArrayList<>();
     private List<Lift> daLifts = new ArrayList<>();
     private Measurement exterior;
-    private List<Measurement> openSpaces = new ArrayList<>();
+   // private List<Measurement> openSpaces = new ArrayList<>();
     // this is for differently able people
     private List<Measurement> specialWaterClosets = new ArrayList<>();
     private List<Measurement> coverageDeduct = new ArrayList<>();
@@ -88,7 +88,12 @@ public class Floor extends Measurement {
     private Room bathRoomWaterClosets;
     private List<BigDecimal> heightFromTheFloorToCeiling;
     private List<BigDecimal> heightOfTheCeilingOfUpperBasement;
+    private InteriorOpenSpace interiorOpenSpace=new InteriorOpenSpace();
+    private MeasurementWithHeight verandah = new MeasurementWithHeight();
+    private MeasurementWithHeight lightAndVentilation =  new MeasurementWithHeight();
+     
     private List<Balcony> balconies = new ArrayList<>();
+
     private List<Measurement> overHangs;
     
     public List<FireStair> getFireStairs() {
@@ -302,18 +307,18 @@ public class Floor extends Measurement {
         this.exterior = exterior;
     }
 
-    public List<Measurement> getOpenSpaces() {
+   /* public List<Measurement> getOpenSpaces() {
         return openSpaces;
     }
 
     public void setOpenSpaces(List<Measurement> openSpaces) {
         this.openSpaces = openSpaces;
-    }
+    }*/
 
     @Override
     public String toString() {
 
-        return "Floor :" + number + " [\n exterior=" + exterior + "\n openSpaces Count=" + openSpaces.size() + "]";
+        return "Floor :" + number + " [\n exterior=" + exterior + ""  + "]";
 
     }
 
@@ -507,5 +512,31 @@ public class Floor extends Measurement {
     public void setOverHangs(List<Measurement> overHangs) {
         this.overHangs = overHangs;
     }
+
+	public InteriorOpenSpace getInteriorOpenSpace() {
+		return interiorOpenSpace;
+	}
+
+	public void setInteriorOpenSpace(InteriorOpenSpace interiorOpenSpace) {
+		this.interiorOpenSpace = interiorOpenSpace;
+	}
+
+	public MeasurementWithHeight getVerandah() {
+		return verandah;
+	}
+
+	public void setVerandah(MeasurementWithHeight verandah) {
+		this.verandah = verandah;
+	}
+
+	public MeasurementWithHeight getLightAndVentilation() {
+		return lightAndVentilation;
+	}
+
+	public void setLightAndVentilation(MeasurementWithHeight lightAndVentilation) {
+		this.lightAndVentilation = lightAndVentilation;
+	}
+
+	 
 
 }
