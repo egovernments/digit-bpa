@@ -160,6 +160,8 @@ public class Plan implements Serializable {
     private transient BigDecimal totalSurrenderRoadArea = BigDecimal.ZERO;
     // Distance of plot with external entities like rive, lake, monuments, government building etc are grouped.
     private DistanceToExternalEntity distanceToExternalEntity = new DistanceToExternalEntity();
+    // Plot all sides compound wall and their railing heights
+    private CompoundWall compoundWall;
 
     @Transient
     @JsonIgnore
@@ -532,6 +534,14 @@ public class Plan implements Serializable {
         this.distanceToExternalEntity = distanceToExternalEntity;
     }
 
+    public void setCompoundWall(CompoundWall compoundWall) {
+        this.compoundWall = compoundWall;
+    }
+    
+    public CompoundWall getCompoundWall() {
+        return compoundWall;
+    }
+    
     public Map<String, String> getPlanInfoProperties() {
         return planInfoProperties;
     }
