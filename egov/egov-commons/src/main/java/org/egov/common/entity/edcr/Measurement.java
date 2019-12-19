@@ -57,6 +57,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class Measurement implements Cloneable, Serializable {
     private static final long serialVersionUID = 3L;
 
+    protected String name;
+    
     protected Boolean presentInDxf = false;
 
     protected BigDecimal minimumDistance = BigDecimal.ZERO;
@@ -80,6 +82,14 @@ public class Measurement implements Cloneable, Serializable {
 
     protected int colorCode;
 
+    public void setName(String name) {
+        this.name = name;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
     public void setMinimumDistance(BigDecimal minimumDistance) {
         this.minimumDistance = minimumDistance;
     }
