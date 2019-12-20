@@ -88,7 +88,8 @@ public class RoadWidth extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
 
-        if (pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null &&
+        if (pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
+                && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null &&
                 !DxfFileConstants.A.equalsIgnoreCase(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
             ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
             scrutinyDetail.setKey("Common_Road Width");
@@ -128,9 +129,6 @@ public class RoadWidth extends FeatureProcess {
                         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                     }
 
-                } else {
-                    errors.put(ERROR_MSG, "invalid road width");
-                    pl.addErrors(errors);
                 }
             }
         }

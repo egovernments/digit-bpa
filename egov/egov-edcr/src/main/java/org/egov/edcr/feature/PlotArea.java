@@ -88,7 +88,8 @@ public class PlotArea extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
 
-        if (pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null &&
+        if (pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
+                && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null &&
                 !DxfFileConstants.A.equalsIgnoreCase(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
             ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
             scrutinyDetail.setKey("Common_Plot Area");
@@ -120,7 +121,6 @@ public class PlotArea extends FeatureProcess {
                         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
 
                     } else {
-
                         details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
                         details.put(PROVIDED, plotArea.toString() + "m2");
                         details.put(STATUS, Result.Not_Accepted.getResultVal());
@@ -128,9 +128,6 @@ public class PlotArea extends FeatureProcess {
                         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                     }
 
-                } else {
-                    errors.put(ERROR_MSG, "invalid plot area");
-                    pl.addErrors(errors);
                 }
             }
         }
