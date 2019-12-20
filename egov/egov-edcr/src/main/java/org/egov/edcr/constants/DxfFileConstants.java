@@ -50,6 +50,11 @@ public class DxfFileConstants {
     public static final String F_K = "F-K";// Kiosk
     public static final String F_PA = "F-PA";// Parking Appurtenant
     public static final String F_PP = "F-PP";// Parking Plaza
+    public static final String F_RT = "F-RT";// Restaurants
+    public static final String F_LD = "F-LD";// Lodges
+    public static final String F_CB = "F-CB";// Commercial Building
+    public static final String F_IT = "F-IT";// IT / ITES Buildings
+
 
     public static final String G_LI = "G-LI";// Large Industrial
     public static final String G_SI = "G-SI";// Small Industrial
