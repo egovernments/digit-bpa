@@ -62,6 +62,7 @@ import org.egov.edcr.feature.BlockDistancesService;
 import org.egov.edcr.feature.BuildingHeight;
 import org.egov.edcr.feature.Chimney;
 import org.egov.edcr.feature.CommonFeature;
+import org.egov.edcr.feature.CompoundWallService;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.DepthCuttingService;
 import org.egov.edcr.feature.DistanceToRoad;
@@ -314,13 +315,18 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(OpenStairService.class);
         features.add(pf);
 
-		pf = new PlanFeature(Ventilation.class);
-		features.add(pf);
-		pf = new PlanFeature(Verandah.class);
-		features.add(pf);
-		pf = new PlanFeature(InteriorOpenSpaceService.class);
-		features.add(pf);
-         
+        pf = new PlanFeature(Ventilation.class);
+        features.add(pf);
+        
+        pf = new PlanFeature(Verandah.class);
+        features.add(pf);
+        
+        pf = new PlanFeature(InteriorOpenSpaceService.class);
+        features.add(pf);
+        
+        pf = new PlanFeature(CompoundWallService.class);
+        features.add(pf);
+
         return features;
     }
 
