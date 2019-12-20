@@ -93,11 +93,13 @@ import org.egov.edcr.feature.PetrolFillingStation;
 import org.egov.edcr.feature.PlanInfoFeature;
 import org.egov.edcr.feature.Plantation;
 import org.egov.edcr.feature.PlantationGreenStrip;
+import org.egov.edcr.feature.PlotArea;
 import org.egov.edcr.feature.RainWaterHarvesting;
 import org.egov.edcr.feature.RampService;
 import org.egov.edcr.feature.RecreationalSpace;
 import org.egov.edcr.feature.RecycleWasteWater;
 import org.egov.edcr.feature.RiverDistance;
+import org.egov.edcr.feature.RoadWidth;
 import org.egov.edcr.feature.RoofTank;
 import org.egov.edcr.feature.Sanitation;
 import org.egov.edcr.feature.SegregatedToilet;
@@ -325,6 +327,12 @@ public class PlanFeatureRepository {
         features.add(pf);
         
         pf = new PlanFeature(CompoundWallService.class);
+        features.add(pf);
+        
+        pf = new PlanFeature(RoadWidth.class);
+        features.add(pf);
+        
+        pf = new PlanFeature(PlotArea.class);
         features.add(pf);
 
         return features;
