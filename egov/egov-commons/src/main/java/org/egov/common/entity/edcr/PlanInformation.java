@@ -84,27 +84,27 @@ public class PlanInformation implements Serializable {
     private BigDecimal demolitionArea = BigDecimal.ZERO;
     //Extracted from Plan info. Depth cutting more than 1.5 Meter flag. 
     private transient Boolean depthCutting;
-    //Extracted from Plan info. Is building of type government or aided school.
+    //YES/NO/NA.Extracted from Plan info. Is building of type government or aided school.
     private transient Boolean governmentOrAidedSchool;
-    //Extracted from Plan info. Is plot comes under security zone flag.
+    //YES/NO/NA.Extracted from Plan info. Is plot comes under security zone flag.
     private transient Boolean securityZone = true;
-    //Extracted from Plan info.  Access width to the plot.
+    //YES/NO/NA.Extracted from Plan info.  Access width to the plot.
 	private transient BigDecimal accessWidth;
     //Extracted from Plan info.  In case of medical occupancy, capture number of beds present in the building. Sanitation details are decided based on number of beds present.
 	private transient BigDecimal noOfBeds;
-	//Extracted from Plan info. NOC received from the side owner.
+	//YES/NO/NA.Extracted from Plan info. NOC received from the side owner.
 	private transient String nocToAbutSideDesc = NA;
-	//Extracted from Plan info. NOC received from the rear owner.
+	//YES/NO/NA.Extracted from Plan info. NOC received from the rear owner.
 	private transient String nocToAbutRearDesc = NA;
-	//Extracted from Plan info. Any opening on sides of building.
+	//YES/NO/NA.Extracted from Plan info. Any opening on sides of building.
 	private transient Boolean openingOnSide = false;
-	//Extracted from Plan info. Any opening on rear side of building.
+	//YES/NO/NA.Extracted from Plan info. Any opening on rear side of building.
 	private transient Boolean openingOnRear = false;
 	//Extracted from Plan info. Number of seats present in special occupancy 
 	private transient Integer noOfSeats = 0;
 	//Extracted from Plan info. Number of mechanical parking declared in the plan
 	private transient Integer noOfMechanicalParking = 0;
-	//Extracted from Plan info.Is plan belongs to single family building. There are few rules relaxed for single family building 
+	//YES/NO/NA.Extracted from Plan info.Is plan belongs to single family building. There are few rules relaxed for single family building 
 	private transient Boolean singleFamilyBuilding;
 	//Extracted from Plan info. Revenue survey number declared in the plan
     private String reSurveyNo;
@@ -116,7 +116,7 @@ public class PlanInformation implements Serializable {
     private String village;
     //Extracted from Plan info. Land Use zone. The value should be standard like RESIDENTIAL,COMMERCIAL,INDUSTRIAL,PUBLICANDSEMIPUBLIC etc.
     private transient String landUseZone;
-    //Extracted from Plan info. Village name declared in the plan
+    //YES/NO/NA. Extracted from Plan info. Is lease hold land
     private transient String leaseHoldLand;
     //Extracted from Plan info. Road width declared in the plan.
     private BigDecimal roadWidth = BigDecimal.ZERO;
@@ -128,33 +128,33 @@ public class PlanInformation implements Serializable {
     private BigDecimal depthOfPlot = BigDecimal.ZERO;
     //Extracted from Plan info. Average plot width.
     private BigDecimal widthOfPlot = BigDecimal.ZERO;
-    //Extracted from Plan info. Is building near to monument.
+    //YES/NO/NA. Extracted from Plan info. Is building near to monument.
     private transient String buildingNearMonument = NA;
-    //Extracted from Plan info. Is building near to government building
+    //YES/NO/NA.Extracted from Plan info. Is building near to government building
     private transient String buildingNearGovtBuilding = NA;
-    //Extracted from Plan info. Building near monument and permitted with NOC
+    //YES/NO/NA.Extracted from Plan info. Building near monument and permitted with NOC
     private transient String nocNearMonument = NA;
-    //Extracted from Plan info. Building near airport and permitted with airport authority
+    //YES/NO/NA.Extracted from Plan info. Building near airport and permitted with airport authority
     private transient String nocNearAirport = NA;
-    //Extracted from Plan info. Building near defence aerodrome and permitted with NOC
+    //YES/NO/NA.Extracted from Plan info. Building near defence aerodrome and permitted with NOC
     private transient String nocNearDefenceAerodomes = NA;
-    //Extracted from Plan info. Permitted with state Environmental impact assessment study report
+    //YES/NO/NA.Extracted from Plan info. Permitted with state Environmental impact assessment study report
     private transient String nocStateEnvImpact = NA;
-    //Extracted from Plan info. Permitted with railway NOC
+    //YES/NO/NA.Extracted from Plan info. Permitted with railway NOC
     private transient String nocRailways = NA;
-    //Extracted from Plan info. Permitted with noc issued by collector on govt. land
+    //YES/NO/NA.Extracted from Plan info. Permitted with noc issued by collector on govt. land
     private transient String nocCollectorGvtLand = NA;
-    //Extracted from Plan info. Permitted with irrigation report NOC
+    //YES/NO/NA.Extracted from Plan info. Permitted with irrigation report NOC
     private transient String nocIrrigationDept = NA;
-    //Extracted from Plan info. Permitted with fire department NOC
+    //YES/NO/NA.Extracted from Plan info. Permitted with fire department NOC
     private transient String nocFireDept = NA;
-    //Extracted from Plan info. Building near the river flag
+    //YES/NO/NA.Extracted from Plan info. Building near the river flag
     private transient String buildingNearToRiver = NA;
-    //Extracted from Plan info. Barrier free access for physically handicapped person provided.
+    //YES/NO/NA.Extracted from Plan info. Barrier free access for physically handicapped person provided.
     private transient String barrierFreeAccessForPhyChlngdPpl = NA;
-    //Extracted from Plan info. Provision for green building and sustainability provided in plan.Rainwater harvesting,solar,segregation of waste etc.
+    //YES/NO/NA.Extracted from Plan info. Provision for green building and sustainability provided in plan.Rainwater harvesting,solar,segregation of waste etc.
     private transient String provisionsForGreenBuildingsAndSustainability = NA;
-    //Extracted from Plan info. Fire Protection And Fire Safety Requirements declared in the plan.
+    //YES/NO/NA.Extracted from Plan info. Fire Protection And Fire Safety Requirements declared in the plan.
     private transient String fireProtectionAndFireSafetyRequirements = NA;
     //Extracted from Plan info.Plot number.
     private String plotNo;
@@ -164,7 +164,7 @@ public class PlanInformation implements Serializable {
     private String mauza;
     //Extracted from Plan info.District name.
     private String district;
-    //Extracted from Plan info. Rain water declared in plan.
+    //YES/NO/NA.Extracted from Plan info. Rain water declared in plan.
     private transient String rwhDeclared = NA;
 
 

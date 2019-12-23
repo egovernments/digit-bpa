@@ -193,6 +193,200 @@ components:
     planInformation:
       type: object
       description: Planinformation captures the declarations of the plan.Plan information captures the boundary, building location details,surrounding building NOC's etc. User will assert the details about the plot. The same will be used to print in plan report.
+      properties:
+        ownerName:
+          type: string
+          maxLength: 32
+          description: Temporary field used to capture Owner Name
+        plotArea:
+          type: number
+          description: Plot area defined in PLAN_INFO layer. Using the same to measure coverage and small plot condition.This is the declared plot area in the plan.
+        occupancy:
+          type: string
+          maxLength: 32
+          description: Temporary field used to auto populate occupancy detail
+        serviceType:
+          type: string
+          maxLength: 32
+          description: Temporary field used for service type.
+        amenities: 
+          type: string
+          maxLength: 32
+          description: Temporary field used to show amenities used in application.
+        architectInformation: 
+          type: string
+          maxLength: 32
+          description: Save architect who submitted application mentioned in plan info.
+        applicantName:  
+          type: string
+          maxLength: 32
+          description: Applicant Name
+        crzZoneArea:  
+          type: boolean
+          description: Extracted from Plan info. Whether plot present in CRZ zone. Expecting default value as NO. 
+        demolitionArea:
+          type: number
+          description: Extracted from Plan info. Demolition area to be mentioned in the plan info
+        depthCutting:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA. Extracted from Plan info. Depth cutting more than 1.5 Meter flag. 
+        governmentOrAidedSchool:
+          type: string
+          maxLength: 3
+          description:  YES/NO/NA.Extracted from Plan info. Is building of type government or aided school.
+        securityZone:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Is plot comes under security zone flag.
+        accessWidth:
+          type: number
+          description: Extracted from Plan info.  Access width to the plot.
+        noOfBeds:
+          type: number
+          description: Extracted from Plan info.  In case of medical occupancy, capture number of beds present in the building. Sanitation details are decided based on number of beds present.
+        nocToAbutSideDesc:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. NOC received from the side owner
+        nocToAbutRearDesc:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. NOC received from the rear owner.
+        openingOnSide:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Any opening on sides of building.
+        openingOnRear:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Any opening on rear side of building.
+        noOfSeats:
+          type: number
+          description: Extracted from Plan info. Number of seats present in special occupancy 
+        noOfMechanicalParking:
+          type: number
+          description: Extracted from Plan info. Number of mechanical parking declared in the plan
+        singleFamilyBuilding:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info.Is plan belongs to single family building. There are few rules relaxed for single family building 
+        reSurveyNo:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info. Revenue survey number declared in the plan
+        revenueWard:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info. Revenue ward name declared in the plan
+        desam:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info. Desam name declared in the plan
+        village:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info. Village name declared in the plan
+        landUseZone:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info. Land Use zone. The value should be standard like RESIDENTIAL,COMMERCIAL,INDUSTRIAL,PUBLICANDSEMIPUBLIC etc.
+        leaseHoldLand:
+          type: string
+          maxLength: 32
+          description: YES/NO/NA. Extracted from Plan info. Is lease hold land
+        roadWidth:
+          type: number
+          description: Extracted from Plan info. Road width declared in the plan.
+        roadLength:
+          type: number
+          description: Extracted from Plan info. Road length declared in the plan.
+        typeOfArea:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info. Type of area. Whether old or new area.
+        depthOfPlot:
+          type: number
+          description: Extracted from Plan info. Average plot depth.
+        widthOfPlot:
+          type: number
+          description: Extracted from Plan info. Average plot width
+        buildingNearMonument:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA. Extracted from Plan info. Is building near to monument.
+        buildingNearGovtBuilding:
+          type: string
+          maxLength: 3 
+          description: YES/NO/NA.Extracted from Plan info. Is building near to government building
+        nocNearMonument: 
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Building near monument and permitted with NOC
+        nocNearAirport:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Building near airport and permitted with airport authority
+        nocNearDefenceAerodomes:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Building near defence aerodrome and permitted with NOC
+        nocStateEnvImpact:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Permitted with state Environmental impact assessment study report
+        nocRailways:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Permitted with railway NOC
+        nocCollectorGvtLand:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Permitted with noc issued by collector on govt. land
+        nocIrrigationDept:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Permitted with irrigation report NOC
+        nocFireDept:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Permitted with fire department NOC
+        buildingNearToRiver:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Building near the river flag
+        barrierFreeAccessForPhyChlngdPpl:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Barrier free access for physically handicapped person provided.
+        provisionsForGreenBuildingsAndSustainability:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Provision for green building and sustainability provided in plan.Rainwater harvesting,solar,segregation of waste etc.
+        fireProtectionAndFireSafetyRequirements:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Fire Protection And Fire Safety Requirements declared in the plan.
+        plotNo:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.Plot number
+        khataNo:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.Khata number.
+        mauza:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.Mauza number.
+        district:
+          type: string
+          maxLength: 32
+          description: Extracted from Plan info.District name
+        rwhDeclared:
+          type: string
+          maxLength: 3
+          description: YES/NO/NA.Extracted from Plan info. Rain water declared in plan
     plot: 
       type: object
       description: Plot and Set back details.
@@ -400,6 +594,3 @@ components:
         planDetail:
           type: string
           description: Data extracted from drawing in json
-          
-            
-         
