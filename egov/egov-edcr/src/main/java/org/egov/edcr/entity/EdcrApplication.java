@@ -74,6 +74,11 @@ public class EdcrApplication extends AbstractAuditable {
     
     @Length(min = 1, max = 128)
     private String transactionNumber;
+    
+    private String thirdPartyUserCode;
+    
+    private String thirdPartyUserTenant;
+
 
     private transient MultipartFile dxfFile; // File to be process.
 
@@ -264,5 +269,21 @@ public class EdcrApplication extends AbstractAuditable {
     public void setPermitDateTemp(String permitDateTemp) {
         this.permitDateTemp = permitDateTemp;
     }
+
+	public String getThirdPartyUserCode() {
+		return thirdPartyUserCode;
+	}
+
+	public void setThirdPartyUserCode(String thirdPartyUserCode) {
+		this.thirdPartyUserCode = thirdPartyUserCode;
+	}
+
+	public String getThirdPartyUserTenant() {
+		return thirdPartyUserTenant;
+	}
+
+	public void setThirdPartyUserTenant(String thirdPartyUserTenant) {
+		this.thirdPartyUserTenant = thirdPartyUserTenant;
+	}
     
 }
