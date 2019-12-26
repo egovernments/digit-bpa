@@ -116,7 +116,7 @@ components:
           maxLength: 32
           description: Unique Transaction Number for each request.
         planDetail:
-          $ref: '#/components/schemas/planDetail'
+          $ref: '#/components/schemas/PlanDetail'
         edcrNumber:
           type: string
           maxLength: 32
@@ -200,7 +200,6 @@ components:
           description: Temporary field used to capture Owner Name
         plotArea:
           type: number
-          description: Plot area defined in PLAN_INFO layer. Using the same to measure coverage and small plot condition.This is the declared plot area in the plan.
         occupancy:
           type: string
           maxLength: 32
@@ -387,18 +386,714 @@ components:
           type: string
           maxLength: 3
           description: YES/NO/NA.Extracted from Plan info. Rain water declared in plan
-    plot: 
+    Yard: 
       type: object
       description: Plot and Set back details.
+      allOf:     # Combines the plot and measurement model
+        - $ref: '#/components/schemas/Measurement'
+      properties:
+        level:
+          type: number
+          format : int32
+          description: Each yard can at different level eg.Level 0 is considered ground Level -1 is basement. Based on type of building, levels used to define yards. The set of floors of similar shapre group under single level.
+        dimensions:
+          type:  array
+          items:
+            type: number
+          description: Different dimensions defined in the plan
+    SetBack: 
+      type: object
+      description: Set back details.
+      properties:
+        frontYard:
+          $ref: '#/components/schemas/Yard'   
+          description: Front setback defined the plan
+        rearYard:
+          $ref: '#/components/schemas/Yard'             
+          description: Rear setback defined the plan
+        sideYard1:
+          $ref: '#/components/schemas/Yard'   
+          description: one side setback defined the plan
+        sideYard2:
+          $ref: '#/components/schemas/Yard'             
+          description: another side setback defined the plan  
+        level:
+          type: number
+          format : int32
+          description: setback defined for each level.  
+        buildingFootPrint:
+          $ref: '#/components/schemas/Measurement'
+    Plot: 
+      type: object
+      description: Plot and Set back details.
+      allOf:     # Combines the plot and measurement model
+        - $ref: '#/components/schemas/Measurement'
+      properties:
+        name:
+          type: string
+          maxLength: 32
+          description: name of measurement field         
+        frontYard:
+          $ref: '#/components/schemas/Yard'   
+          description: Front setback defined the plan
+        rearYard:
+          $ref: '#/components/schemas/Yard'             
+          description: Rear setback defined the plan
+        sideYard1:
+          $ref: '#/components/schemas/Yard'   
+          description: one side setback defined the plan
+        sideYard2:
+          $ref: '#/components/schemas/Yard'             
+          description: another side setback defined the plan  
+        setBacks:
+          type:  array
+          items:
+            $ref: '#/components/schemas/SetBack'  
+        buildingFootPrint:
+          $ref: '#/components/schemas/Measurement'    
+        bsmtFrontYard:
+          $ref: '#/components/schemas/Yard'   
+          description: Basement Front setback defined the plan
+        bsmtRearYard:
+          $ref: '#/components/schemas/Yard'             
+          description: Basement Rear setback defined the plan
+        bsmtSideYard1:
+          $ref: '#/components/schemas/Yard'   
+          description: Basement one side setback defined the plan
+        bsmtSideYard2:
+          $ref: '#/components/schemas/Yard'             
+          description: Basement another side setback defined the plan 
+        plotBndryArea:
+          type: number
+          format: double
+          description: Plot boundary area
+        smallPlot:
+          type: boolean
+          description: Small plot condition check flag          
+    Measurement: 
+      type: object
+      description: Common object used to save measurement detail.
+      properties:
+        name:
+          type: string
+          maxLength: 32
+          description: name of measurement field 
+        presentInDxf:
+          type: string
+          description: boolean to check whether defined in dxf file 
+        minimumDistance:
+          type: number
+          format: double
+          description: Minimum distance 
+        minimumSide: 
+          type: number
+          format: double
+          description: Minimum side distance 
+        length: 
+          type: number
+          format: double
+          description: length of measurement   
+        width: 
+          type: number
+          format: double
+          description: width of measurement    
+        height: 
+          type: number
+          format: double
+          description: height of measurement  
+        mean: 
+          type: number
+          format: double
+          description: mean area               
+        area: 
+          type: number
+          format: double
+          description: area of measurement
+        colorCode: 
+          type: number
+          format: int32
+          description: color code 
+        isValid: 
+          type: boolean
+          description: is valid flag. Use if required.            
+      
+    AccessoryBuilding:
+      type: object
+      description: Accessory buildings are outdoor structures such as attached or detached garages, sheds, playhouses, storage buildings, pergolas, garden structures, greenhouses, private studios, boathouses, pool houses, cabanas, and other similar residential buildings.
+      allOf:     # Combines the plot and measurement model
+        - $ref: '#/components/schemas/Measurement'
+      properties:
+        number:
+          type: string
+          maxLength: 32
+          description: Block number
+        distanceFromPlotBoundary:
+          type:  array
+          items:
+            type: number
+    
+    AccessoryBlock: 
+      type: object
+      description: Accessory blocks are outdoor building which present with residential buildings used like attached garage, storage etc.
+      allOf:     # Combines the plot and measurement model
+        - $ref: '#/components/schemas/Measurement'
+      properties:
+        number:
+          type: string
+          maxLength: 32
+          description: Block number
+        accessoryBuilding:
+          $ref: '#/components/schemas/AccessoryBuilding'   
+        measurements:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'
+    Block: 
+      type: object
+      description: Single plan contain multiple block/building information. Records Existing and proposed block information.  
+      allOf:     
+        - $ref: '#/components/schemas/Measurement'
+      properties:
+        name:
+          type: string
+          maxLength: 32
+          description: Block name
+        number:
+          type: string
+          maxLength: 32
+          description: Block number
+        numberOfLifts:
+          type: string
+          maxLength: 32
+          description: Number of lifts present in block         
+        building:
+          $ref: '#/components/schemas/Building'  
+        setBacks:
+          type:  array
+          items:
+            $ref: '#/components/schemas/SetBack'          
+        coverage:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'
+        coverageDeductions:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'
+        typicalFloor:
+          type:  array
+          items:
+            $ref: '#/components/schemas/TypicalFloor'    
+        disBetweenBlocks:
+          type:  array
+          items:
+            $ref: '#/components/schemas/BlockDistances'   
+        hallAreas:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Hall'               
+        diningSpaces:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'          
+        sanityDetails:
+          $ref: '#/components/schemas/SanityDetails'           
+        singleFamilyBuilding:  
+          type: boolean
+          description: Single family flag.
+        residentialBuilding:  
+          type: boolean
+          description: Residential building flag. Default value false   
+        residentialOrCommercialBuilding:  
+          type: boolean
+          description: Residential or commercial building flag. Default value false   
+        highRiseBuilding:  
+          type: boolean
+          description: High rise building flag. Default value false   
+        completelyExisting:  
+          type: boolean
+          description: Completely existing building flag. Default value false           
+        daRamps:
+          type:  array
+          items:
+            $ref: '#/components/schemas/DARamp'     
+        openStairs:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        protectedBalconies:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        plantationGreenStripes:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'                   
+        plinthHeight:
+          type:  array
+          items:
+            type: number
+          description: plint heights
+        interiorCourtYard:
+          type:  array
+          items:
+            type: number
+          description: Interior court yard details       
+        roofTanks:
+          type:  array
+          items:
+            type: number
+          description: Roof tanks dimensions in meter
+        stairCovers:
+          type:  array
+          items:
+            type: number
+          description: Stair covers  dimensions in meter    
+        chimneys:
+          type:  array
+          items:
+            type: number
+          description: Chimneys dimensions in meter
+        parapets:
+          type:  array
+          items:
+            type: number
+          description: parapet  dimensions in meter         
+        fireTenderMovement:
+          $ref: '#/components/schemas/FireTenderMovement'           
+    TypicalFloor:
+      type: object
+      description: Typical floor case handle using this object 
+      properties:
+        modelFloorNo:
+          type: number
+          description: Model floor number. 
+        repetitiveFloorNos:
+          type:  array
+          items:
+            type: number
+    BlockDistances:
+      type: object
+      description: Block distances 
+      properties:
+        blockNumber:
+          type: string
+          description: Block number. 
+        distances:
+          type:  array
+          items:
+            type: number
+    Hall:
+      type: object
+      allOf:     
+        - $ref: '#/components/schemas/Measurement'      
+      description: Hall details required in commercial cases
+      properties:
+        number:
+          type: string
+          description: Hall number. 
+        builtUpArea:
+          type: number
+          format: double
+          description: Build up area of a hall. 
+        deductions:
+          type: number
+          format : double
+          description: buildup area deductions
+
+    SanityDetails: 
+      type: object
+      description: Sanitary details
+      properties:
+        totalSPWC:
+          type: number
+          format: int32
+          description: Total Special water closets
+        totalwashBasins:
+          type: number
+          format : int32
+          description: Total wash basins      
+        maleWaterClosets:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        femaleWaterClosets:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        commonWaterClosets:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        urinals:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        maleBathRooms:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        femaleBathRooms:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        commonBathRooms:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        maleRoomsWithWaterCloset:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        femaleRoomsWithWaterCloset:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        commonRoomsWithWaterCloset:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        drinkingWater:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+        totalSpecialWC:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'       
+    DARamp: 
+      type: object
+      description: Disabled facility ramp details
+      allOf:     
+        - $ref: '#/components/schemas/Measurement'
+      properties:
+        number:
+          type: number
+          format: int32
+          description: Ramp number
+        slope:
+          type: number
+          format: double
+          description: Slope number
+        measurements:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'
+    FireTenderMovement: 
+      type: object
+      description: Fire tender movement
+      properties:
+        errors:
+          type:  array
+          items:
+            type: string
+        fireTenderMovements:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'
+    Building: 
+      type: object
+      description: Building details
+      allOf:     
+        - $ref: '#/components/schemas/Measurement'
+      properties:
+        buildingHeight:
+          type: number
+          format: double
+          description: building height as per measurement
+        declaredBuildingHeight:
+          type: number
+          format: double
+          description: building height as per declared in planinfo
+        heightIncreasedBy:
+          type: string
+          description: Flag used to check whether height increased by chimney,roof tank or stair cover calculation
+        buildingTopMostHeight:
+          type: number
+          format: double
+          description: building height to topmost level
+        totalFloorArea:
+          type: number
+          format: double
+          description: Total floor area 
+        totalExistingFloorArea:
+          type: number
+          format: double
+          description: Total existing building floor area
+        far:
+          type: number
+          format: double
+          description: FSI area
+        coverage:
+          type: number
+          format: double
+          description: Coverage in percentage
+        coverageArea:
+          type: number
+          format: double
+          description:  Coverage area
+        maxFloor:
+          type: number
+          format: double
+          description:  Maximum floor
+        totalFloors:
+          type: number
+          format: double
+          description: Total floors   
+        floorsAboveGround:
+          type: number
+          format: double
+          description: Floor above ground
+        exteriorWall:
+          $ref: '#/components/schemas/Measurement'   
+        shade:
+          $ref: '#/components/schemas/Measurement' 
+        floors:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Floor'          
+        distanceFromBuildingFootPrintToRoadEnd:
+          type:  array
+          items:
+            type:  number
+        distanceFromSetBackToBuildingLine:
+          type:  array
+          items:
+            type:  number
+        totalBuitUpArea:
+          type: number
+          format: double
+          description: Total build up area   
+        totalExistingBuiltUpArea:
+          type: number
+          format: double
+          description: Total existing build up area   
+        mostRestrictiveOccupancy:
+          $ref: '#/components/schemas/OccupancyType'               
+        mostRestrictiveOccupancyType:
+          $ref: '#/components/schemas/OccupancyType'          
+        mostRestrictiveFarHelper:
+          $ref: '#/components/schemas/OccupancyTypeHelper'       
+        occupancies:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Occupancy'   
+          description: The list of occupancies present in the building. The occupancies are grouped by combining with different floor/ conversion logic.           
+        totalArea:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Occupancy'
+          description: This would be plain sum of occupancies without converting. Occupancies as declared in plan   
+        isHighRise:
+          type: boolean
+          description: Flag used to check high rise building
+        passage:
+          $ref: '#/components/schemas/Passage'      
+        headRoom:
+          $ref: '#/components/schemas/HeadRoom'                
+    Passage:
+      type: object
+      description: Passage details in the building
+      allOf:     
+        - $ref: '#/components/schemas/Measurement'
+      properties:
+        passageDimensions:
+          type:  array
+          items:
+            type:  number
+        passageStairDimensions:
+          type:  array
+          items:
+            type:  number            
+    HeadRoom:
+      type: object
+      description: Head room details of the building      
+      allOf:     
+        - $ref: '#/components/schemas/Measurement'
+      properties:
+        headRoomDimensions:
+          type:  array
+          items:
+            type:  number      
+    OccupancyType:
+      type: object
+      description: Electric lines which are passed through plot
+      properties:
+        occupancyTypeVal:
+          type:  string
+          description: List of occupancies defined    
+
+    OccupancyTypeHelper:
+      type: object
+      description: Electric lines which are passed through plot
+    Floor: 
+      type: object
+      description: Electric lines which are passed through plot
+      allOf:     
+        - $ref: '#/components/schemas/Measurement'
+      properties:
+        units:
+          type:  array
+          items:
+            $ref: '#/components/schemas/FloorUnit'     
+        daRooms:
+          type:  array
+          items:
+            $ref: '#/components/schemas/DARoom'     
+        vehicleRamps:
+          type:  array
+          items:
+            $ref: '#/components/schemas/VehicleRamp'    
+        ramps:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Ramp'  
+        lifts:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Lift' 
+        daLifts:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Lift'  
+        exterior:    
+          $ref: '#/components/schemas/Measurement'  
+        parking:    
+          $ref: '#/components/schemas/ParkingDetails'            
+        specialWaterClosets:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'    
+        coverageDeduct:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'   
+        name:
+          type: string
+          description: Floor name.       
+        number:
+          type: string
+          description: Floor number.                 
+        occupancies:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Occupancy'   
+        mezzanineFloor:
+          type:  array
+          items:
+            $ref: '#/components/schemas/MezzanineFloor'               
+        exitWidthDoor:
+          type:  array
+          items:
+            type:  number
+        exitWidthStair:
+          type:  array
+          items:
+            type:  number
+        halls:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Hall'              
+        convertedOccupancies:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Occupancy' 
+        generalStairs:
+          type:  array
+          items:
+            $ref: '#/components/schemas/GeneralStair'  
+        fireStairs:
+          type:  array
+          items:
+            $ref: '#/components/schemas/FireStair'  
+        spiralStairs:
+          type:  array
+          items:
+            $ref: '#/components/schemas/SpiralStair'  
+        acRoom:
+            $ref: '#/components/schemas/Room'  
+        regularRoom:
+            $ref: '#/components/schemas/Room'              
+        kitchen:
+            $ref: '#/components/schemas/Room'               
+        bathRoom:
+            $ref: '#/components/schemas/Room'                
+        waterClosets:
+            $ref: '#/components/schemas/Room'                
+        bathRoomWaterClosets:
+            $ref: '#/components/schemas/Room'   
+        heightFromTheFloorToCeiling:
+          type:  array
+          items:
+            type: number
+        heightOfTheCeilingOfUpperBasement:
+          type:  array
+          items:
+            type: number
+        interiorOpenSpace:
+            $ref: '#/components/schemas/InteriorOpenSpace'                           
+        verandah:
+            $ref: '#/components/schemas/MeasurementWithHeight'   
+        lightAndVentilation:
+            $ref: '#/components/schemas/MeasurementWithHeight'   
+        balconies:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Balcony'  
+        overHangs:
+          type:  array
+          items:
+            $ref: '#/components/schemas/Measurement'              
+        floorHeights:
+          type:  array
+          items:
+            type:  number
+    Balcony:
+      type: object
+      description: Balcony detail           
+    MeasurementWithHeight:
+      type: object
+      description: Measurement with height detail   
+    InteriorOpenSpace:
+      type: object
+      description: Interior open space object     
+    Room:
+      type: object
+      description: Room object          
+    MezzanineFloor:
+      type: object
+      description: Mezzanine floor detail
+    ParkingDetails:   
+      type: object
+      description: Parking detail
+    GeneralStair:   
+      type: object
+      description: General stair detail
+    FireStair:   
+      type: object
+      description: Fire stair detail
+    SpiralStair:   
+      type: object
+      description: Spiral stair detail      
+    FloorUnit:   
+      type: object
+      description: Number of units present in each floor. Used in apartment, lodge etc use cases.
+    DARoom:   
+      type: object
+      description: DA Rooms
+    Lift:   
+      type: object
+      description: Lift details
+
+    VehicleRamp:
+      type: object
+      description: Vehicle ramp details    
+    Ramp:   
+      type: object
+      description: Ramps details    
     virtualBuilding: 
       type: object
       description: Temporary building object used to validate rules based on overall plot/buildings details. Example Total buildup area of all the blocks, Unique occupancies present in this plot etc.      
-    accessoryBlock: 
-      type: object
-      description: Records Accessory building details. Building has outdoor structures such as attached or detached garages, sheds, storage building etc.This will not consider as another block.  
-    block: 
-      type: object
-      description: Single plan contain multiple block/building information. Records Existing and proposed block information.  
     electricLine: 
       type: object
       description: Electric lines which are passed through plot
@@ -417,7 +1112,7 @@ components:
     parkingDetails:  
       type: object
       description: Parking facilities provided in the plot. Includes visitor, two wheeler, four wheeler etc
-    occupancy:  
+    Occupancy:  
       type: object
       description: List of occupancies present in the plot inclusive of all the blocks.
     utility:  
@@ -451,7 +1146,7 @@ components:
       type: object
       description: The report output object. Based on type of building and occupancies,the rules are validated and rules which are considered for the submitted plan are recorded in this object             
     
-    planDetail:
+    PlanDetail:
       type: object
       description: All the details extracted from the plan are referred in this object
       properties:
@@ -466,15 +1161,15 @@ components:
         planInformation:
           $ref: '#/components/schemas/planInformation'  
         plot:
-          $ref: '#/components/schemas/plot'    
+          $ref: '#/components/schemas/Plot'    
         block:
           type:  array
           items:
-            $ref: '#/components/schemas/block'  
+            $ref: '#/components/schemas/Block'  
         accessoryBlocks:
           type:  array
           items:
-            $ref: '#/components/schemas/accessoryBlock'    
+            $ref: '#/components/schemas/AccessoryBlock'    
         virtualBuilding:   
           $ref: '#/components/schemas/virtualBuilding'    
         electricLine:
@@ -514,7 +1209,7 @@ components:
         occupancies:
           type:  array
           items:
-            $ref: '#/components/schemas/occupancy'  
+            $ref: '#/components/schemas/Occupancy'  
         utility:
           $ref: '#/components/schemas/utility'   
         coverage:
