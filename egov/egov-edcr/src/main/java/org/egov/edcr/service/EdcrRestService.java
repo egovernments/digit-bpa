@@ -124,8 +124,6 @@ public class EdcrRestService {
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
         edcrApplicationDetails.add(edcrApplicationDetail);
-        edcrApplication.setThirdPartyUserCode(edcrRequest.getRequestInfo().getUserInfo().getId().toString());
-        edcrApplication.setThirdPartyUserTenant(edcrRequest.getRequestInfo().getUserInfo().getTenantId());
         edcrApplication.setTransactionNumber(edcrRequest.getTransactionNumber());
         if (StringUtils.isNotBlank(edcrRequest.getApplicantName()))
             edcrApplication.setApplicantName(edcrRequest.getApplicantName());
@@ -136,10 +134,15 @@ public class EdcrRestService {
         edcrApplication.setApplicationType(ApplicationType.PERMIT);
         edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
         edcrApplication.setDxfFile(file);
+        
+        if(edcrRequest.getRequestInfo() != null && edcrRequest.getRequestInfo().getUserInfo() != null)
+    		edcrApplication.setThirdPartyUserCode(edcrRequest.getRequestInfo().getUserInfo().getId() != null ? edcrRequest.getRequestInfo().getUserInfo().getId().toString() : StringUtils.EMPTY);
+            edcrApplication.setThirdPartyUserTenant(edcrRequest.getRequestInfo().getUserInfo().getTenantId());
+            
         edcrApplication = edcrApplicationService.createRestEdcr(edcrApplication);
         return setEdcrResponse(edcrApplication, edcrRequest.getTenantId());
     }
-
+    
     @Transactional
     public List<EdcrDetail> edcrDetailsResponse(List<EdcrApplication> edcrApplications, String tenantId) {
         List<EdcrDetail> edcrDetails = new ArrayList<>();
