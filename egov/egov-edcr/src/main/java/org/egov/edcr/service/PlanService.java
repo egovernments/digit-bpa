@@ -108,7 +108,8 @@ public class PlanService {
             rule.process(plan);
             LOG.info("Completed Process " + rule.getClass().getSimpleName() + "  " + new Date());
             if (plan.getErrors().containsKey(DxfFileConstants.OCCUPANCY_ALLOWED_KEY)
-                    || plan.getErrors().containsKey("units not in meters"))
+                    || plan.getErrors().containsKey("units not in meters")
+                    || plan.getErrors().containsKey(DxfFileConstants.OCCUPANCY_PO_NOT_ALLOWED_KEY))
                 return plan;
         }
         return plan;

@@ -559,6 +559,19 @@ public class Far extends FeatureProcess {
 			pl.getErrors().put(DxfFileConstants.OCCUPANCY_ALLOWED_KEY, DxfFileConstants.OCCUPANCY_ALLOWED);
 			return pl;
 		}
+		
+                Set<String> occupancyCodes = new HashSet<String>();
+                for (OccupancyTypeHelper oth : pl.getVirtualBuilding().getOccupancyTypes()) {
+                    if (oth.getSubtype() != null) {
+                        occupancyCodes.add(oth.getSubtype().getCode());
+                    }
+                }
+        
+                if (occupancyCodes.size() == 1 && occupancyCodes.contains(DxfFileConstants.A_PO)) {
+                    pl.getErrors().put(DxfFileConstants.OCCUPANCY_PO_NOT_ALLOWED_KEY, DxfFileConstants.OCCUPANCY_PO_NOT_ALLOWED);
+                    return pl;
+                }
+	
 		OccupancyTypeHelper mostRestrictiveOccupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
 		BigDecimal providedFar = BigDecimal.ZERO;
 		BigDecimal surrenderRoadArea = BigDecimal.ZERO;
