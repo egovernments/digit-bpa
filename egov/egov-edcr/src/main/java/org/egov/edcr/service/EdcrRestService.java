@@ -124,6 +124,8 @@ public class EdcrRestService {
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
         edcrApplicationDetails.add(edcrApplicationDetail);
+        edcrApplication.setThirdPartyUserCode(edcrRequest.getRequestInfo().getUserInfo().getId().toString());
+        edcrApplication.setThirdPartyUserTenant(edcrRequest.getRequestInfo().getUserInfo().getTenantId());
         edcrApplication.setTransactionNumber(edcrRequest.getTransactionNumber());
         if (StringUtils.isNotBlank(edcrRequest.getApplicantName()))
             edcrApplication.setApplicantName(edcrRequest.getApplicantName());

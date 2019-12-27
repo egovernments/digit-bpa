@@ -222,6 +222,9 @@ public class ApplicationTenantResolverFilter implements Filter {
                         LOG.info("***********Request Body Params**************" + String.valueOf(charSequence));
                         for (String param : reqBodyParams) {
                             LOG.info("*************************" + param);
+                            if (param.contains("userInfo") && StringUtils.isNotBlank(tenantAtBody)) 
+                            	break;
+                           
                             if (param.contains("tenantId")) {
                                 String[] tenant = param.split(":");
                                 if (tenant[1].startsWith("\"") && tenant[1].endsWith("\""))
