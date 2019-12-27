@@ -88,6 +88,7 @@ public class Block extends Measurement {
     private List<BigDecimal> stairCovers;
     private List<BigDecimal> chimneys;
     private List<BigDecimal> parapets;
+    private List<TerraceUtility> terraceUtilities;
     private FireTenderMovement fireTenderMovement;
 
     @Override
@@ -376,4 +377,12 @@ public class Block extends Measurement {
         this.fireTenderMovement = fireTenderMovement;
     }
 
+    public List<TerraceUtility> getTerraceUtilities() {
+        return terraceUtilities;
+    }
+
+    public void setTerraceUtilities(List<TerraceUtility> terraceUtilities) {
+        this.terraceUtilities = terraceUtilities;
+    }
+    
 }
