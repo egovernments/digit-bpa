@@ -69,6 +69,8 @@ public class RequestInfo {
     private String msgId;
 
     private String authToken;
+    
+    private String requesterId;
 
     private String correlationId;
 
@@ -113,7 +115,7 @@ public class RequestInfo {
     public void setDid(final String did) {
         this.did = did;
     }
-
+	
     public String getKey() {
         return key;
     }
@@ -138,7 +140,15 @@ public class RequestInfo {
         this.authToken = authToken;
     }
 
-    public String getCorrelationId() {
+    public String getRequesterId() {
+		return requesterId;
+	}
+
+	public void setRequesterId(String requesterId) {
+		this.requesterId = requesterId;
+	}
+
+	public String getCorrelationId() {
         return correlationId;
     }
 
