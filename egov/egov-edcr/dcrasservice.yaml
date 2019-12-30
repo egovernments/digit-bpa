@@ -164,7 +164,7 @@ components:
           maxLength: 32
           description: Unique Transaction Number for each request.
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
+          $ref: '#/components/schemas/RequestInfo'
         dxfFile:
           type: string
           x-mimetype: application/dxf
@@ -1267,7 +1267,7 @@ components:
         applicantName:
           type: string
         requestInfo:
-          $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/RequestInfo'
+          $ref: '#/components/schemas/RequestInfo'
         dxfFile:
           type: string
           x-mimetype: application/dxf
@@ -1289,3 +1289,128 @@ components:
         planDetail:
           type: string
           description: Data extracted from drawing in json
+          
+    RequestInfo:
+      type: object
+      description: RequestInfo should be used to carry meta information about the requests to the server as described in the fields below. All eGov APIs will use requestinfo as a part of the request body to carry this meta information. Some of this information will be returned back from the server as part of the ResponseInfo in the response body to ensure correlation.
+      properties:
+        apiId:
+          type: string
+          description: unique API ID
+          maxLength: 128
+        ver:
+          type: string
+          description: API version - for HTTP based request this will be same as used in path
+          maxLength: 32
+        ts:
+          type: integer
+          format: int64
+          description: time in epoch
+        action:
+          type: string
+          description: API action to be performed like _create, _update, _search (denoting POST, PUT, GET) or _oauth etc
+          maxLength: 32
+        did:
+          type: string
+          description: Device ID from which the API is called
+          maxLength: 1024
+        key:
+          type: string
+          description: API key (API key provided to the caller in case of server to server communication)
+          maxLength: 256
+        msgId:
+          type: string
+          description: Unique request message id from the caller
+          maxLength: 256
+        requesterId:
+          type: string
+          description: UserId of the user calling
+          maxLength: 256
+        authToken:
+          type: string
+          description: //session/jwt/saml token/oauth token - the usual value that would go into HTTP bearer token
+        userInfo:
+          $ref: '#/components/schemas/UserInfo'
+        correlationId:
+          type: string
+          readOnly: true
+      required:
+        - apiId
+        - ver
+        - ts
+        - msgId
+        - action      
+          
+    UserInfo:
+      type: object
+      description: This is acting ID token of the authenticated user on the server. Any value provided by the clients will be ignored and actual user based on authtoken will be used on the server. 
+      readOnly: true
+      properties:
+        tenantId:
+          type: string
+          description: Unique Identifier of the tenant to which user primarily belongs
+        uuid: 
+          type: string
+          description: System Generated User id of the authenticated user.
+        userName: 
+          type: string
+          description: Unique user name of the authenticated user
+        password: 
+          type: string
+          description: password of the user.  
+        idToken: 
+          type: string
+          description: This will be the OTP.
+        mobile:
+          type: string
+          description: mobile number of the autheticated user
+        email: 
+          type: string
+          description: email address of the authenticated user
+        primaryrole:
+          type: array
+          description: List of all the roles for the primary tenant
+          items:
+            $ref: '#/components/schemas/Role'
+        additionalroles:
+          type: array
+          description: array of additional tenantids authorized for the authenticated user
+          items:
+            $ref: '#/components/schemas/TenantRole'
+            
+    TenantRole:
+      type: object
+      description: User role carries the tenant related role information for the user. A user can have multiple roles per tenant based on the need of the tenant. A user may also have multiple roles for multiple tenants.
+      properties:
+        tenantId: 
+          type: string
+          description: tenantid for the tenant
+        roles:
+          type: array
+          description: Roles assigned for a particular tenant - array of role codes/names
+          items: 
+            $ref: "#/components/schemas/Role"
+      required:
+        - tenantId
+        - roles             
+            
+    Role:
+      type: object
+      description: |
+        minimal representation of the Roles in the system to be carried along in UserInfo with RequestInfo meta data. Actual authorization service to extend this to have more role related attributes
+      properties:
+        name:  
+          type: string
+          description: Unique name of the role
+          maxLength: 64
+        code: 
+          type: string
+          description: Unique code of the role
+          maxLength: 64
+        description:
+          type: string
+          description: brief description of the role
+      required:
+        - name
+          
+   
