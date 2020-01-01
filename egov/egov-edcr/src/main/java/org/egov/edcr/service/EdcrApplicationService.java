@@ -193,6 +193,10 @@ public class EdcrApplicationService {
     public List<EdcrApplication> search(EdcrApplication edcrApplication) {
         return edcrApplicationRepository.findAll();
     }
+    
+    public List<EdcrApplication> findByThirdPartyUserCode(String userCode) {
+        return edcrApplicationRepository.findByThirdPartyUserCode(userCode);
+    }
 
     public List<EdcrApplication> getEdcrApplications() {
     	Pageable pageable = new PageRequest(0, 25,Sort.Direction.DESC, "id"); 

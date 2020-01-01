@@ -47,6 +47,8 @@
 
 package org.egov.edcr.repository;
 
+import java.util.List;
+
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -62,4 +64,6 @@ public interface EdcrApplicationRepository extends JpaRepository<EdcrApplication
 	EdcrApplication findByPlanPermitNumber(String permitNumber);
 	
 	EdcrApplication findByTransactionNumber(String transactionNumber);
+	
+	List<EdcrApplication> findByThirdPartyUserCode(String thirdPartyUserCode);
 }

@@ -52,13 +52,15 @@ import java.io.File;
 
 import org.egov.infra.microservice.models.RequestInfo;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EdcrRequest {
-	
-	@JsonProperty("RequestInfo")
+
+    @JsonProperty("RequestInfo")
     private RequestInfo requestInfo;
-	
+
     private String applicantName;
 
     private String transactionNumber;
@@ -70,22 +72,22 @@ public class EdcrRequest {
     private String tenantId;
 
     public RequestInfo getRequestInfo() {
-		return requestInfo;
-	}
+        return requestInfo;
+    }
 
-	public void setRequestInfo(RequestInfo requestInfo) {
-		this.requestInfo = requestInfo;
-	}
+    public void setRequestInfo(RequestInfo requestInfo) {
+        this.requestInfo = requestInfo;
+    }
 
-	public String getApplicantName() {
-		return applicantName;
-	}
+    public String getApplicantName() {
+        return applicantName;
+    }
 
-	public void setApplicantName(String applicantName) {
-		this.applicantName = applicantName;
-	}
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
+    }
 
-	public String getTransactionNumber() {
+    public String getTransactionNumber() {
         return transactionNumber;
     }
 
@@ -109,11 +111,11 @@ public class EdcrRequest {
         this.edcrNumber = edcrNumber;
     }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 }

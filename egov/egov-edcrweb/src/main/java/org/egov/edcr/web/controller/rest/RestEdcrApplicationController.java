@@ -131,8 +131,7 @@ public class RestEdcrApplicationController {
     @ResponseBody
     public ResponseEntity<?> scrutinyDetails(@ModelAttribute EdcrRequest edcrRequest,
             @RequestBody @Valid RequestInfoWrapper requestInfoWrapper) {
-        List<EdcrDetail> edcrDetail = edcrRestService.fetchEdcr(edcrRequest.getEdcrNumber(), edcrRequest.getTransactionNumber(),
-                    edcrRequest.getTenantId());
+        List<EdcrDetail> edcrDetail = edcrRestService.fetchEdcr(edcrRequest,requestInfoWrapper);
 
         if (!edcrDetail.isEmpty() && edcrDetail.get(0).getErrors() != null)
             return new ResponseEntity<>(edcrDetail.get(0).getErrors(), HttpStatus.NOT_FOUND);

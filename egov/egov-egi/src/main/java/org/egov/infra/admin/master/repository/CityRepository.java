@@ -50,6 +50,7 @@ package org.egov.infra.admin.master.repository;
 
 import org.egov.infra.admin.master.entity.City;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
@@ -71,4 +72,7 @@ public interface CityRepository extends JpaRepository<City, Long> {
 
     @QueryHints({ @QueryHint(name = HINT_CACHEABLE, value = "true") })
     City findByDomainURL(String url);
+    
+    @Query(value="select * from state.eg_city", nativeQuery = true)
+    City findStateCityDetails();
 }

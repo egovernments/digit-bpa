@@ -73,6 +73,8 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.entity.City;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.rest.support.MultiReadRequestWrapper;
@@ -96,6 +98,9 @@ public class ApplicationTenantResolverFilter implements Filter {
 
     @Autowired
     private TenantUtils tenantUtils;
+
+    @Autowired
+    private CityService cityService;
 
     private static final Logger LOG = LoggerFactory.getLogger(ApplicationTenantResolverFilter.class);
 
@@ -133,38 +138,37 @@ public class ApplicationTenantResolverFilter implements Filter {
             tenants = tenantUtils.tenantsMap();
         }
 
-      
         // restricted only the state URL to access the rest API
-      //  LOG.info("***********Enter to set tenant id and custom header**************" + req.getRequestURL().toString());
+        // LOG.info("***********Enter to set tenant id and custom header**************" + req.getRequestURL().toString());
         if (req.getRequestURL().toString().contains(tenants.get("state"))
                 && (req.getRequestURL().toString().contains("/edcr/") && (req.getRequestURL().toString().contains("/rest/")
                         || req.getRequestURL().toString().contains("/oauth/")))) {
-        	
-           LOG.debug("All tenants from config" + tenants);
-           LOG.info("tenants.get(state))" + tenants.get("state"));
-           LOG.info("Inside method to set tenant id and custom header");
+
+            LOG.debug("All tenants from config" + tenants);
+            LOG.info("tenants.get(state))" + tenants.get("state"));
+            LOG.info("Inside method to set tenant id and custom header");
             String tenantFromBody = StringUtils.EMPTY;
             customRequest = new MultiReadRequestWrapper(req);
-            tenantFromBody=   setCustomHeader(req, tenantFromBody,customRequest);
+            tenantFromBody = setCustomHeader(req, tenantFromBody, customRequest);
             String fullTenant = req.getParameter("tenantId");
             if (StringUtils.isBlank(fullTenant)) {
                 fullTenant = tenantFromBody;
             }
             if (StringUtils.isBlank(fullTenant)) {
-                throw new ApplicationRestException("incorrect_request","RestUrl does not contain tenantId: " + fullTenant);
+                throw new ApplicationRestException("incorrect_request", "RestUrl does not contain tenantId: " + fullTenant);
             }
             String tenant = fullTenant.substring(fullTenant.lastIndexOf('.') + 1, fullTenant.length());
             LOG.info("tenant from rest request =" + tenant);
             LOG.info("City Code from session " + (String) session.getAttribute(CITY_CODE_KEY));
             boolean found = false;
-            if (tenant.equalsIgnoreCase("generic")) {
+            City stateCity = cityService.fetchStateCityDetails();
+            if (tenant.equalsIgnoreCase("generic") || tenant.equalsIgnoreCase("state")) {
                 ApplicationThreadLocals.setTenantID(tenant);
                 found = true;
-            } else if (tenant.equalsIgnoreCase("state")) {
-                ApplicationThreadLocals.setTenantID(tenant);
+            } else if (tenant.equalsIgnoreCase(stateCity.getCode())) {
+                ApplicationThreadLocals.setTenantID("state");
                 found = true;
-            } else
-            {
+            } else {
                 for (String city : tenants.keySet()) {
                     LOG.info("Key :" + city + " ,Value :" + tenants.get(city) + "request tenant" + tenant);
 
@@ -172,14 +176,13 @@ public class ApplicationTenantResolverFilter implements Filter {
                         ApplicationThreadLocals.setTenantID(city);
                         found = true;
                         break;
-                    }else
-                    {
-                    	
+                    } else {
+
                     }
                 }
             }
             if (!found) {
-                throw new ApplicationRestException("invalid_tenant","Invalid Tenant Id: " + tenant);
+                throw new ApplicationRestException("invalid_tenant", "Invalid Tenant Id: " + tenant);
             }
 
         }
@@ -205,8 +208,9 @@ public class ApplicationTenantResolverFilter implements Filter {
      * }
      */
 
-    private String setCustomHeader(HttpServletRequest request, String tenantAtBody,MultiReadRequestWrapper multiReadRequestWrapper) {
-       
+    private String setCustomHeader(HttpServletRequest request, String tenantAtBody,
+            MultiReadRequestWrapper multiReadRequestWrapper) {
+
         if (request.getRequestURL().toString().contains("/rest/")) {
             LOG.info("***********Inside method to fetch auth token and tenant from reqbody**************");
             try {
@@ -222,9 +226,9 @@ public class ApplicationTenantResolverFilter implements Filter {
                         LOG.info("***********Request Body Params**************" + String.valueOf(charSequence));
                         for (String param : reqBodyParams) {
                             LOG.info("*************************" + param);
-                            if (param.contains("userInfo") && StringUtils.isNotBlank(tenantAtBody)) 
-                            	break;
-                           
+                            if (param.contains("userInfo") && StringUtils.isNotBlank(tenantAtBody))
+                                break;
+
                             if (param.contains("tenantId")) {
                                 String[] tenant = param.split(":");
                                 if (tenant[1].startsWith("\"") && tenant[1].endsWith("\""))
@@ -232,17 +236,15 @@ public class ApplicationTenantResolverFilter implements Filter {
                                 else
                                     tenantAtBody = tenant[1];
                                 LOG.info("############Tenant From Body######" + tenantAtBody);
-							} /*
-								 * else if (param.contains("authToken")) { String[] authTokenVal =
-								 * param.split(":"); // Next to 'bearer' word space is required to differentiate
-								 * token type and access token String tokenType = "bearer "; if
-								 * (authTokenVal[1].startsWith("\"") && authTokenVal[1].endsWith("\"")) { String
-								 * authToken = authTokenVal[1].substring(1, authTokenVal[1].length() - 1);
-								 * LOG.info("############Auth Token######" + tokenType + authToken);
-								 * multiReadRequestWrapper.putHeader("Authorization", tokenType + authToken); }
-								 * else { multiReadRequestWrapper.putHeader("Authorization", tokenType +
-								 * authTokenVal[1]); } }
-								 */
+                            } /*
+                               * else if (param.contains("authToken")) { String[] authTokenVal = param.split(":"); // Next to
+                               * 'bearer' word space is required to differentiate token type and access token String tokenType =
+                               * "bearer "; if (authTokenVal[1].startsWith("\"") && authTokenVal[1].endsWith("\"")) { String
+                               * authToken = authTokenVal[1].substring(1, authTokenVal[1].length() - 1);
+                               * LOG.info("############Auth Token######" + tokenType + authToken);
+                               * multiReadRequestWrapper.putHeader("Authorization", tokenType + authToken); } else {
+                               * multiReadRequestWrapper.putHeader("Authorization", tokenType + authTokenVal[1]); } }
+                               */
                         }
                     }
                 }
