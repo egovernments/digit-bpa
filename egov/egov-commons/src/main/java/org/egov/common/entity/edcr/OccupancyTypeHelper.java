@@ -129,6 +129,11 @@ public class OccupancyTypeHelper implements Serializable {
         if (!(other instanceof OccupancyTypeHelper))
             return false;
         final OccupancyTypeHelper that = (OccupancyTypeHelper) other;
+        if (that.usage != null) {
+            return that.usage != null && Objects.equals(usage.getCode(), that.usage.getCode());
+        } else if (that.subtype != null) {
+            return that.subtype != null && Objects.equals(subtype.getCode(), that.subtype.getCode());
+        }
         return that.type != null && Objects.equals(type.getCode(), that.type.getCode());
     }
 

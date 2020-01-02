@@ -15,6 +15,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -544,7 +545,8 @@ public class PlanReportService {
         if (plan.getVirtualBuilding() != null && !plan.getVirtualBuilding().getOccupancyTypes().isEmpty()) {
             List<String> occupancies = new ArrayList<>();
             plan.getVirtualBuilding().getOccupancyTypes().forEach(occ -> occupancies.add(occ.getType().getName()));
-            plan.getPlanInformation().setOccupancy(occupancies.stream().map(String::new).collect(Collectors.joining(",")));
+            Set<String> distinctOccupancies = new HashSet<>(occupancies); 
+            plan.getPlanInformation().setOccupancy(distinctOccupancies.stream().map(String::new).collect(Collectors.joining(",")));
         }
         boolean reportStatus = false;
         boolean finalReportStatus = true;

@@ -39,7 +39,7 @@ public class GeneralStair extends FeatureProcess {
     private static final String FLIGHT_WIDTH_DEFINED_DESCRIPTION = "Flight polyline width is not defined in layer ";
     private static final String WIDTH_LANDING_DESCRIPTION = "Minimum width for general stair %s mid landing %s";
     private static final String FLIGHT_NOT_DEFINED_DESCRIPTION = "General stair flight is not defined in block %s floor %s";
-    
+
     @Override
     public Plan validate(Plan planDetail) {
         return planDetail;
@@ -93,8 +93,8 @@ public class GeneralStair extends FeatureProcess {
                 scrutinyDetailLanding.addColumnHeading(6, STATUS);
                 scrutinyDetailLanding.setKey("Block_" + block.getNumber() + "_" + "General Stair - Mid landing");
 
-                OccupancyTypeHelper mostRestrictiveOccupancyType = planDetail.getVirtualBuilding() != null
-                        ? planDetail.getVirtualBuilding().getMostRestrictiveFarHelper()
+                OccupancyTypeHelper mostRestrictiveOccupancyType = block.getBuilding() != null
+                        ? block.getBuilding().getMostRestrictiveFarHelper()
                         : null;
 
                 /*
