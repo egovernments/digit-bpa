@@ -58,7 +58,13 @@ import org.springframework.stereotype.Repository;
 public interface EdcrApplicationDetailRepository extends JpaRepository<EdcrApplicationDetail, Long>, JpaSpecificationExecutor<EdcrApplicationDetail> {
 
     List<EdcrApplicationDetail> findByApplicationId(Long dcrApplicationId);
+    
     EdcrApplicationDetail findByDcrNumber(String dcrNumber);
+    
+    EdcrApplicationDetail findByDcrNumberAndApplication_ThirdPartyUserCode(String dcrNumber, String thirdPartyUserCode);
+    
     EdcrApplicationDetail findByDcrNumberAndApplication_TransactionNumber(String dcrNumber, String transactionNumber);
+    
+    EdcrApplicationDetail findByDcrNumberAndApplication_TransactionNumberAndApplication_ThirdPartyUserCode(String dcrNumber, String transactionNumber, String thirdPartyUserCode);
 
 }

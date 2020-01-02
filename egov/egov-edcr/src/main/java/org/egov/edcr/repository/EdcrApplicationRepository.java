@@ -66,4 +66,7 @@ public interface EdcrApplicationRepository extends JpaRepository<EdcrApplication
 	EdcrApplication findByTransactionNumber(String transactionNumber);
 	
 	List<EdcrApplication> findByThirdPartyUserCode(String thirdPartyUserCode);
+	
+	EdcrApplication findByTransactionNumberAndThirdPartyUserCode(String transactionNumber, String thirdPartyUserCode);
+	
 }

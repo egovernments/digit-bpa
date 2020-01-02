@@ -189,6 +189,10 @@ public class EdcrApplicationService {
     public EdcrApplication findByTransactionNumber(String transactionNo) {
         return edcrApplicationRepository.findByTransactionNumber(transactionNo);
     }
+    
+    public EdcrApplication findByTransactionNumberAndTPUserCode(String transactionNo, String userCode) {
+        return edcrApplicationRepository.findByTransactionNumberAndThirdPartyUserCode(transactionNo, userCode);
+    }
 
     public List<EdcrApplication> search(EdcrApplication edcrApplication) {
         return edcrApplicationRepository.findAll();

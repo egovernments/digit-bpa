@@ -350,9 +350,34 @@ public class EdcrRestService {
             for (Object[] appln : applns)
                 edcrDetails2.add(setEdcrResponseForAcrossTenants(appln));
             return edcrDetails2;
-        } else if (edcrRequest != null && userInfo != null && isNotBlank(userInfo.getId()) && isNotBlank(edcrRequest.getTenantId())) {
+        } else if (edcrRequest != null && userInfo != null && isNotBlank(userInfo.getId())
+                && isNotBlank(edcrRequest.getEdcrNumber()) && isNotBlank(edcrRequest.getTransactionNumber())) {
+            EdcrApplicationDetail dcrDetails = edcrApplicationDetailService.findByDcrAndTransactionNumberAndTPUserCode(
+                    edcrRequest.getEdcrNumber(),
+                    edcrRequest.getTransactionNumber(), userInfo.getId());
+            if (dcrDetails != null) {
+                edcrApplication = dcrDetails.getApplication();
+                edcrDetails.add(edcrApplication);
+            }
+        } else if (edcrRequest != null && userInfo != null && isNotBlank(userInfo.getId())
+                && isNotBlank(edcrRequest.getEdcrNumber())) {
+            EdcrApplicationDetail dcrDetails = edcrApplicationDetailService
+                    .findByDcrNumberAndTPUserCode(edcrRequest.getEdcrNumber(), userInfo.getId());
+            if (dcrDetails != null) {
+                edcrApplication = dcrDetails.getApplication();
+                edcrDetails.add(edcrApplication);
+            }
+        } else if (edcrRequest != null && userInfo != null && isNotBlank(userInfo.getId())
+                && isNotBlank(edcrRequest.getTransactionNumber())) {
+            edcrApplication = edcrApplicationService.findByTransactionNumberAndTPUserCode(edcrRequest.getTransactionNumber(),
+                    userInfo.getId());
+            if (edcrApplication != null)
+                edcrDetails.add(edcrApplication);
+        } else if (edcrRequest != null && userInfo != null && isNotBlank(userInfo.getId())
+                && isNotBlank(edcrRequest.getTenantId())) {
             edcrDetails.addAll(edcrApplicationService.findByThirdPartyUserCode(userInfo.getId()));
-        } else if (edcrRequest != null && isNotBlank(edcrRequest.getEdcrNumber()) && isNotBlank(edcrRequest.getTransactionNumber())) {
+        } else if (edcrRequest != null && isNotBlank(edcrRequest.getEdcrNumber())
+                && isNotBlank(edcrRequest.getTransactionNumber())) {
             EdcrApplicationDetail dcrDetails = edcrApplicationDetailService.findByDcrAndTransactionNumber(
                     edcrRequest.getEdcrNumber(),
                     edcrRequest.getTransactionNumber());
