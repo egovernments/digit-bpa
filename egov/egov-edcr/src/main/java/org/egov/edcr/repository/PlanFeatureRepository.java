@@ -51,6 +51,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.egov.common.entity.edcr.PlanFeature;
+import org.egov.common.entity.edcr.TerraceUtility;
 import org.egov.edcr.feature.AccessoryBuildingService;
 import org.egov.edcr.feature.AdditionalFeature;
 import org.egov.edcr.feature.Balcony;
@@ -112,6 +113,7 @@ import org.egov.edcr.feature.SolidLiquidWasteTreatment;
 import org.egov.edcr.feature.SpiralStair;
 import org.egov.edcr.feature.StairCover;
 import org.egov.edcr.feature.SurrenderRoad;
+import org.egov.edcr.feature.TerraceUtilityService;
 import org.egov.edcr.feature.TravelDistanceToExit;
 import org.egov.edcr.feature.Ventilation;
 import org.egov.edcr.feature.Verandah;
@@ -333,6 +335,9 @@ public class PlanFeatureRepository {
         features.add(pf);
         
         pf = new PlanFeature(PlotArea.class);
+        features.add(pf);
+        
+        pf = new PlanFeature(TerraceUtilityService.class);
         features.add(pf);
 
         return features;
