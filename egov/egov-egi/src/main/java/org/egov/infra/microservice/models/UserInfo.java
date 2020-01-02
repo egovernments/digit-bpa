@@ -52,6 +52,9 @@ import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class UserInfo implements Serializable {
 
     private static final long serialVersionUID = -6099520777478122089L;
@@ -70,7 +73,7 @@ public class UserInfo implements Serializable {
     private String email;
     
     private String uuid;
-
+	
     private String password;
 
     private String idToken;
