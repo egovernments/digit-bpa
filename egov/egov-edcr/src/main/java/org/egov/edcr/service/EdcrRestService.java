@@ -152,8 +152,8 @@ public class EdcrRestService {
         edcrApplication.setDxfFile(file);
 
         if (edcrRequest.getRequestInfo() != null && edcrRequest.getRequestInfo().getUserInfo() != null) {
-            edcrApplication.setThirdPartyUserCode(edcrRequest.getRequestInfo().getUserInfo().getId() != null
-                    ? edcrRequest.getRequestInfo().getUserInfo().getId().toString()
+            edcrApplication.setThirdPartyUserCode(isNotBlank(edcrRequest.getRequestInfo().getUserInfo().getId())
+                    ? edcrRequest.getRequestInfo().getUserInfo().getId()
                     : StringUtils.EMPTY);
             edcrApplication
                     .setThirdPartyUserTenant(StringUtils.isNotBlank(edcrRequest.getRequestInfo().getUserInfo().getTenantId())
@@ -312,10 +312,10 @@ public class EdcrRestService {
 
         UserInfo userInfo = reqInfoWrapper.getRequestInfo() == null ? null : reqInfoWrapper.getRequestInfo().getUserInfo();
         City stateCity = cityService.fetchStateCityDetails();
-        if (edcrRequest != null && userInfo != null && userInfo.getId() != null
+        if (edcrRequest != null && userInfo != null && isNotBlank(userInfo.getId())
                 && edcrRequest.getTenantId().equalsIgnoreCase(stateCity.getCode())) {
             final Map<String, String> params = new ConcurrentHashMap<>();
-            params.put("thirdPartyUserCode", String.valueOf(userInfo.getId()));
+            params.put("thirdPartyUserCode", userInfo.getId());
             Map<String, String> tenants = tenantUtils.tenantsMap();
             StringBuilder queryStr = new StringBuilder();
             Iterator<Map.Entry<String, String>> tenantItr = tenants.entrySet().iterator();
@@ -350,8 +350,8 @@ public class EdcrRestService {
             for (Object[] appln : applns)
                 edcrDetails2.add(setEdcrResponseForAcrossTenants(appln));
             return edcrDetails2;
-        } else if (edcrRequest != null && userInfo != null && userInfo.getId() != null && isNotBlank(edcrRequest.getTenantId())) {
-            edcrDetails.addAll(edcrApplicationService.findByThirdPartyUserCode(String.valueOf(userInfo.getId())));
+        } else if (edcrRequest != null && userInfo != null && isNotBlank(userInfo.getId()) && isNotBlank(edcrRequest.getTenantId())) {
+            edcrDetails.addAll(edcrApplicationService.findByThirdPartyUserCode(userInfo.getId()));
         } else if (edcrRequest != null && isNotBlank(edcrRequest.getEdcrNumber()) && isNotBlank(edcrRequest.getTransactionNumber())) {
             EdcrApplicationDetail dcrDetails = edcrApplicationDetailService.findByDcrAndTransactionNumber(
                     edcrRequest.getEdcrNumber(),

@@ -113,7 +113,7 @@ public class MicroserviceUtils {
         final List<org.egov.infra.microservice.models.Role> roles = new ArrayList<org.egov.infra.microservice.models.Role>();
         user.getRoles().forEach(authority -> roles.add(new org.egov.infra.microservice.models.Role(authority.getName())));
 
-        return new UserInfo(roles, user.getId(), user.getUsername(), user.getName(),
+        return new UserInfo(roles, String.valueOf(user.getId()), user.getUsername(), user.getName(),
                 user.getEmailId(), user.getMobileNumber(), user.getType().toString(),
                 getTanentId());
     }
