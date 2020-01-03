@@ -57,9 +57,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
+import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
@@ -101,33 +103,35 @@ public class PlotArea extends FeatureProcess {
             scrutinyDetail.addColumnHeading(6, STATUS);
 
             HashMap<String, String> errors = new HashMap<>();
-            Map<String, String> details = new HashMap<>();
-            details.put(RULE_NO, RULE_34);
-            details.put(DESCRIPTION, PLOTAREA_DESCRIPTION);
 
             BigDecimal plotArea = pl.getPlanInformation().getPlotArea();
             if (plotArea != null) {
-                OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null
-                        ? pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
-                        : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
-                if (occupancyType != null) {
-                    details.put(OCCUPANCY, occupancyType.getName());
-                    double occupancyValues = getOccupancyValues(occupancyType.getCode());
-                    if (plotArea.compareTo(BigDecimal.valueOf(occupancyValues)) >= 0) {
-                        details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
-                        details.put(PROVIDED, plotArea.toString() + "m2");
-                        details.put(STATUS, Result.Accepted.getResultVal());
-                        scrutinyDetail.getDetail().add(details);
-                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                Set<OccupancyTypeHelper> occupancyTypes = pl.getVirtualBuilding().getOccupancyTypes();
+                for (OccupancyTypeHelper o : occupancyTypes) {
+                    Map<String, String> details = new HashMap<>();
+                    details.put(RULE_NO, RULE_34);
+                    details.put(DESCRIPTION, PLOTAREA_DESCRIPTION);
 
-                    } else {
-                        details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
-                        details.put(PROVIDED, plotArea.toString() + "m2");
-                        details.put(STATUS, Result.Not_Accepted.getResultVal());
-                        scrutinyDetail.getDetail().add(details);
-                        pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                    OccupancyHelperDetail occupancyType = o.getSubtype() != null ? o.getSubtype() : o.getType();
+                    if (occupancyType != null) {
+                        details.put(OCCUPANCY, occupancyType.getName());
+                        double occupancyValues = getOccupancyValues(occupancyType.getCode());
+                        if (plotArea.compareTo(BigDecimal.valueOf(occupancyValues)) >= 0) {
+                            details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
+                            details.put(PROVIDED, plotArea.toString() + "m2");
+                            details.put(STATUS, Result.Accepted.getResultVal());
+                            scrutinyDetail.getDetail().add(details);
+                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+
+                        } else {
+                            details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
+                            details.put(PROVIDED, plotArea.toString() + "m2");
+                            details.put(STATUS, Result.Not_Accepted.getResultVal());
+                            scrutinyDetail.getDetail().add(details);
+                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                        }
+
                     }
-
                 }
             }
         }
