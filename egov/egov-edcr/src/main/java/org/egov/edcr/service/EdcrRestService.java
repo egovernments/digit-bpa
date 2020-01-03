@@ -244,7 +244,7 @@ public class EdcrRestService {
         return edcrDetail;
     }
 
-    public EdcrDetail setEdcrResponseForAcrossTenants(Object[] applnDtls) {
+    public EdcrDetail setEdcrResponseForAcrossTenants(Object[] applnDtls, String stateCityCode) {
         EdcrDetail edcrDetail = new EdcrDetail();
         List<String> planPdfs = new ArrayList<>();
         edcrDetail.setTransactionNumber(String.valueOf(applnDtls[1]));
@@ -263,31 +263,11 @@ public class EdcrRestService {
             edcrDetail.setPlanReport(format(
                     getFileDownloadUrl(String.valueOf(applnDtls[7]), String.valueOf(applnDtls[0]))));
 
-        File file = String.valueOf(applnDtls[8]) != null
-                ? fileStoreService.fetch(String.valueOf(applnDtls[8]), DcrConstants.APPLICATION_MODULE_TYPE)
-                : null;
-
-        if (LOG.isInfoEnabled())
-            LOG.info("**************** End - Reading Plan detail file **************" + file);
-        try {
-            if (file != null) {
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-                Plan pl1 = mapper.readValue(file, Plan.class);
-                pl1.getPlanInformation().setApplicantName(String.valueOf(applnDtls[4]));
-                if (LOG.isInfoEnabled())
-                    LOG.info("**************** Plan detail object **************" + pl1);
-                edcrDetail.setPlanDetail(pl1);
-            } else {
-                Plan pl1 = new Plan();
-                PlanInformation pi = new PlanInformation();
-                pi.setApplicantName(String.valueOf(applnDtls[4]));
-                pl1.setPlanInformation(pi);
-                edcrDetail.setPlanDetail(pl1);
-            }
-        } catch (IOException e) {
-            LOG.log(Level.ERROR, e);
-        }
+        Plan pl1 = new Plan();
+        PlanInformation pi = new PlanInformation();
+        pi.setApplicantName(String.valueOf(applnDtls[4]));
+        pl1.setPlanInformation(pi);
+        edcrDetail.setPlanDetail(pl1);
 
         if (String.valueOf(applnDtls[5]) != null)
             planPdfs.add(
@@ -298,7 +278,7 @@ public class EdcrRestService {
                     format(getFileDownloadUrl(String.valueOf(applnDtls[7]), String.valueOf(applnDtls[0]))));
 
         edcrDetail.setPlanPdfs(planPdfs);
-        edcrDetail.setTenantId(String.valueOf(applnDtls[0]));
+        edcrDetail.setTenantId(stateCityCode.concat(".").concat(String.valueOf(applnDtls[0])));
 
         if (!String.valueOf(applnDtls[3]).equalsIgnoreCase("Accepted"))
             edcrDetail.setStatus(String.valueOf(applnDtls[3]));
@@ -348,7 +328,7 @@ public class EdcrRestService {
             List<Object[]> applns = query.list();
             List<EdcrDetail> edcrDetails2 = new ArrayList<>();
             for (Object[] appln : applns)
-                edcrDetails2.add(setEdcrResponseForAcrossTenants(appln));
+                edcrDetails2.add(setEdcrResponseForAcrossTenants(appln, stateCity.getCode()));
             return edcrDetails2;
         } else if (edcrRequest != null && userInfo != null && isNotBlank(userInfo.getId())
                 && isNotBlank(edcrRequest.getEdcrNumber()) && isNotBlank(edcrRequest.getTransactionNumber())) {
