@@ -86,6 +86,7 @@ import org.egov.infra.microservice.contract.ResponseInfo;
 import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.microservice.models.UserInfo;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.TenantUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -121,9 +122,6 @@ public class EdcrRestService {
 
     @Autowired
     private EdcrApplicationService edcrApplicationService;
-
-    @Autowired
-    private EdcrApplicationDetailService edcrApplicationDetailService;
 
     @Autowired
     private FileStoreService fileStoreService;
@@ -184,6 +182,8 @@ public class EdcrRestService {
         edcrDetail.setTransactionNumber(edcrApplnDtl.getApplication().getTransactionNumber());
         edcrDetail.setEdcrNumber(edcrApplnDtl.getDcrNumber());
         edcrDetail.setStatus(edcrApplnDtl.getStatus());
+        edcrDetail.setApplicationNumber(edcrApplnDtl.getApplication().getApplicationNumber());
+        edcrDetail.setApplicationDate(edcrApplnDtl.getApplication().getApplicationDate());
 
         if (edcrApplnDtl.getDxfFileId() != null)
             edcrDetail.setDxfFile(
@@ -209,19 +209,19 @@ public class EdcrRestService {
         if (LOG.isInfoEnabled())
             LOG.info("**************** End - Reading Plan detail file **************" + file);
         try {
-            if (file != null) {
+            if (file == null) {
+                Plan pl1 = new Plan();
+                PlanInformation pi = new PlanInformation();
+                pi.setApplicantName(edcrApplnDtl.getApplication().getApplicantName());
+                pl1.setPlanInformation(pi);
+                edcrDetail.setPlanDetail(pl1);
+            } else {
                 ObjectMapper mapper = new ObjectMapper();
                 mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
                 Plan pl1 = mapper.readValue(file, Plan.class);
                 pl1.getPlanInformation().setApplicantName(edcrApplnDtl.getApplication().getApplicantName());
                 if (LOG.isInfoEnabled())
                     LOG.info("**************** Plan detail object **************" + pl1);
-                edcrDetail.setPlanDetail(pl1);
-            } else {
-                Plan pl1 = new Plan();
-                PlanInformation pi = new PlanInformation();
-                pi.setApplicantName(edcrApplnDtl.getApplication().getApplicantName());
-                pl1.setPlanInformation(pi);
                 edcrDetail.setPlanDetail(pl1);
             }
         } catch (IOException e) {
@@ -253,6 +253,8 @@ public class EdcrRestService {
         edcrDetail.setTransactionNumber(String.valueOf(applnDtls[1]));
         edcrDetail.setEdcrNumber(String.valueOf(applnDtls[2]));
         edcrDetail.setStatus(String.valueOf(applnDtls[3]));
+        edcrDetail.setApplicationDate(DateUtils.toDateUsingDefaultPattern(String.valueOf(applnDtls[8])));
+        edcrDetail.setApplicationNumber(String.valueOf(applnDtls[9]));
 
         if (String.valueOf(applnDtls[5]) != null)
             edcrDetail.setDxfFile(
@@ -292,7 +294,7 @@ public class EdcrRestService {
                 Map.Entry<String, String> value = tenantItr.next();
                 queryStr.append("(select '")
                         .append(value.getKey())
-                        .append("' as tenantId,appln.transactionNumber,dtl.dcrNumber,dtl.status,appln.applicantName,dxf.fileStoreId as dxfFileId,scrudxf.fileStoreId as scrutinizedDxfFileId,rofile.fileStoreId as reportOutputId,pdfile.fileStoreId as planDetailFileStore from ")
+                        .append("' as tenantId,appln.transactionNumber,dtl.dcrNumber,dtl.status,appln.applicantName,dxf.fileStoreId as dxfFileId,scrudxf.fileStoreId as scrutinizedDxfFileId,rofile.fileStoreId as reportOutputId,pdfile.fileStoreId as planDetailFileStore,appln.applicationDate,appln.applicationNumber from ")
                         .append(value.getKey())
                         .append(".edcr_application appln, ")
                         .append(value.getKey())
@@ -331,10 +333,16 @@ public class EdcrRestService {
             for (final Map.Entry<String, String> param : params.entrySet())
                 query.setParameter(param.getKey(), param.getValue());
             List<Object[]> applns = query.list();
-            List<EdcrDetail> edcrDetails2 = new ArrayList<>();
-            for (Object[] appln : applns)
-                edcrDetails2.add(setEdcrResponseForAcrossTenants(appln, stateCity.getCode()));
-            return edcrDetails2;
+            if (applns.isEmpty()) {
+                EdcrDetail edcrDetail = new EdcrDetail();
+                edcrDetail.setErrors("No Record Found");
+                return Arrays.asList(edcrDetail);
+            } else {
+                List<EdcrDetail> edcrDetails2 = new ArrayList<>();
+                for (Object[] appln : applns)
+                    edcrDetails2.add(setEdcrResponseForAcrossTenants(appln, stateCity.getCode()));
+                return edcrDetails2;
+            }
         } else {
             final Criteria criteria = getCurrentSession().createCriteria(EdcrApplicationDetail.class, "edcrApplicationDetail");
             criteria.createAlias("edcrApplicationDetail.application", "application");
@@ -352,12 +360,12 @@ public class EdcrRestService {
             edcrApplications = criteria.list();
         }
 
-        if (!edcrApplications.isEmpty())
-            return edcrDetailsResponse(edcrApplications, edcrRequest.getTenantId());
-        else {
+        if (edcrApplications.isEmpty()) {
             EdcrDetail edcrDetail = new EdcrDetail();
             edcrDetail.setErrors("No Record Found");
             return Arrays.asList(edcrDetail);
+        } else {
+            return edcrDetailsResponse(edcrApplications, edcrRequest.getTenantId());
         }
     }
 

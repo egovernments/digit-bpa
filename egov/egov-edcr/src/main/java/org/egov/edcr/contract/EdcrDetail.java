@@ -48,6 +48,7 @@
 
 package org.egov.edcr.contract;
 
+import java.util.Date;
 import java.util.List;
 
 import org.egov.common.entity.edcr.Plan;
@@ -57,23 +58,26 @@ public class EdcrDetail {
     private String dxfFile;
 
     private String updatedDxfFile;
-    
+
     private String planReport;
-    
+
     private String transactionNumber;
 
+    private Date applicationDate;
+
+    private String applicationNumber;
+
     private String status;
-    
-    private String edcrNumber; 
-    
+
+    private String edcrNumber;
+
     private String tenantId;
-    
+
     private String errors;
-    
+
     private List<String> planPdfs;
 
     private Plan planDetail;
-
 
     public String getPlanReport() {
         return planReport;
@@ -115,43 +119,59 @@ public class EdcrDetail {
         this.edcrNumber = edcrNumber;
     }
 
-	public String getTransactionNumber() {
-		return transactionNumber;
-	}
+    public String getTransactionNumber() {
+        return transactionNumber;
+    }
 
-	public void setTransactionNumber(String transactionNumber) {
-		this.transactionNumber = transactionNumber;
-	}
+    public void setTransactionNumber(String transactionNumber) {
+        this.transactionNumber = transactionNumber;
+    }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public void setApplicationDate(Date applicationDate) {
+        this.applicationDate = applicationDate;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
 
-	public String getDxfFile() {
-		return dxfFile;
-	}
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
 
-	public void setDxfFile(String dxfFile) {
-		this.dxfFile = dxfFile;
-	}
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
 
-	public String getUpdatedDxfFile() {
-		return updatedDxfFile;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public void setUpdatedDxfFile(String updatedDxfFile) {
-		this.updatedDxfFile = updatedDxfFile;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public String getErrors() {
-		return errors;
-	}
+    public String getDxfFile() {
+        return dxfFile;
+    }
 
-	public void setErrors(String errors) {
-		this.errors = errors;
-	}
+    public void setDxfFile(String dxfFile) {
+        this.dxfFile = dxfFile;
+    }
+
+    public String getUpdatedDxfFile() {
+        return updatedDxfFile;
+    }
+
+    public void setUpdatedDxfFile(String updatedDxfFile) {
+        this.updatedDxfFile = updatedDxfFile;
+    }
+
+    public String getErrors() {
+        return errors;
+    }
+
+    public void setErrors(String errors) {
+        this.errors = errors;
+    }
 }
