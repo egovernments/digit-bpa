@@ -86,7 +86,6 @@ import org.egov.infra.microservice.contract.ResponseInfo;
 import org.egov.infra.microservice.models.RequestInfo;
 import org.egov.infra.microservice.models.UserInfo;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.TenantUtils;
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -94,6 +93,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
+import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -253,8 +253,8 @@ public class EdcrRestService {
         edcrDetail.setTransactionNumber(String.valueOf(applnDtls[1]));
         edcrDetail.setEdcrNumber(String.valueOf(applnDtls[2]));
         edcrDetail.setStatus(String.valueOf(applnDtls[3]));
-        edcrDetail.setApplicationDate(DateUtils.toDateUsingDefaultPattern(String.valueOf(applnDtls[8])));
-        edcrDetail.setApplicationNumber(String.valueOf(applnDtls[9]));
+        edcrDetail.setApplicationDate(new LocalDate(String.valueOf(applnDtls[9])).toDate());
+        edcrDetail.setApplicationNumber(String.valueOf(applnDtls[10]));
 
         if (String.valueOf(applnDtls[5]) != null)
             edcrDetail.setDxfFile(
