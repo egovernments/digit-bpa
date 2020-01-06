@@ -9,7 +9,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -89,7 +88,6 @@ public class PlanReportService {
     private static final Logger LOG = Logger.getLogger(PlanReportService.class);
     public static final String BLOCK = "Block";
     public static final String STATUS = "Status";
-    private ReportUtil reportUtil;
     @Value("${edcr.client.subreport}")
     private boolean clientSpecificSubReport;
     @Autowired
@@ -259,7 +257,7 @@ public class PlanReportService {
             return sub;
         } catch (ColumnBuilderException | ClassNotFoundException e) {
             LOG.error(e.getMessage(), e);
-        } 
+        }
         return null;
 
     }
@@ -615,9 +613,9 @@ public class PlanReportService {
         valuesMap.put("blockCount",
                 plan.getBlocks() != null && !plan.getBlocks().isEmpty() ? plan.getBlocks().size() : 0);
         valuesMap.put("surrenderRoadArea", plan.getTotalSurrenderRoadArea());
-        String imageURL = reportUtil.getImageURL("/egi/resources/global/images/digit-logo-black.png");
+        String imageURL = ReportUtil.getImageURL("/egi/resources/global/images/digit-logo-black.png");
         valuesMap.put("egovLogo", imageURL);
-        valuesMap.put("cityLogo", cityService.getCityLogoURL());
+        valuesMap.put("cityLogo", cityService.getCityLogoURLByCurrentTenant());
 
         if (clientSpecificSubReport) {
 
@@ -630,16 +628,16 @@ public class PlanReportService {
             combinedSummary.add(COMBINED_BLOCKS_SUMMARY_DETAILS);
             drb.addConcatenatedReport(createHeaderSubreport(COMBINED_BLOCKS_SUMMARY_DETAILS, COMBINED_BLOCKS_SUMMARY_DETAILS));
             valuesMap.put(COMBINED_BLOCKS_SUMMARY_DETAILS, combinedSummary);
-            
+
             // Add total area details
             drb.addConcatenatedReport(getTotalAreaDetails());
             valuesMap.put("Total Area Details", Arrays.asList(virtualBuildingReport));
-            
+
             List<String> blockSummary = new ArrayList<>();
             blockSummary.add(BLOCK_WISE_SUMMARY);
             drb.addConcatenatedReport(createHeaderSubreport(BLOCK_WISE_SUMMARY, BLOCK_WISE_SUMMARY));
             valuesMap.put(BLOCK_WISE_SUMMARY, blockSummary);
-            
+
             // Add existing block details
             if (existingBlockDetails != null && !existingBlockDetails.isEmpty()) {
                 for (DcrReportBlockDetail existingBlockDetail : existingBlockDetails) {

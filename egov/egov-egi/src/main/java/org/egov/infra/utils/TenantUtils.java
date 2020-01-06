@@ -83,14 +83,17 @@ public final class TenantUtils {
         Map<String, String> tenants = new HashMap<>();
         URL url;
 
-        LOG.info("cities" + applicationConfiguration.cities());
+        if (LOG.isInfoEnabled())
+            LOG.info(String.format("cities %s", applicationConfiguration.cities().isEmpty() ? "" : applicationConfiguration.cities()));
         try {
             url = new URL(ApplicationThreadLocals.getDomainURL());
 
-            // first get from override properties
+            // first: get from override properties
             environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
-                LOG.info(
-                        "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
+                if (LOG.isInfoEnabled())
+                    LOG.info(
+                            "Property Source" + propertySource.getName() + " Class Name"
+                                    + propertySource.getClass().getSimpleName());
                 if (propertySource.getName().contains("egov-erp-override.properties")
                         && propertySource instanceof MapPropertySource) {
                     ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
@@ -104,10 +107,12 @@ public final class TenantUtils {
                 }
 
             });
-            // second get from application config only properties if it is not overriden
+            // second: get it only from application config properties if it is not override
             environment.getPropertySources().iterator().forEachRemaining(propertySource -> {
-                LOG.info(
-                        "Property Source" + propertySource.getName() + " Class Name" + propertySource.getClass().getSimpleName());
+                if (LOG.isInfoEnabled())
+                    LOG.info(
+                            "Property Source" + propertySource.getName() + " Class Name"
+                                    + propertySource.getClass().getSimpleName());
                 if (propertySource.getName().contains("application-config.properties")
                         && propertySource instanceof MapPropertySource) {
                     ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {

@@ -4,7 +4,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="183"/>
+	<property name="ireport.y" value="519"/>
 	<import value="org.joda.time.LocalDate"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -1501,30 +1501,32 @@
 	<pageFooter>
 		<band height="52">
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="225" y="26" width="15" height="12" uuid="68b285d7-eec7-41c7-a617-0e666c163f7a"/>
+				<reportElement x="221" y="27" width="15" height="25" uuid="68b285d7-eec7-41c7-a617-0e666c163f7a"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" evaluationTime="Report" isBlankWhenNull="true">
-				<reportElement x="252" y="27" width="22" height="12" uuid="0c301f1e-dfac-47e6-bcce-a509c0366641"/>
+				<reportElement x="248" y="27" width="22" height="25" uuid="0c301f1e-dfac-47e6-bcce-a509c0366641"/>
 				<textElement verticalAlignment="Bottom">
 					<font size="9"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="235" y="27" width="11" height="12" uuid="2656c6b1-22db-4ad7-962b-92d966d3917d"/>
+				<reportElement x="231" y="27" width="11" height="25" uuid="2656c6b1-22db-4ad7-962b-92d966d3917d"/>
 				<textElement textAlignment="Center" verticalAlignment="Bottom">
 					<font size="9"/>
 				</textElement>
 				<text><![CDATA[of]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="327" y="26" width="221" height="16" uuid="b797c101-877f-4213-8b70-47b46efc4ccd"/>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA["Generated On : "+$P{reportGeneratedDate}]]></textFieldExpression>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="288" y="26" width="260" height="26" uuid="b797c101-877f-4213-8b70-47b46efc4ccd"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Application No:"+$P{applicationNumber}+", Scrutiny Date:"+$P{reportGeneratedDate}]]></textFieldExpression>
 			</textField>
 			<image scaleImage="RetainShape" hAlign="Left" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
 				<reportElement mode="Transparent" x="9" y="27" width="109" height="25" uuid="a44f1994-7654-4816-a0f5-0de0ffecc5ce"/>

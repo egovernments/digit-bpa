@@ -71,6 +71,7 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.TenantUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -89,6 +90,9 @@ public class CityService {
 
     @Autowired
     private NotificationService notificationService;
+
+    @Autowired
+    private TenantUtils tenantUtils;
 
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, Object> cityPrefCache;
@@ -130,7 +134,7 @@ public class CityService {
     public List<City> findAll() {
         return cityRepository.findAll();
     }
-    
+
     public City fetchStateCityDetails() {
         return cityRepository.findStateCityDetails();
     }
@@ -142,19 +146,17 @@ public class CityService {
     public Map<String, Object> cityDataAsMap() {
         Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         if (cityPrefs.isEmpty()) {
-        	
-        	List<City> cityEntries = cityRepository.findAll();
-        	if(cityEntries!=null && cityEntries.size()==1)
-        	{
-            cityPrefCache.putAll(cityPrefCacheKey(),cityEntries.get(0).toMap());
-        	}else
-        	{
-        		if(getCityByURL(getDomainName())!=null)
-        		cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(getDomainName()).toMap());
-        		else
-        		cityPrefCache.putAll(cityPrefCacheKey(),cityEntries.get(0).toMap());
-        	}
-        	//cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(getDomainName()).toMap());
+
+            List<City> cityEntries = cityRepository.findAll();
+            if (cityEntries != null && cityEntries.size() == 1) {
+                cityPrefCache.putAll(cityPrefCacheKey(), cityEntries.get(0).toMap());
+            } else {
+                if (getCityByURL(getDomainName()) != null)
+                    cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(getDomainName()).toMap());
+                else
+                    cityPrefCache.putAll(cityPrefCacheKey(), cityEntries.get(0).toMap());
+            }
+            // cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(getDomainName()).toMap());
             cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         }
         return cityPrefs;
@@ -182,6 +184,11 @@ public class CityService {
 
     public String getCityLogoURL() {
         return format(CITY_LOGO_URL, getDomainURL());
+    }
+
+    public String getCityLogoURLByCurrentTenant() {
+        Map<String, String> tenants = tenantUtils.tenantsMap();
+        return format(CITY_LOGO_URL, tenants.get(getTenantID()));
     }
 
     public byte[] getCityLogoAsBytes() {
