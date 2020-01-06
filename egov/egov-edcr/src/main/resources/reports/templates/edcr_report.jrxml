@@ -4,7 +4,7 @@
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="183"/>
 	<import value="org.joda.time.LocalDate"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -195,7 +195,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getDemolitionArea()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{planInformation}.getWidthOfPlot()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="28" y="273" width="114" height="21" uuid="949ab0e1-96dd-4960-9c81-ea624c41bc50"/>
@@ -210,7 +210,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["DEMOLITION AREA in m²"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["AVERAGE WIDTH OF PLOT  in m"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="12" y="273" width="16" height="21" uuid="693763ca-77cb-4196-b15f-41f09c68ce9b"/>
@@ -255,7 +255,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["AVERAGE WIDTH OF PLOT  in m"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["PLOT AREA (As per measurement) in m²"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="418" y="252" width="130" height="21" uuid="e8d25a86-a1fc-42e5-88e1-a141e99c948c"/>
@@ -270,7 +270,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="5"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{planInformation}.getWidthOfPlot()]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$F{plot}.getPlotBndryArea()]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="104" y="10" width="340" height="17" uuid="1d8eef1e-11e9-40cd-a376-edf9107b8e3f">
@@ -372,7 +372,7 @@
 				<textFieldExpression><![CDATA[$F{planInformation}.getDepthOfPlot()]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="142" y="315" width="406" height="21" uuid="74a5768c-4cea-442c-a0f1-989b90ef9d2e"/>
+				<reportElement x="142" y="315" width="146" height="21" uuid="74a5768c-4cea-442c-a0f1-989b90ef9d2e"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -894,7 +894,7 @@
 					<font size="8"/>
 					<paragraph leftIndent="3"/>
 				</textElement>
-				<textFieldExpression><![CDATA["PLOT AREA in m²"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["PLOT AREA (As per declaration) in m²"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="142" y="252" width="146" height="21" uuid="2280df2e-7f1e-480c-a703-d2fb9a872d0b"/>
@@ -1316,21 +1316,6 @@
 				</textElement>
 				<textFieldExpression><![CDATA["9"]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="210" y="70" width="339" height="19" uuid="33a1077e-24fc-4283-a571-a5b9d10df059"/>
-				<box>
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<leftPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<bottomPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-					<rightPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle">
-					<font size="10" isBold="true"/>
-					<paragraph leftIndent="3"/>
-				</textElement>
-				<textFieldExpression><![CDATA["Report Generated On : "+$P{reportGeneratedDate}]]></textFieldExpression>
-			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
 				<reportElement x="28" y="620" width="343" height="25" uuid="571e3ece-34d8-4577-a1a1-ab0f6a4bc5f7"/>
 				<box>
@@ -1466,6 +1451,51 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{dcrNo} != null  && $P{dcrNo} !=  ""  ?  $P{dcrNo} : "NA"]]></textFieldExpression>
 			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="418" y="315" width="130" height="21" uuid="28774628-3a1d-47ef-aed7-bbd00e19487e"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+					<paragraph leftIndent="5"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{planInformation}.getDemolitionArea()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="288" y="315" width="16" height="21" uuid="9102bb24-54f2-451c-9595-f75d0d4f4c60"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA["12"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="304" y="315" width="114" height="21" uuid="518c08c8-cf93-42fb-be8d-427604e3c93a"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA["DEMOLITION AREA in m²"]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<pageFooter>
@@ -1492,11 +1522,12 @@
 				<text><![CDATA[of]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="327" y="26" width="238" height="16" uuid="b797c101-877f-4213-8b70-47b46efc4ccd"/>
-				<textFieldExpression><![CDATA["Powered by Egovernments Foundation " +$P{currentYear}]]></textFieldExpression>
+				<reportElement x="327" y="26" width="221" height="16" uuid="b797c101-877f-4213-8b70-47b46efc4ccd"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Generated On : "+$P{reportGeneratedDate}]]></textFieldExpression>
 			</textField>
-			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
-				<reportElement mode="Transparent" x="11" y="27" width="107" height="25" uuid="a44f1994-7654-4816-a0f5-0de0ffecc5ce"/>
+			<image scaleImage="RetainShape" hAlign="Left" vAlign="Middle" isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="9" y="27" width="109" height="25" uuid="a44f1994-7654-4816-a0f5-0de0ffecc5ce"/>
 				<imageExpression><![CDATA[$P{egovLogo}]]></imageExpression>
 			</image>
 		</band>

@@ -3,6 +3,7 @@ package org.egov.edcr.service;
 import static ar.com.fdvs.dj.domain.constants.Stretching.RELATIVE_TO_BAND_HEIGHT;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 
+import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -73,6 +74,7 @@ import ar.com.fdvs.dj.domain.constants.Page;
 import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 import ar.com.fdvs.dj.domain.entities.Subreport;
 import ar.com.fdvs.dj.domain.entities.columns.AbstractColumn;
+import ar.com.fdvs.dj.domain.entities.conditionalStyle.ConditionalStyle;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperExportManager;
@@ -81,6 +83,9 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Service
 public class PlanReportService {
+    private static final String TOTAL = "Total";
+    private static final String DESCRIPTION = "description";
+    private static final String RULE_NO = "RuleNo";
     private static final Logger LOG = Logger.getLogger(PlanReportService.class);
     public static final String BLOCK = "Block";
     public static final String STATUS = "Status";
@@ -109,9 +114,10 @@ public class PlanReportService {
     private static final String SIDENUMBER = "Side Number";
     private static final String SIDENUMBER_NAME = "Setback";
     private static final String LEVEL = "Level";
+    private static final String COMBINED_BLOCKS_SUMMARY_DETAILS = "Overall Summary";
+    private static final String BLOCK_WISE_SUMMARY = "Block Wise Summary";
 
     public InputStream generateDynamicReport(Plan plan, EdcrApplication dcrApplication) {
-        // reportService = new ReportService();
         FastReportBuilder drb = new FastReportBuilder();
         List<Map> inputData = new ArrayList<>();
         try {
@@ -170,38 +176,30 @@ public class PlanReportService {
                 }
             }
 
-            drb.addColumn("RuleNo", "RuleNo", String.class.getName(), 100).addColumn("description", "description",
+            drb.addColumn(RULE_NO, RULE_NO, String.class.getName(), 100).addColumn(DESCRIPTION, DESCRIPTION,
                     String.class.getName(), 100);
             drb.setTitle("FAR");
 
             Map<String, String> details = new HashMap<>();
-            details.put("RuleNo", "31-1");
-            details.put("description", "far");
+            details.put(RULE_NO, "31-1");
+            details.put(DESCRIPTION, "far");
 
             Map<String, String> details21 = new HashMap<>();
-            details21.put("RuleNo", "4444");
-            details21.put("description", "fffff");
+            details21.put(RULE_NO, "4444");
+            details21.put(DESCRIPTION, "fffff");
 
             inputData.add(details);
             inputData.add(details21);
 
-            InputStream exportPdf = null;
             JasperPrint generateJasperPrint = DynamicJasperHelper.generateJasperPrint(drb.build(),
                     new ClassicLayoutManager(), new JRBeanCollectionDataSource(inputData), paramMap);
             ByteArrayOutputStream outputBytes;
             outputBytes = new ByteArrayOutputStream();
             JasperExportManager.exportReportToPdfStream(generateJasperPrint, outputBytes);
-            InputStream inputStream = new ByteArrayInputStream(outputBytes.toByteArray());
-            return inputStream;
+            return new ByteArrayInputStream(outputBytes.toByteArray());
             // closeStream(reportStream);
-        } catch (ColumnBuilderException e) {
-            e.printStackTrace();
-        } catch (JRException e) {
-
-            e.printStackTrace();
-        } catch (Exception e) {
-
-            e.printStackTrace();
+        } catch (ColumnBuilderException | JRException | ClassNotFoundException e) {
+            LOG.error(e.getMessage(), e);
         }
 
         return null;
@@ -210,7 +208,7 @@ public class PlanReportService {
     private Subreport getSub(ScrutinyDetail detail, int j, String title, String heading, String subheading,
             String dataSourceName) {
         try {
-
+            List<ConditionalStyle> listCondStyle = getConditonalStyles();
             FastReportBuilder frb = new FastReportBuilder();
             int size = detail.getColumnHeading().keySet().size();
             Double byeLawColumnSize = 40d;
@@ -222,14 +220,19 @@ public class PlanReportService {
                 if ("Byelaw".equalsIgnoreCase(columnHeading.name)) {
                     columnWidth = byeLawColumnSize.intValue();
                 }
-                if ("Status".equalsIgnoreCase(columnHeading.name)) {
+                if (STATUS.equalsIgnoreCase(columnHeading.name)) {
                     columnWidth = statusColumnSize.intValue();
                 }
                 frb.addColumn(columnHeading.name, columnHeading.name, String.class.getName(), columnWidth);
             }
             frb.setMargins(0, 0, 0, 0);
             frb.setUseFullPageWidth(true);
+            List<AbstractColumn> columns = frb.getColumns();
+            for (AbstractColumn col : columns) {
+                if (STATUS.equalsIgnoreCase(col.getTitle()))
+                    col.setConditionalStyles(listCondStyle);
 
+            }
             if (heading != null)
                 frb.setTitle(j + "." + heading);
             else
@@ -254,11 +257,9 @@ public class PlanReportService {
             sub.setDatasource(new DJDataSource(dataSourceName, DJConstants.DATA_SOURCE_ORIGIN_PARAMETER, 0));
             sub.setLayoutManager(new ClassicLayoutManager());
             return sub;
-        } catch (ColumnBuilderException e) {
-            e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        }
+        } catch (ColumnBuilderException | ClassNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+        } 
         return null;
 
     }
@@ -332,7 +333,7 @@ public class PlanReportService {
                     reportService.getColumnHeaderStyle(), reportService.getDetailStyle());
             frb.setAllowDetailSplit(false);
             frb.setPageSizeAndOrientation(Page.Page_A4_Portrait());
-            frb.setGrandTotalLegend("Total");
+            frb.setGrandTotalLegend(TOTAL);
             frb.setGrandTotalLegendStyle(reportService.getNumberStyle());
             DynamicReport build = frb.build();
             Subreport sub = new Subreport();
@@ -350,7 +351,7 @@ public class PlanReportService {
             sub.setLayoutManager(new ClassicLayoutManager());
             return sub;
         } catch (ColumnBuilderException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return null;
     }
@@ -392,7 +393,7 @@ public class PlanReportService {
                     reportService.getColumnHeaderStyle(), reportService.getDetailStyle());
             frb.setAllowDetailSplit(false);
             frb.setPageSizeAndOrientation(Page.Page_A4_Portrait());
-            frb.setGrandTotalLegend("Total");
+            frb.setGrandTotalLegend(TOTAL);
             frb.setGrandTotalLegendStyle(reportService.getNumberStyle());
             DynamicReport build = frb.build();
             Subreport sub = new Subreport();
@@ -410,7 +411,7 @@ public class PlanReportService {
             sub.setLayoutManager(new ClassicLayoutManager());
             return sub;
         } catch (ColumnBuilderException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return null;
     }
@@ -449,7 +450,7 @@ public class PlanReportService {
                     reportService.getColumnHeaderStyle(), reportService.getDetailStyle());
             frb.setAllowDetailSplit(false);
             frb.setPageSizeAndOrientation(Page.Page_A4_Portrait());
-            frb.setGrandTotalLegend("Total");
+            frb.setGrandTotalLegend(TOTAL);
             frb.setGrandTotalLegendStyle(reportService.getNumberStyle());
             DynamicReport build = frb.build();
             Subreport sub = new Subreport();
@@ -464,7 +465,7 @@ public class PlanReportService {
             sub.setLayoutManager(new ClassicLayoutManager());
             return sub;
         } catch (ColumnBuilderException e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return null;
     }
@@ -487,7 +488,7 @@ public class PlanReportService {
             sub.setLayoutManager(new ClassicLayoutManager());
             return sub;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return null;
     }
@@ -509,7 +510,7 @@ public class PlanReportService {
             sub.setLayoutManager(new ClassicLayoutManager());
             return sub;
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error(e.getMessage(), e);
         }
         return null;
     }
@@ -528,8 +529,6 @@ public class PlanReportService {
     public InputStream generateReport(Plan plan, EdcrApplication dcrApplication) {
 
         FastReportBuilder drb = new FastReportBuilder();
-        SimpleDateFormat FORMATDDMMYYYY = new SimpleDateFormat("dd/MM/yyyy");
-
         StringBuilder reportBuilder = new StringBuilder();
 
         final Style titleStyle = new Style("titleStyle");
@@ -540,13 +539,14 @@ public class PlanReportService {
         String applicationNumber = StringUtils.isNotBlank(dcrApplication.getApplicationNumber())
                 ? dcrApplication.getApplicationNumber()
                 : "NA";
-        String applicationDate = FORMATDDMMYYYY.format(dcrApplication.getApplicationDate());
+        String applicationDate = DateUtils.toDefaultDateFormat(dcrApplication.getApplicationDate());
 
         if (plan.getVirtualBuilding() != null && !plan.getVirtualBuilding().getOccupancyTypes().isEmpty()) {
             List<String> occupancies = new ArrayList<>();
             plan.getVirtualBuilding().getOccupancyTypes().forEach(occ -> occupancies.add(occ.getType().getName()));
-            Set<String> distinctOccupancies = new HashSet<>(occupancies); 
-            plan.getPlanInformation().setOccupancy(distinctOccupancies.stream().map(String::new).collect(Collectors.joining(",")));
+            Set<String> distinctOccupancies = new HashSet<>(occupancies);
+            plan.getPlanInformation()
+                    .setOccupancy(distinctOccupancies.stream().map(String::new).collect(Collectors.joining(",")));
         }
         boolean reportStatus = false;
         boolean finalReportStatus = true;
@@ -587,11 +587,11 @@ public class PlanReportService {
                 voltages = voltageString.deleteCharAt(voltageString.length() - 1).toString() + " KV";
             }
         }
-        if (voltages == "") {
+        if (StringUtils.isBlank(voltages)) {
             voltages = String.valueOf(BigDecimal.ZERO) + " KV";
         }
 
-        final Map<String, Object> valuesMap = new HashMap();
+        final Map<String, Object> valuesMap = new HashMap<>();
         valuesMap.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
         valuesMap.put("applicantName", dcrApplication.getApplicantName());
         valuesMap.put("licensee", dcrApplication.getArchitectInformation());
@@ -603,7 +603,7 @@ public class PlanReportService {
         valuesMap.put("nocs", plan.getNoObjectionCertificates());
         valuesMap.put("reportGeneratedDate", DateUtils.toDefaultDateTimeFormat(new Date()));
         valuesMap.put("currentYear", new LocalDate().getYear());
-        valuesMap.put("far", plan.getFarDetails()!=null?plan.getFarDetails().getProvidedFar():"");
+        valuesMap.put("far", plan.getFarDetails() != null ? plan.getFarDetails().getProvidedFar() : "");
         valuesMap.put("coverage", plan.getCoverage());
         valuesMap.put("totalFloorArea",
                 plan.getVirtualBuilding() != null ? plan.getVirtualBuilding().getTotalFloorArea()
@@ -615,7 +615,7 @@ public class PlanReportService {
         valuesMap.put("blockCount",
                 plan.getBlocks() != null && !plan.getBlocks().isEmpty() ? plan.getBlocks().size() : 0);
         valuesMap.put("surrenderRoadArea", plan.getTotalSurrenderRoadArea());
-        String imageURL = reportUtil.getImageURL("/egi/resources/global/images/egov_logo_brown.png");
+        String imageURL = reportUtil.getImageURL("/egi/resources/global/images/digit-logo-black.png");
         valuesMap.put("egovLogo", imageURL);
         valuesMap.put("cityLogo", cityService.getCityLogoURL());
 
@@ -626,6 +626,20 @@ public class PlanReportService {
             List<DcrReportBlockDetail> existingBlockDetails = buildBlockWiseExistingInfo(plan);
             VirtualBuildingReport virtualBuildingReport = buildVirtualBuilding(plan.getVirtualBuilding());
 
+            List<String> combinedSummary = new ArrayList<>();
+            combinedSummary.add(COMBINED_BLOCKS_SUMMARY_DETAILS);
+            drb.addConcatenatedReport(createHeaderSubreport(COMBINED_BLOCKS_SUMMARY_DETAILS, COMBINED_BLOCKS_SUMMARY_DETAILS));
+            valuesMap.put(COMBINED_BLOCKS_SUMMARY_DETAILS, combinedSummary);
+            
+            // Add total area details
+            drb.addConcatenatedReport(getTotalAreaDetails());
+            valuesMap.put("Total Area Details", Arrays.asList(virtualBuildingReport));
+            
+            List<String> blockSummary = new ArrayList<>();
+            blockSummary.add(BLOCK_WISE_SUMMARY);
+            drb.addConcatenatedReport(createHeaderSubreport(BLOCK_WISE_SUMMARY, BLOCK_WISE_SUMMARY));
+            valuesMap.put(BLOCK_WISE_SUMMARY, blockSummary);
+            
             // Add existing block details
             if (existingBlockDetails != null && !existingBlockDetails.isEmpty()) {
                 for (DcrReportBlockDetail existingBlockDetail : existingBlockDetails) {
@@ -652,10 +666,6 @@ public class PlanReportService {
                 drb.addConcatenatedReport(getAreaDetails(true));
                 valuesMap.put("Total Proposed Details", Arrays.asList(virtualBuildingReport));
             }
-
-            // Add total area details
-            drb.addConcatenatedReport(getTotalAreaDetails());
-            valuesMap.put("Total Area Details", Arrays.asList(virtualBuildingReport));
 
             DcrReportPlanDetail dcrReportPlanDetail = new DcrReportPlanDetail();
             dcrReportPlanDetail.setVirtualBuildingReport(virtualBuildingReport);
@@ -689,6 +699,10 @@ public class PlanReportService {
                 }
             }
             int i = 0;
+            List<String> cmnHeading = new ArrayList<>();
+            cmnHeading.add("Common");
+            drb.addConcatenatedReport(createHeaderSubreport("Common - Scrutiny Details", "Common"));
+            valuesMap.put("Common", cmnHeading);
             for (String cmnFeature : common) {
                 i++;
                 drb.addConcatenatedReport(getSub(allMap.get(cmnFeature), i, i + "." + cmnFeature,
@@ -735,7 +749,7 @@ public class PlanReportService {
 
                         for (Map<String, String> d : detail) {
                             String sideNumber = d.get(SIDENUMBER);
-                            if (org.egov.infra.utils.StringUtils.isNotBlank(sideNumber)) {
+                            if (StringUtils.isNotBlank(sideNumber)) {
                                 d.remove(SIDENUMBER);
                                 d.put(SIDENUMBER_NAME, sideNumber);
                             }
@@ -849,16 +863,14 @@ public class PlanReportService {
             JasperPrint generateJasperPrint = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(),
                     ds, valuesMap);
             exportPdf = reportService.exportPdf(generateJasperPrint);
-        } catch (JRException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (IOException | JRException e) {
+            LOG.error("Error occurred when generating Jasper report", e);
         }
         return exportPdf;
 
     }
 
-    public Subreport generateDcrSubReport(final List<DcrReportOutput> dcrReportOutputs) throws Exception {
+    public Subreport generateDcrSubReport(final List<DcrReportOutput> dcrReportOutputs) {
         FastReportBuilder drb = new FastReportBuilder();
 
         final Style titleStyle = new Style("titleStyle");
@@ -870,13 +882,17 @@ public class PlanReportService {
         final Style columnHeaderStyle = reportService.getColumnHeaderStyle();
         drb.setTitle("Building Rule Scrutiny");
         drb.setTitleStyle(titleStyle);
-        drb.addColumn("KMBR Rule No.", "key", String.class.getName(), 50, columnStyle, columnHeaderStyle);
-        drb.addColumn("Rule description", "description", String.class.getName(), 120, columnStyle, columnHeaderStyle);
-        drb.addColumn("Required by Rule", "expectedResult", String.class.getName(), 120, columnStyle,
-                columnHeaderStyle);
-        drb.addColumn("Provided as per drawings", "actualResult", String.class.getName(), 120, columnStyle,
-                columnHeaderStyle);
-        drb.addColumn("Accepted / Not Accepted ", "status", String.class.getName(), 50, columnStyle, columnHeaderStyle);
+        try {
+            drb.addColumn("KMBR Rule No.", "key", String.class.getName(), 50, columnStyle, columnHeaderStyle);
+            drb.addColumn("Rule description", DESCRIPTION, String.class.getName(), 120, columnStyle, columnHeaderStyle);
+            drb.addColumn("Required by Rule", "expectedResult", String.class.getName(), 120, columnStyle,
+                    columnHeaderStyle);
+            drb.addColumn("Provided as per drawings", "actualResult", String.class.getName(), 120, columnStyle,
+                    columnHeaderStyle);
+            drb.addColumn("Accepted / Not Accepted ", "status", String.class.getName(), 50, columnStyle, columnHeaderStyle);
+        } catch (ColumnBuilderException | ClassNotFoundException e) {
+            LOG.error(e.getMessage(), e);
+        }
         drb.setUseFullPageWidth(true);
         drb.setPageSizeAndOrientation(Page.Page_Legal_Landscape());
 
@@ -905,12 +921,12 @@ public class PlanReportService {
 
     private String buildQRCodeDetails(final EdcrApplication dcrApplication, boolean reportStatus) {
         StringBuilder qrCodeValue = new StringBuilder();
-        qrCodeValue = !org.apache.commons.lang.StringUtils
+        qrCodeValue = !StringUtils
                 .isEmpty(dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber())
                         ? qrCodeValue.append("DCR Number : ")
                                 .append(dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber()).append("\n")
                         : qrCodeValue.append("DCR Number : ").append("N/A").append("\n");
-        qrCodeValue = !org.apache.commons.lang.StringUtils.isEmpty(dcrApplication.getApplicationNumber())
+        qrCodeValue = !StringUtils.isEmpty(dcrApplication.getApplicationNumber())
                 ? qrCodeValue.append("Application Number : ").append(dcrApplication.getApplicationNumber()).append("\n")
                 : qrCodeValue.append("Application Number : ").append("N/A").append("\n");
         qrCodeValue = dcrApplication.getApplicationDate() != null
@@ -958,7 +974,7 @@ public class PlanReportService {
                                     if (floor.getTerrace())
                                         floorNo = "Terrace";
                                     else if (occupancy.getIsMezzanine())
-                                        floorNo = floor.getNumber() + " (Mezzanine " + floor.getNumber() +")";
+                                        floorNo = floor.getNumber() + " (Mezzanine " + floor.getNumber() + ")";
                                     else
                                         floorNo = String.valueOf(floor.getNumber());
                                     dcrReportFloorDetail.setFloorNo(floorNo);
@@ -1089,5 +1105,25 @@ public class PlanReportService {
             virtualBuildingReport.setTotalCarpetArea(virtualBuilding.getTotalCarpetArea());
         }
         return virtualBuildingReport;
+    }
+
+    private List<ConditionalStyle> getConditonalStyles() {
+        List<ConditionalStyle> conditionalStyles = new ArrayList<>();
+        FetchCondition fc = new FetchCondition(STATUS, "Not Accepted");
+
+        ConditionalStyle cs = new ConditionalStyle(fc, reportService.getDetailStyle(Color.RED));
+        conditionalStyles.add(cs);
+
+        fc = new FetchCondition(STATUS, "Accepted");
+
+        cs = new ConditionalStyle(fc, reportService.getDetailStyle(new Color(0, 128, 0)));
+        conditionalStyles.add(cs);
+
+        fc = new FetchCondition(STATUS, "Verify");
+
+        cs = new ConditionalStyle(fc, reportService.getDetailStyle(new Color(30, 144, 255)));
+        conditionalStyles.add(cs);
+
+        return conditionalStyles;
     }
 }

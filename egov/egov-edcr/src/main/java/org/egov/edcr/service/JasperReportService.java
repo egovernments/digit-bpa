@@ -70,8 +70,20 @@ public class JasperReportService {
         detailStyle.setTransparency(Transparency.OPAQUE);
         return detailStyle;
     }
-
     
+    public Style getDetailStyle(Color color) {
+        final Style detailStyle = new Style("detail");
+        detailStyle.setBorderLeft(Border.THIN());
+        detailStyle.setBorderRight(Border.THIN());
+        detailStyle.setBorderTop(Border.THIN());
+        detailStyle.setBorderBottom(Border.THIN());
+        detailStyle.setTextColor(color);
+        detailStyle.setHorizontalAlign(HorizontalAlign.LEFT);
+        detailStyle.setVerticalAlign(VerticalAlign.TOP);
+        detailStyle.setFont(new Font(8, Font._FONT_VERDANA, true));
+        detailStyle.setTransparency(Transparency.OPAQUE);
+        return detailStyle;
+    }
 
     public Style getHeaderStyle() {
         final Style headerStyle = new Style("header");
