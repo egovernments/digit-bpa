@@ -380,6 +380,11 @@ public class EdcrRestService {
     }
 
     public ErrorDetail validateEdcrRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
+    	if (edcrRequest.getRequestInfo() == null)
+            return new ErrorDetail("BPA-07", "Required request body is missing");
+    	else if (edcrRequest.getRequestInfo().getUserInfo() == null || (edcrRequest.getRequestInfo().getUserInfo() != null && isBlank(edcrRequest.getRequestInfo().getUserInfo().getId())))
+            return new ErrorDetail("BPA-07", "User id is mandatory");
+    	
         if (isBlank(edcrRequest.getTransactionNumber()))
             return new ErrorDetail("BPA-07", "Please enter transaction number");
         if (isNotBlank(edcrRequest.getTransactionNumber())
