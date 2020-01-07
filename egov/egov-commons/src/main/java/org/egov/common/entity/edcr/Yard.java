@@ -47,10 +47,6 @@
 
 package org.egov.common.entity.edcr;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
 public class Yard extends Measurement {
 
     private static final long serialVersionUID = 15L;
@@ -58,9 +54,7 @@ public class Yard extends Measurement {
     /**
      * Each yard can at different level Level 0 is considered ground Level -1 is basement
      */
-
     private Integer level = 0;
-    List<BigDecimal> dimensions = new ArrayList<>();
 
     @Override
     public String toString() {
@@ -76,11 +70,4 @@ public class Yard extends Measurement {
         this.level = level;
     }
 
-    public List<BigDecimal> getDimensions() {
-        return dimensions;
-    }
-
-    public void setDimensions(List<BigDecimal> dimensions) {
-        this.dimensions = dimensions;
-    }
 }

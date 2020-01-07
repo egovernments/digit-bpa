@@ -979,7 +979,7 @@ public class BpaUtils {
                 || heightOfTheBuilding.compareTo(BigDecimal.valueOf(11)) > 0)
             return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_HIGHRISK);
         else
-            return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_MEDIUMRISK);
+            return applicationTypeService.findByName(BpaConstants.APPLICATION_TYPE_LOWRISK);
     }
 
     public ApplicationSubType getMostRestrOccAppType(BigDecimal plotArea, BigDecimal heightOfTheBuilding) {

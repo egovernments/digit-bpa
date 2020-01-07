@@ -50,7 +50,9 @@ package org.egov.common.entity.edcr;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-
+/*
+ * The plot information with setback details.
+ */
 public class Plot extends Measurement {
 
     private static final long serialVersionUID = 17L;

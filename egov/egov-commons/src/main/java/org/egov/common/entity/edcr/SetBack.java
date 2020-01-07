@@ -59,7 +59,6 @@ public class SetBack implements Serializable {
     private Yard sideYard1;
     private Yard sideYard2;
     private Integer level;
-    private BigDecimal height;
     private Measurement buildingFootPrint = new Measurement();
 
     public Measurement getBuildingFootPrint() {
@@ -76,14 +75,6 @@ public class SetBack implements Serializable {
 
     public void setLevel(Integer level) {
         this.level = level;
-    }
-
-    public BigDecimal getHeight() {
-        return height;
-    }
-
-    public void setHeight(BigDecimal height) {
-        this.height = height;
     }
 
     public Yard getFrontYard() {
@@ -146,7 +137,7 @@ public class SetBack implements Serializable {
     @Override
     public String toString() {
         return "SetBack [frontYard=" + frontYard + ", rearYard=" + rearYard + ", sideYard1=" + sideYard1
-                + ", sideYard2=" + sideYard2 + ", level=" + level + ", height=" + height + ", buildingFootPrint="
+                + ", sideYard2=" + sideYard2 + ", level=" + level + ",  buildingFootPrint="
                 + buildingFootPrint + "]";
     }
 
