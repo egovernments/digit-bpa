@@ -172,6 +172,9 @@ public class Plan implements Serializable {
     @Transient
     @JsonIgnore
     private List<EdcrPdfDetail> edcrPdfDetails;
+    
+    
+    private Gate gate;
 
     // Used to show drawing mistakes, General errors, mistakes in following layer/color coding standard etc
     private transient Map<String, String> errors = new LinkedHashMap<>();
@@ -549,5 +552,13 @@ public class Plan implements Serializable {
     public void setPlanInfoProperties(Map<String, String> planInfoProperties) {
         this.planInfoProperties = planInfoProperties;
     }
+
+	public Gate getGate() {
+		return gate;
+	}
+
+	public void setGate(Gate gate) {
+		this.gate = gate;
+	}
 
 }

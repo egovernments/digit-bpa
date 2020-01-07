@@ -103,11 +103,20 @@ public class CustomImplProvider {
 					ulbBean = c;
 					break;
 				}
+				if(ApplicationThreadLocals.getDistrictName()==null)
+				{
+					throw new RuntimeException("District name is not present. Please update and try again");
+				}
 				if (!ApplicationThreadLocals.getDistrictName().isEmpty()
 						&& serviceName.contains(ApplicationThreadLocals.getDistrictName().toLowerCase())) {
 					if (serviceName.contains("District".toLowerCase())) {
 						districtBean = c;
 					}
+				}
+				
+				if(ApplicationThreadLocals.getStateName()==null)
+				{
+					throw new RuntimeException("State  name is not present. Please update and try again");
 				}
 
 				if (!ApplicationThreadLocals.getStateName().isEmpty()
