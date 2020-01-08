@@ -71,13 +71,13 @@ public class PassageService extends FeatureProcess {
 		private static final String RULE_41_DESCRIPTION = "The minimum width of corridors/ verandhas";
 		
 	@Override
-	public Plan validate(Plan planDetail) {
-		return planDetail;
+	public Plan validate(Plan plan) {
+		return plan;
 	}
 
 	@Override
-	public Plan process(Plan planDetail) {
-		for (Block block : planDetail.getBlocks()) {
+	public Plan process(Plan plan) {
+		for (Block block : plan.getBlocks()) {
 			if (block.getBuilding() != null) {
 
 				ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
@@ -109,11 +109,11 @@ public class PassageService extends FeatureProcess {
 						BigDecimal minWidth = Util.roundOffTwoDecimal(minPassagePolyLine);
 						
 						if (minWidth.compareTo(BigDecimal.ONE) >= 0) {
-							setReportOutputDetails(planDetail, RULE41, RULE_41_DESCRIPTION,
+							setReportOutputDetails(plan, RULE41, RULE_41_DESCRIPTION,
 									String.valueOf(1), String.valueOf(minWidth), Result.Accepted.getResultVal(),
 									scrutinyDetail);
 						} else {
-							setReportOutputDetails(planDetail, RULE41, RULE_41_DESCRIPTION,
+							setReportOutputDetails(plan, RULE41, RULE_41_DESCRIPTION,
 									String.valueOf(1), String.valueOf(minWidth), Result.Not_Accepted.getResultVal(),
 									scrutinyDetail);
 						}
@@ -126,11 +126,11 @@ public class PassageService extends FeatureProcess {
 						BigDecimal minWidth = Util.roundOffTwoDecimal(minPassageStairPolyLine);
 						
 						if (minWidth.compareTo(Util.roundOffTwoDecimal(BigDecimal.valueOf(1.2))) >= 0) {
-							setReportOutputDetails(planDetail, RULE39_6, RULE39_6_DESCRIPTION,
+							setReportOutputDetails(plan, RULE39_6, RULE39_6_DESCRIPTION,
 									PASSAGE_STAIR_MINIMUM_WIDTH, String.valueOf(minWidth), Result.Accepted.getResultVal(),
 									scrutinyDetail1);
 						} else {
-							setReportOutputDetails(planDetail, RULE39_6, RULE39_6_DESCRIPTION,
+							setReportOutputDetails(plan, RULE39_6, RULE39_6_DESCRIPTION,
 									PASSAGE_STAIR_MINIMUM_WIDTH, String.valueOf(minWidth), Result.Not_Accepted.getResultVal(),
 									scrutinyDetail1);
 						}
@@ -139,7 +139,7 @@ public class PassageService extends FeatureProcess {
 				}
 			}
 		}
-		return planDetail;
+		return plan;
 	}
 
 	private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,

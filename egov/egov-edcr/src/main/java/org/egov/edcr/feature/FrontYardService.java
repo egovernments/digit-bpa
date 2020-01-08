@@ -55,6 +55,7 @@ import static org.egov.edcr.constants.DxfFileConstants.D;
 import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.I;
 import static org.egov.edcr.constants.DxfFileConstants.A_PO;
+import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.utility.DcrConstants.FRONT_YARD_DESC;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 
@@ -213,15 +214,15 @@ public class FrontYardService extends GeneralRule {
 												setback.getLevel(), block.getName(), plot, FRONT_YARD_DESC, min, mean,
 												occupancy.getTypeHelper(), frontYardResult);
 									}
-								} /*
-									 * else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
-									 * checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
-									 * setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
-									 * occupancy.getTypeHelper(), frontYardResult); } else {
-									 * checkFrontYardOtherOccupancies(pl, block.getBuilding(), block.getName(),
-									 * setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
-									 * occupancy.getTypeHelper(), frontYardResult); }
-									 */
+                                                            } else if (G.equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())) {
+                                                                checkFrontYardForIndustrial(pl, block.getBuilding(), block.getName(),
+                                                                        setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
+                                                                        occupancy.getTypeHelper(), frontYardResult);
+                                                            } else {
+                                                                checkFrontYardOtherOccupancies(pl, block.getBuilding(), block.getName(),
+                                                                        setback.getLevel(), plot, FRONT_YARD_DESC, min, mean,
+                                                                        occupancy.getTypeHelper(), frontYardResult);
+                                                            }
 
 							}
 
@@ -479,7 +480,7 @@ public class FrontYardService extends GeneralRule {
 		return valid;
 	}
 
-	private Boolean checkFrontYardBasement(Plan planDetail, Building building, String blockName, Integer level,
+	private Boolean checkFrontYardBasement(Plan plan, Building building, String blockName, Integer level,
 			Plot plot, String frontYardFieldName, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, FrontYardResult frontYardResult) {
 		Boolean valid = false;
@@ -514,9 +515,9 @@ public class FrontYardService extends GeneralRule {
 		String rule = FRONT_YARD_DESC;
 		BigDecimal minVal = BigDecimal.ZERO;
 		BigDecimal meanVal = BigDecimal.ZERO;
-		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
+		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
 		valid = processFrontYardForIndustrial(blockName, level, min, mean, mostRestrictiveOccupancy, frontYardResult,
-				valid, subRule, rule, minVal, meanVal, pl.getPlot().getArea(), depthOfPlot);
+				valid, subRule, rule, minVal, meanVal, pl.getPlot().getArea(), widthOfPlot);
 		return valid;
 	}
 

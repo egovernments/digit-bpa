@@ -189,7 +189,7 @@ public class OverheadElectricalLineService extends FeatureProcess {
     }
 
 
-    private boolean processVerticalDistance(ElectricLine electricalLine, Plan planDetail, String remarks1, String remarks2) {
+    private boolean processVerticalDistance(ElectricLine electricalLine, Plan plan, String remarks1, String remarks2) {
 
         boolean verticalDistancePassed = false;
 
@@ -224,10 +224,10 @@ public class OverheadElectricalLineService extends FeatureProcess {
                 }
             }
             if (verticalDistancePassed) {
-                setReportOutputDetails(planDetail, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
+                setReportOutputDetails(plan, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
                         actualResult, Result.Accepted.getResultVal(), remarks1,electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
             } else {
-                setReportOutputDetails(planDetail, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
+                setReportOutputDetails(plan, SUB_RULE_31, DcrConstants.VERTICAL_ELECTRICLINE_DISTANCE + electricalLine.getNumber(), expectedResult,
                         actualResult, Result.Not_Accepted.getResultVal(), remarks2,electricalLine.getVoltage().toString() + DcrConstants.IN_KV);
             }
 

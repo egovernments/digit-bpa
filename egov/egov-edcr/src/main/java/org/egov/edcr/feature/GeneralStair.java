@@ -41,15 +41,15 @@ public class GeneralStair extends FeatureProcess {
     private static final String FLIGHT_NOT_DEFINED_DESCRIPTION = "General stair flight is not defined in block %s floor %s";
 
     @Override
-    public Plan validate(Plan planDetail) {
-        return planDetail;
+    public Plan validate(Plan plan) {
+        return plan;
     }
 
     @Override
-    public Plan process(Plan planDetail) {
+    public Plan process(Plan plan) {
         // validate(planDetail);
         HashMap<String, String> errors = new HashMap<>();
-        blk: for (Block block : planDetail.getBlocks()) {
+        blk: for (Block block : plan.getBlocks()) {
             int generalStairCount = 0;
 
             if (block.getBuilding() != null) {
@@ -119,13 +119,13 @@ public class GeneralStair extends FeatureProcess {
                         if (!generalStairs.isEmpty()) {
                             for (org.egov.common.entity.edcr.GeneralStair generalStair : generalStairs) {
                                 {
-                                    validateFlight(planDetail, errors, block, scrutinyDetail2, scrutinyDetail3,
+                                    validateFlight(plan, errors, block, scrutinyDetail2, scrutinyDetail3,
                                             scrutinyDetailRise, mostRestrictiveOccupancyType, floor, typicalFloorValues,
                                             generalStair);
 
                                     List<StairLanding> landings = generalStair.getLandings();
                                     if (!landings.isEmpty()) {
-                                        validateLanding(planDetail, block, scrutinyDetailLanding, mostRestrictiveOccupancyType,
+                                        validateLanding(plan, block, scrutinyDetailLanding, mostRestrictiveOccupancyType,
                                                 floor,
                                                 typicalFloorValues, generalStair, landings);
                                     } else {
@@ -136,7 +136,7 @@ public class GeneralStair extends FeatureProcess {
                                                 "General Stair landing not defined in block " + block.getNumber() + " floor "
                                                         + floor.getNumber()
                                                         + " stair " + generalStair.getNumber());
-                                        planDetail.addErrors(errors);
+                                        plan.addErrors(errors);
                                     }
 
                                 }
@@ -153,7 +153,7 @@ public class GeneralStair extends FeatureProcess {
                     for (String error : stairAbsent) {
                         errors.put("General Stair " + error,
                                 "General stair not defined in " + error);
-                        planDetail.addErrors(errors);
+                        plan.addErrors(errors);
                     }
                 }
 
@@ -162,15 +162,15 @@ public class GeneralStair extends FeatureProcess {
                     errors.put("General Stair not defined in blk " + block.getNumber(),
                             "General Stair not defined in block " + block.getNumber()
                                     + ", it is mandatory for building with floors more than one.");
-                    planDetail.addErrors(errors);
+                    plan.addErrors(errors);
                 }
             }
         }
 
-        return planDetail;
+        return plan;
     }
 
-    private void validateLanding(Plan planDetail, Block block, ScrutinyDetail scrutinyDetailLanding,
+    private void validateLanding(Plan plan, Block block, ScrutinyDetail scrutinyDetailLanding,
             OccupancyTypeHelper mostRestrictiveOccupancyType, Floor floor, Map<String, Object> typicalFloorValues,
             org.egov.common.entity.edcr.GeneralStair generalStair, List<StairLanding> landings) {
         for (StairLanding landing : landings) {
@@ -191,14 +191,14 @@ public class GeneralStair extends FeatureProcess {
                         : " floor " + floor.getNumber();
 
                 if (valid) {
-                    setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
+                    setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                             String.format(WIDTH_LANDING_DESCRIPTION, generalStair.getNumber(),
                                     landing.getNumber()),
                             minimumWidth.toString(),
                             String.valueOf(minWidth), Result.Accepted.getResultVal(),
                             scrutinyDetailLanding);
                 } else {
-                    setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
+                    setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                             String.format(WIDTH_LANDING_DESCRIPTION, generalStair.getNumber(),
                                     landing.getNumber()),
                             minimumWidth.toString(),
@@ -209,7 +209,7 @@ public class GeneralStair extends FeatureProcess {
         }
     }
 
-    private void validateFlight(Plan planDetail, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetail2,
+    private void validateFlight(Plan plan, HashMap<String, String> errors, Block block, ScrutinyDetail scrutinyDetail2,
             ScrutinyDetail scrutinyDetail3, ScrutinyDetail scrutinyDetailRise, OccupancyTypeHelper mostRestrictiveOccupancyType,
             Floor floor, Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair) {
         if (!generalStair.getFlights().isEmpty()) {
@@ -229,7 +229,7 @@ public class GeneralStair extends FeatureProcess {
                 if (flightPolyLines != null && flightPolyLines.size() > 0) {
                     if (flightPolyLineClosed) {
                         if (flightWidths != null && flightWidths.size() > 0) {
-                            minFlightWidth = validateWidth(planDetail, scrutinyDetail2, floor, block,
+                            minFlightWidth = validateWidth(plan, scrutinyDetail2, floor, block,
                                     typicalFloorValues, generalStair, flight, flightWidths,
                                     minFlightWidth,
                                     mostRestrictiveOccupancyType);
@@ -237,7 +237,7 @@ public class GeneralStair extends FeatureProcess {
                         } else {
                             errors.put("Flight PolyLine width" + flightLayerName,
                                     FLIGHT_WIDTH_DEFINED_DESCRIPTION + flightLayerName);
-                            planDetail.addErrors(errors);
+                            plan.addErrors(errors);
                         }
 
                         /*
@@ -247,7 +247,7 @@ public class GeneralStair extends FeatureProcess {
 
                         if (flightLengths != null && flightLengths.size() > 0) {
                             try {
-                                minTread = validateTread(planDetail, errors, block, scrutinyDetail3,
+                                minTread = validateTread(plan, errors, block, scrutinyDetail3,
                                         floor, typicalFloorValues, generalStair, flight, flightLengths,
                                         minTread,
                                         mostRestrictiveOccupancyType);
@@ -257,13 +257,13 @@ public class GeneralStair extends FeatureProcess {
                         } else {
                             errors.put("Flight PolyLine length" + flightLayerName,
                                     FLIGHT_LENGTH_DEFINED_DESCRIPTION + flightLayerName);
-                            planDetail.addErrors(errors);
+                            plan.addErrors(errors);
 
                         }
 
                         if (noOfRises.compareTo(BigDecimal.ZERO) > 0) {
                             try {
-                                validateNoOfRises(planDetail, errors, block, scrutinyDetailRise, floor,
+                                validateNoOfRises(plan, errors, block, scrutinyDetailRise, floor,
                                         typicalFloorValues, generalStair, flight, noOfRises);
                             } catch (ArithmeticException e) {
                                 LOG.info("Denominator is zero");
@@ -277,25 +277,25 @@ public class GeneralStair extends FeatureProcess {
                                     edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED,
                                             new String[] { NO_OF_RISERS + flightLayerName },
                                             LocaleContextHolder.getLocale()));
-                            planDetail.addErrors(errors);
+                            plan.addErrors(errors);
                         }
 
                     }
                 } else {
                     errors.put("Flight PolyLine " + flightLayerName,
                             FLIGHT_POLYLINE_NOT_DEFINED_DESCRIPTION + flightLayerName);
-                    planDetail.addErrors(errors);
+                    plan.addErrors(errors);
                 }
 
             }
         } else {
             String error = String.format(FLIGHT_NOT_DEFINED_DESCRIPTION, block.getNumber(), floor.getNumber());
             errors.put(error, error);
-            planDetail.addErrors(errors);
+            plan.addErrors(errors);
         }
     }
 
-    private BigDecimal validateWidth(Plan planDetail, ScrutinyDetail scrutinyDetail2, Floor floor, Block block,
+    private BigDecimal validateWidth(Plan plan, ScrutinyDetail scrutinyDetail2, Floor floor, Block block,
             Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight,
             List<BigDecimal> flightWidths, BigDecimal minFlightWidth,
             OccupancyTypeHelper mostRestrictiveOccupancyType) {
@@ -315,11 +315,11 @@ public class GeneralStair extends FeatureProcess {
                     : " floor " + floor.getNumber();
 
             if (valid) {
-                setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
+                setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                         String.format(WIDTH_DESCRIPTION, generalStair.getNumber(), flight.getNumber()), minimumWidth.toString(),
                         String.valueOf(minFlightWidth), Result.Accepted.getResultVal(), scrutinyDetail2);
             } else {
-                setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
+                setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                         String.format(WIDTH_DESCRIPTION, generalStair.getNumber(), flight.getNumber()), minimumWidth.toString(),
                         String.valueOf(minFlightWidth), Result.Not_Accepted.getResultVal(), scrutinyDetail2);
             }
@@ -353,7 +353,7 @@ public class GeneralStair extends FeatureProcess {
         }
     }
 
-    private BigDecimal validateTread(Plan planDetail, HashMap<String, String> errors, Block block,
+    private BigDecimal validateTread(Plan plan, HashMap<String, String> errors, Block block,
             ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
             org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight, List<BigDecimal> flightLengths,
             BigDecimal minTread,
@@ -389,12 +389,12 @@ public class GeneralStair extends FeatureProcess {
                             ? (String) typicalFloorValues.get("typicalFloors")
                             : " floor " + floor.getNumber();
                     if (valid) {
-                        setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
+                        setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                                 String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
                                 requiredTread.toString(),
                                 String.valueOf(minTread), Result.Accepted.getResultVal(), scrutinyDetail3);
                     } else {
-                        setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
+                        setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                                 String.format(TREAD_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
                                 requiredTread.toString(),
                                 String.valueOf(minTread), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
@@ -407,7 +407,7 @@ public class GeneralStair extends FeatureProcess {
                     errors.put("NoOfRisesCount" + flightLayerName,
                             "Number of risers count should be greater than the count of length of flight dimensions defined in layer "
                                     + flightLayerName);
-                    planDetail.addErrors(errors);
+                    plan.addErrors(errors);
                 }
             }
         }
@@ -423,7 +423,7 @@ public class GeneralStair extends FeatureProcess {
         }
     }
 
-    private void validateNoOfRises(Plan planDetail, HashMap<String, String> errors, Block block,
+    private void validateNoOfRises(Plan plan, HashMap<String, String> errors, Block block,
             ScrutinyDetail scrutinyDetail3, Floor floor, Map<String, Object> typicalFloorValues,
             org.egov.common.entity.edcr.GeneralStair generalStair, Flight flight, BigDecimal noOfRises) {
         boolean valid = false;
@@ -437,12 +437,12 @@ public class GeneralStair extends FeatureProcess {
                     ? (String) typicalFloorValues.get("typicalFloors")
                     : " floor " + floor.getNumber();
             if (valid) {
-                setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
+                setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                         String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
                         EXPECTED_NO_OF_RISER,
                         String.valueOf(noOfRises), Result.Accepted.getResultVal(), scrutinyDetail3);
             } else {
-                setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_II, value,
+                setReportOutputDetailsFloorStairWise(plan, RULE42_5_II, value,
                         String.format(NO_OF_RISER_DESCRIPTION, generalStair.getNumber(), flight.getNumber()),
                         EXPECTED_NO_OF_RISER,
                         String.valueOf(noOfRises), Result.Not_Accepted.getResultVal(), scrutinyDetail3);
@@ -470,14 +470,15 @@ public class GeneralStair extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
+    
     /*
-     * private void validateDimensions(Plan planDetail, String blockNo, int floorNo, String stairNo, List<Measurement>
-     * flightPolyLines) { int count = 0; for (Measurement m : flightPolyLines) { if (m.getInvalidReason() != null &&
-     * m.getInvalidReason().length() > 0) { count++; } } if (count > 0) { planDetail.addError(String.format(DxfFileConstants.
-     * LAYER_FIRESTAIR_FLIGHT_FLOOR, blockNo, floorNo, stairNo), count +
-     * " number of flight polyline not having only 4 points in layer " +
+     * private void validateDimensions(Plan plan, String blockNo, int floorNo, String stairNo, List<Measurement> flightPolyLines)
+     * { int count = 0; for (Measurement m : flightPolyLines) { if (m.getInvalidReason() != null && m.getInvalidReason().length()
+     * > 0) { count++; } } if (count > 0) { plan.addError(String.format(DxfFileConstants. LAYER_FIRESTAIR_FLIGHT_FLOOR, blockNo,
+     * floorNo, stairNo), count + " number of flight polyline not having only 4 points in layer " +
      * String.format(DxfFileConstants.LAYER_FIRESTAIR_FLIGHT_FLOOR, blockNo, floorNo, stairNo)); } }
      */
+     
 
     @Override
     public Map<String, Date> getAmendments() {

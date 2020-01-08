@@ -79,6 +79,7 @@ import static org.egov.edcr.constants.DxfFileConstants.S_ICC;
 import static org.egov.edcr.constants.DxfFileConstants.S_MCH;
 import static org.egov.edcr.constants.DxfFileConstants.S_SAS;
 import static org.egov.edcr.constants.DxfFileConstants.S_SC;
+import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.PLOT_AREA;
@@ -555,9 +556,16 @@ public class Far extends FeatureProcess {
                         }
                         pl.getVirtualBuilding().setResidentialOrCommercialBuilding(allResidentialOrCommercialOccTypesForPlan == 1);
                 }
-                if (!pl.getVirtualBuilding().getResidentialOrCommercialBuilding()) {
-                        pl.getErrors().put(DxfFileConstants.OCCUPANCY_ALLOWED_KEY, DxfFileConstants.OCCUPANCY_ALLOWED);
-                        return pl;
+        
+                OccupancyTypeHelper mostRestrictiveOccupancy = pl.getVirtualBuilding() != null
+                        ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+                        : null;
+                        
+                if (!(pl.getVirtualBuilding().getResidentialOrCommercialBuilding()
+                        || (mostRestrictiveOccupancy.getType() != null
+                                && DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())))) {
+                    pl.getErrors().put(DxfFileConstants.OCCUPANCY_ALLOWED_KEY, DxfFileConstants.OCCUPANCY_ALLOWED);
+                    return pl;
                 }
                 
                 Set<String> occupancyCodes = new HashSet<String>();
@@ -763,6 +771,8 @@ public class Far extends FeatureProcess {
                         return codesMap.get(M_HOTHC);
                 else if (codes.contains(E_SACA))
                         return codesMap.get(E_SACA);
+                else if (codes.contains(G))
+                    return codesMap.get(G);
                 else if (codes.contains(F))
                         return codesMap.get(F);
                 else if (codes.contains(A))

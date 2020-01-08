@@ -58,13 +58,13 @@ import org.springframework.stereotype.Service;
 public class DxfToPdfConverter extends FeatureProcess {
 
 	@Override
-	public Plan validate(Plan planDetail) {
-		return planDetail;
+	public Plan validate(Plan plan) {
+		return plan;
 	}
 
 	@Override
-	public Plan process(Plan planDetail) {
-		return planDetail;
+	public Plan process(Plan plan) {
+		return plan;
 		}
 
 

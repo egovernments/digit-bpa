@@ -141,21 +141,23 @@ public class RainWaterHarvesting extends FeatureProcess {
         }
     }
 
+    
     /*
-     * private void processRWHTankCapacity(Plan planDetail, String rule, String subRule, String subRuleDesc, BigDecimal
+     * private void processRWHTankCapacity(Plan plan, String rule, String subRule, String subRuleDesc, BigDecimal
      * expectedTankCapacity, Boolean valid) { if (expectedTankCapacity.compareTo(BigDecimal.valueOf(0)) > 0) { if (valid) {
-     * setReportOutputDetails(planDetail, subRule, RAINWATER_HARVESTING_TANK_CAPACITY, expectedTankCapacity.toString(),
-     * planDetail.getUtility().getRainWaterHarvestingTankCapacity().toString(), Result.Accepted.getResultVal()); } else {
-     * setReportOutputDetails(planDetail, subRule, RAINWATER_HARVESTING_TANK_CAPACITY, expectedTankCapacity.toString() + IN_LITRE,
-     * planDetail.getUtility().getRainWaterHarvestingTankCapacity().toString() + IN_LITRE, Result.Not_Accepted.getResultVal()); }
-     * } }
+     * setReportOutputDetails(plan, subRule, RAINWATER_HARVESTING_TANK_CAPACITY, expectedTankCapacity.toString(),
+     * plan.getUtility().getRainWaterHarvestingTankCapacity().toString(), Result.Accepted.getResultVal()); } else {
+     * setReportOutputDetails(plan, subRule, RAINWATER_HARVESTING_TANK_CAPACITY, expectedTankCapacity.toString() + IN_LITRE,
+     * plan.getUtility().getRainWaterHarvestingTankCapacity().toString() + IN_LITRE, Result.Not_Accepted.getResultVal()); } } }
      */
+     
 
+    
     /*
-     * private boolean processRWH(Plan planDetail, String rule, String subRule, String subRuleDesc) { if
-     * (!planDetail.getUtility().getRainWaterHarvest().isEmpty()) { setReportOutputDetails(planDetail, subRule, subRuleDesc, "",
+     * private boolean processRWH(Plan plan, String rule, String subRule, String subRuleDesc) { if
+     * (!plan.getUtility().getRainWaterHarvest().isEmpty()) { setReportOutputDetails(plan, subRule, subRuleDesc, "",
      * OBJECTDEFINED_DESC, Result.Accepted.getResultVal()); return true; } else if
-     * (planDetail.getUtility().getRainWaterHarvest().isEmpty()) { setReportOutputDetails(planDetail, subRule, subRuleDesc, "",
+     * (plan.getUtility().getRainWaterHarvest().isEmpty()) { setReportOutputDetails(plan, subRule, subRuleDesc, "",
      * OBJECTNOTDEFINED_DESC, Result.Not_Accepted.getResultVal()); return true; } return false; } private boolean
      * checkOccupancyTypeForRWH(OccupancyType occupancyType) { return occupancyType.equals(OccupancyType.OCCUPANCY_A2) ||
      * occupancyType.equals(OccupancyType.OCCUPANCY_A3) || occupancyType.equals(OccupancyType.OCCUPANCY_B1) ||
@@ -167,6 +169,7 @@ public class RainWaterHarvesting extends FeatureProcess {
      * occupancyType.equals(OccupancyType.OCCUPANCY_G1) || occupancyType.equals(OccupancyType.OCCUPANCY_G2) ||
      * occupancyType.equals(OccupancyType.OCCUPANCY_I1) || occupancyType.equals(OccupancyType.OCCUPANCY_I2); }
      */
+     
 
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
             String status) {

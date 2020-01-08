@@ -464,7 +464,7 @@ public class RampService extends FeatureProcess {
         pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
     }
 
-    private void validateDimensions(Plan planDetail, String blockNo, int floorNo, String rampNo,
+    private void validateDimensions(Plan plan, String blockNo, int floorNo, String rampNo,
             List<Measurement> rampPolylines) {
         int count = 0;
         for (Measurement m : rampPolylines) {
@@ -473,7 +473,7 @@ public class RampService extends FeatureProcess {
             }
         }
         if (count > 0) {
-            planDetail.addError(String.format(DxfFileConstants.LAYER_RAMP_WITH_NO, blockNo, floorNo, rampNo),
+            plan.addError(String.format(DxfFileConstants.LAYER_RAMP_WITH_NO, blockNo, floorNo, rampNo),
                     count + " number of ramp polyline not having only 4 points in layer "
                             + String.format(DxfFileConstants.LAYER_RAMP_WITH_NO, blockNo, floorNo, rampNo));
 

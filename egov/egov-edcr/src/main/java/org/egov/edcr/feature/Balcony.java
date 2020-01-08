@@ -73,13 +73,13 @@ public class Balcony extends FeatureProcess {
     private static final BigDecimal ONE_POINTTWO = BigDecimal.valueOf(1.2);
 
     @Override
-    public Plan validate(Plan planDetail) {
-        return planDetail;
+    public Plan validate(Plan plan) {
+        return plan;
     }
 
     @Override
-    public Plan process(Plan planDetail) {
-        for (Block block : planDetail.getBlocks()) {
+    public Plan process(Plan plan) {
+        for (Block block : plan.getBlocks()) {
             if (block.getBuilding() != null) {
 
                 ScrutinyDetail scrutinyDetailLanding = new ScrutinyDetail();
@@ -116,12 +116,12 @@ public class Balcony extends FeatureProcess {
                                     : " floor " + floor.getNumber();
 
                             if (isAccepted) {
-                                setReportOutputDetailsFloorBalconyWise(planDetail, RULE45_IV, value,
+                                setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
                                         String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
                                         ONE_POINTTWO.toString(),
                                         String.valueOf(minWidth), Result.Accepted.getResultVal(), scrutinyDetailLanding);
                             } else {
-                                setReportOutputDetailsFloorBalconyWise(planDetail, RULE45_IV, value,
+                                setReportOutputDetailsFloorBalconyWise(plan, RULE45_IV, value,
                                         String.format(WIDTH_BALCONY_DESCRIPTION, balcony.getNumber()),
                                         ONE_POINTTWO.toString(),
                                         String.valueOf(minWidth), Result.Not_Accepted.getResultVal(), scrutinyDetailLanding);
@@ -134,7 +134,7 @@ public class Balcony extends FeatureProcess {
             }
         }
 
-        return planDetail;
+        return plan;
     }
 
     private void setReportOutputDetailsFloorBalconyWise(Plan pl, String ruleNo, String floor, String description,

@@ -331,7 +331,7 @@ public class DxfFileConstants {
     public static final String SETBACK = "SetBack";
     public static final String YARD_NAME = "Yard Name";
 
-    public static final String OCCUPANCY_ALLOWED = "Only residential or commerical buildings will be scrutinized for now.";
+    public static final String OCCUPANCY_ALLOWED = "Only residential or commerical or industrial buildings will be scrutinized for now.";
     public static final String OCCUPANCY_ALLOWED_KEY = "occupancy_allowed";
     public static final String OCCUPANCY_PO_NOT_ALLOWED = "Plans with only professional office occupancy is not allowed";
     public static final String OCCUPANCY_PO_NOT_ALLOWED_KEY = "occupancy_po_not_allowed";

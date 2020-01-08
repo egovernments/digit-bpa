@@ -74,8 +74,8 @@ public class SpiralStair extends FeatureProcess {
 	private static final String DIAMETER_DESCRIPTION = "Minimum diameter for spiral fire stair %s";
 
 	@Override
-	public Plan process(Plan planDetail) {
-		blk: for (Block block : planDetail.getBlocks()) {
+	public Plan process(Plan plan) {
+		blk: for (Block block : plan.getBlocks()) {
 			if (block.getBuilding() != null && !block.getBuilding().getOccupancies().isEmpty()) {
 				/*
 				 * if (Util.checkExemptionConditionForBuildingParts(block) ||
@@ -119,7 +119,7 @@ public class SpiralStair extends FeatureProcess {
 										: " floor " + floor.getNumber();
 
 								if (valid) {
-									setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_IV, value,
+									setReportOutputDetailsFloorStairWise(plan, RULE42_5_IV, value,
 											spiralStair.getNumber(), "",
 											"spiral stair of fire stair not allowed for building with height > 9 for block "
 													+ block.getNumber() + " " + value,
@@ -138,12 +138,12 @@ public class SpiralStair extends FeatureProcess {
 										BigDecimal minDiameter = Util.roundOffTwoDecimal(BigDecimal.valueOf(1.50));
 
 										if (diameter.compareTo(minDiameter) >= 0) {
-											setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_IV, value,
+											setReportOutputDetailsFloorStairWise(plan, RULE42_5_IV, value,
 													String.format(DIAMETER_DESCRIPTION, spiralStair.getNumber()),
 													EXPECTED_DIAMETER, String.valueOf(diameter),
 													Result.Accepted.getResultVal(), scrutinyDetail);
 										} else {
-											setReportOutputDetailsFloorStairWise(planDetail, RULE42_5_IV, value,
+											setReportOutputDetailsFloorStairWise(plan, RULE42_5_IV, value,
 													String.format(DIAMETER_DESCRIPTION, spiralStair.getNumber()),
 													EXPECTED_DIAMETER, String.valueOf(diameter),
 													Result.Not_Accepted.getResultVal(), scrutinyDetail);
@@ -157,7 +157,7 @@ public class SpiralStair extends FeatureProcess {
 				}
 			}
 		}
-		return planDetail;
+		return plan;
 	}
 
 	private void setReportOutputDetailsFloorStairWise(Plan pl, String ruleNo, String floor, String description,

@@ -111,18 +111,18 @@ public class WaterTankCapacity extends FeatureProcess {
         return pl;
     }
 
-    private void processWaterTankCapacity(Plan planDetail, String rule, String subRule, String subRuleDesc,
+    private void processWaterTankCapacity(Plan plan, String rule, String subRule, String subRuleDesc,
             BigDecimal expectedWaterTankCapacity, Boolean valid) {
         if (expectedWaterTankCapacity.compareTo(BigDecimal.valueOf(0)) > 0) {
             if (valid) {
-                setReportOutputDetails(planDetail, subRule, WATER_TANK_CAPACITY,
+                setReportOutputDetails(plan, subRule, WATER_TANK_CAPACITY,
                         expectedWaterTankCapacity.toString(),
-                        planDetail.getUtility().getWaterTankCapacity().toString(),
+                        plan.getUtility().getWaterTankCapacity().toString(),
                         Result.Accepted.getResultVal());
             } else {
-                setReportOutputDetails(planDetail, subRule, WATER_TANK_CAPACITY,
+                setReportOutputDetails(plan, subRule, WATER_TANK_CAPACITY,
                         expectedWaterTankCapacity.toString() + IN_LITRE,
-                        planDetail.getUtility().getWaterTankCapacity().toString() + IN_LITRE,
+                        plan.getUtility().getWaterTankCapacity().toString() + IN_LITRE,
                         Result.Not_Accepted.getResultVal());
             }
         }

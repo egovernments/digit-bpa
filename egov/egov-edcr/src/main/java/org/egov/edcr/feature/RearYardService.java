@@ -317,7 +317,7 @@ public class RearYardService extends GeneralRule {
 		return valid;
 	}
 
-	private Boolean checkRearYardBasement(Plan planDetail, Building building, String blockName, Integer level,
+	private Boolean checkRearYardBasement(Plan plan, Building building, String blockName, Integer level,
 			Plot plot, String rearYardFieldName, BigDecimal min, BigDecimal mean,
 			OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult) {
 		Boolean valid = false;
@@ -384,10 +384,10 @@ public class RearYardService extends GeneralRule {
 		Boolean valid = false;
 		BigDecimal minVal = BigDecimal.valueOf(0);
 		BigDecimal meanVal = BigDecimal.valueOf(0);
-		BigDecimal depthOfPlot = pl.getPlanInformation().getDepthOfPlot();
+		BigDecimal widthOfPlot = pl.getPlanInformation().getWidthOfPlot();
 
 		valid = processRearYardForIndustrial(block, level, min, mean, mostRestrictiveOccupancy, rearYardResult, subRule,
-				rule, minVal, meanVal, pl.getPlot().getArea(), depthOfPlot, valid);
+				rule, minVal, meanVal, pl.getPlot().getArea(), widthOfPlot, valid);
 
 		return valid;
 	}
@@ -437,18 +437,18 @@ public class RearYardService extends GeneralRule {
 	private Boolean processRearYardForIndustrial(Block block, Integer level, final BigDecimal min,
 			final BigDecimal mean, final OccupancyTypeHelper mostRestrictiveOccupancy, RearYardResult rearYardResult,
 			String subRule, String rule, BigDecimal minVal, BigDecimal meanVal, BigDecimal plotArea,
-			BigDecimal depthOfPlot, Boolean valid) {
+			BigDecimal widthOfPlot, Boolean valid) {
 
 		if (plotArea.compareTo(BigDecimal.valueOf(550)) < 0) {
-			if (depthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
+			if (widthOfPlot.compareTo(BigDecimal.valueOf(10)) <= 0) {
 				minVal = REARYARDMINIMUM_DISTANCE_3;
-			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) {
+			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(12)) <= 0) {
 				minVal = REARYARDMINIMUM_DISTANCE_3;
-			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
+			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(15)) <= 0) {
 				minVal = REARYARDMINIMUM_DISTANCE_3;
-			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
+			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) <= 0) {
 				minVal = REARYARDMINIMUM_DISTANCE_4;
-			} else if (depthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0) {
+			} else if (widthOfPlot.compareTo(BigDecimal.valueOf(18)) > 0) {
 				minVal = REARYARDMINIMUM_DISTANCE_4_5;
 			}
 		} else if (plotArea.compareTo(BigDecimal.valueOf(550)) > 0

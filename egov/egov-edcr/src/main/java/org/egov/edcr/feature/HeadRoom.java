@@ -68,13 +68,13 @@ public class HeadRoom extends FeatureProcess {
     private static final BigDecimal TWO_POINTTWO = BigDecimal.valueOf(2.2);
 
     @Override
-    public Plan validate(Plan planDetail) {
-        return planDetail;
+    public Plan validate(Plan plan) {
+        return plan;
     }
 
     @Override
-    public Plan process(Plan planDetail) {
-        for (Block block : planDetail.getBlocks()) {
+    public Plan process(Plan plan) {
+        for (Block block : plan.getBlocks()) {
             if (block.getBuilding() != null) {
 
                 ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
@@ -98,11 +98,11 @@ public class HeadRoom extends FeatureProcess {
                         BigDecimal minWidth = Util.roundOffTwoDecimal(minHeadRoomDimension);
 
                         if (minWidth.compareTo(TWO_POINTTWO) >= 0) {
-                            setReportOutputDetails(planDetail, RULE42_5_ii, RULE_42_5_ii_DESCRIPTION,
+                            setReportOutputDetails(plan, RULE42_5_ii, RULE_42_5_ii_DESCRIPTION,
                                     String.valueOf(TWO_POINTTWO), String.valueOf(minWidth), Result.Accepted.getResultVal(),
                                     scrutinyDetail);
                         } else {
-                            setReportOutputDetails(planDetail, RULE42_5_ii, RULE_42_5_ii_DESCRIPTION,
+                            setReportOutputDetails(plan, RULE42_5_ii, RULE_42_5_ii_DESCRIPTION,
                                     String.valueOf(TWO_POINTTWO), String.valueOf(minWidth), Result.Not_Accepted.getResultVal(),
                                     scrutinyDetail);
                         }
@@ -111,7 +111,7 @@ public class HeadRoom extends FeatureProcess {
                 }
             }
         }
-        return planDetail;
+        return plan;
     }
 
     private void setReportOutputDetails(Plan pl, String ruleNo, String ruleDesc, String expected, String actual,
