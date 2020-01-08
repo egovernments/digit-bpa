@@ -55,6 +55,7 @@ import static org.egov.edcr.constants.DxfFileConstants.F_RT;
 import static org.egov.edcr.constants.DxfFileConstants.F_LD;
 import static org.egov.edcr.constants.DxfFileConstants.F_CB;
 import static org.egov.edcr.constants.DxfFileConstants.F_IT;
+import static org.egov.edcr.constants.DxfFileConstants.G;
 import static org.egov.edcr.constants.DxfFileConstants.PARKING_SLOT;
 import static org.egov.edcr.utility.DcrConstants.SQMTRS;
 
@@ -316,6 +317,9 @@ public class Parking extends FeatureProcess {
                 		|| F_IT.equals(mostRestrictiveOccupancy.getSubtype().getCode()))) {
                     requiredCarParkArea = totalBuiltupArea.doubleValue() * PARK_F;
             }
+          }
+           else if (mostRestrictiveOccupancy != null && (G.equals(mostRestrictiveOccupancy.getType().getCode()))) {
+                requiredCarParkArea = totalBuiltupArea.doubleValue() * PARK_F;
           }
         }
 
