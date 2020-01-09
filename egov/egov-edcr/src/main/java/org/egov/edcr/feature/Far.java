@@ -80,6 +80,8 @@ import static org.egov.edcr.constants.DxfFileConstants.S_MCH;
 import static org.egov.edcr.constants.DxfFileConstants.S_SAS;
 import static org.egov.edcr.constants.DxfFileConstants.S_SC;
 import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.DxfFileConstants.G_PHI;
+import static org.egov.edcr.constants.DxfFileConstants.G_NPHI;
 import static org.egov.edcr.utility.DcrConstants.DECIMALDIGITS_MEASUREMENTS;
 import static org.egov.edcr.utility.DcrConstants.OBJECTNOTDEFINED;
 import static org.egov.edcr.utility.DcrConstants.PLOT_AREA;
@@ -96,6 +98,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
 import org.egov.common.entity.edcr.Block;
 import org.egov.common.entity.edcr.Building;
 import org.egov.common.entity.edcr.FarDetails;
@@ -868,8 +871,11 @@ public class Far extends FeatureProcess {
 
                 }
 
+                String occupancyName = occupancyType.getSubtype() != null ? occupancyType.getSubtype().getName()
+                        : occupancyType.getType().getName();
+                
                 if (StringUtils.isNotBlank(expectedResult)) {
-                        buildResult(pl, occupancyType, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+                        buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
                 }
 
                 return false;
@@ -965,8 +971,9 @@ public class Far extends FeatureProcess {
 
                 }
 
+                String occupancyName = occupancyType.getType().getName();
                 if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-                        buildResult(pl, occupancyType, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+                        buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
                 }
         }
 
@@ -1060,45 +1067,67 @@ public class Far extends FeatureProcess {
 
                 }
 
+                String occupancyName = occupancyType.getType().getName();
+                
                 if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-                        buildResult(pl, occupancyType, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+                        buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
                 }
         }
 
         private void processFarForGBDOccupancy(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far,
-                        String typeOfArea, BigDecimal roadWidth, HashMap<String, String> errors) {
-
+                    String typeOfArea, BigDecimal roadWidth, HashMap<String, String> errors) {
+        
                 String expectedResult = StringUtils.EMPTY;
                 boolean isAccepted = false;
-
+        
                 if (typeOfArea.equalsIgnoreCase(OLD)) {
-                        if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOUR) < 0) {
-                                errors.put(OLD_AREA_ERROR, OLD_AREA_ERROR_MSG);
-                                pl.addErrors(errors);
-                        } else {
-                                isAccepted = far.compareTo(ONE_POINTFIVE) <= 0;
-                                pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
-                                expectedResult = "<=" + ONE_POINTFIVE;
-                        }
-
+                    if (roadWidth.compareTo(ROAD_WIDTH_TWO_POINTFOUR) < 0) {
+                        errors.put(OLD_AREA_ERROR, OLD_AREA_ERROR_MSG);
+                        pl.addErrors(errors);
+                        return;
+                    } else {
+                        isAccepted = far.compareTo(ONE_POINTFIVE) <= 0;
+                        pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+                        expectedResult = "<=" + ONE_POINTFIVE;
+                    }
+        
                 }
-
+        
                 if (typeOfArea.equalsIgnoreCase(NEW)) {
-                        if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) < 0) {
-                                errors.put(NEW_AREA_ERROR, NEW_AREA_ERROR_MSG);
-                                pl.addErrors(errors);
-                        } else {
-                                isAccepted = far.compareTo(ONE_POINTFIVE) <= 0;
-                                pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
-                                expectedResult = "<=" + ONE_POINTFIVE;
-                        }
-
+                    if (roadWidth.compareTo(ROAD_WIDTH_SIX_POINTONE) < 0) {
+                        errors.put(NEW_AREA_ERROR, NEW_AREA_ERROR_MSG);
+                        pl.addErrors(errors);
+                        return;
+                    } else {
+                        isAccepted = far.compareTo(ONE_POINTFIVE) <= 0;
+                        pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+                        expectedResult = "<=" + ONE_POINTFIVE;
+                    }
+        
                 }
-
+        
+                String occupancyName = occupancyType.getType().getName();
+        
+                if (occupancyType.getSubtype() != null) {
+                    OccupancyHelperDetail subtype = occupancyType.getSubtype();
+                    occupancyName = subtype.getName();
+                    String code = subtype.getCode();
+        
+                    if (G_PHI.equalsIgnoreCase(code)) {
+                        isAccepted = far.compareTo(POINTFIVE) <= 0;
+                        pl.getFarDetails().setPermissableFar(POINTFIVE.doubleValue());
+                        expectedResult = "<=" + POINTFIVE;
+                    } else if (G_NPHI.equalsIgnoreCase(code)) {
+                        isAccepted = far.compareTo(ONE_POINTFIVE) <= 0;
+                        pl.getFarDetails().setPermissableFar(ONE_POINTFIVE.doubleValue());
+                        expectedResult = "<=" + ONE_POINTFIVE;
+                    }
+                }
+        
                 if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-                        buildResult(pl, occupancyType, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+                    buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
                 }
-        }
+            }
 
         private void processFarHaazardous(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
                         BigDecimal roadWidth, HashMap<String, String> errors) {
@@ -1130,12 +1159,14 @@ public class Far extends FeatureProcess {
 
                 }
 
+                String occupancyName = occupancyType.getType().getName();
+                
                 if (errors.isEmpty() && StringUtils.isNotBlank(expectedResult)) {
-                        buildResult(pl, occupancyType, far, typeOfArea, roadWidth, expectedResult, isAccepted);
+                        buildResult(pl, occupancyName, far, typeOfArea, roadWidth, expectedResult, isAccepted);
                 }
         }
 
-        private void buildResult(Plan pl, OccupancyTypeHelper occupancyType, BigDecimal far, String typeOfArea,
+        private void buildResult(Plan pl, String occupancyName, BigDecimal far, String typeOfArea,
                         BigDecimal roadWidth, String expectedResult, boolean isAccepted) {
                 ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
                 scrutinyDetail.addColumnHeading(1, RULE_NO);
@@ -1148,7 +1179,6 @@ public class Far extends FeatureProcess {
                 scrutinyDetail.setKey("Common_FAR");
 
                 String actualResult = far.toString();
-                String occupancyName = occupancyType.getType().getName();
 
                 Map<String, String> details = new HashMap<>();
                 details.put(RULE_NO, RULE_38);

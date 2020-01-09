@@ -58,7 +58,10 @@ public class DxfFileConstants {
 
     public static final String G_LI = "G-LI";// Large Industrial
     public static final String G_SI = "G-SI";// Small Industrial
-
+    public static final String G_PHI = "G-PHI";// Polluting and hazardous industries
+    public static final String G_NPHI = "G-NPHI";// Non-polluting and household industries
+    
+    
     public static final String H_PP = "H-PP"; // Petrol Pump
 
     public static final String I1 = "I-1";// Hazardous (I1)
