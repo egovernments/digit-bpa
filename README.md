@@ -34,7 +34,7 @@ $ git clone  -b master --single-branch  https://github.com/egovernments/digit-bp
 $ cd ${HOME}/egovgithub/digit-bpa && make all
 ```
 -----
-* To install the prerequisites Phoenix stacks
+* To install the prerequisites Digit BPA stacks
 ```bash
 $ cd ${HOME}/egovgithub/digit-bpa &&  make install
 ```
@@ -195,9 +195,9 @@ This section is to be referred only if you want the application to run using any
 
 ###### 2. To access the application using domain name:
 
-* Have an entry in eg_city table in database with domain name (for ex: domainurl= "www.egoverpphoenix.org") to access application using domain name.
-* Add the entry in hosts file of your system with details as 172.16.2.164    www.egoverpphoenix.org (This needs to be done both in server machine as well as the machines in which the application needs to be accessed since this is not a public domain).
-* Access the application  using an url http://www.egoverpphoenix.org:8080/egi/ where www.egoverpphoenix.org is the domain name and 8080 is the port of the machine where application server is running.
+* Have an entry in eg_city table in database with domain name (for ex: domainurl= "www.egovbpa.org") to access application using domain name.
+* Add the entry in hosts file of your system with details as 172.16.2.164    www.egovbpa.org (This needs to be done both in server machine as well as the machines in which the application needs to be accessed since this is not a public domain).
+* Access the application  using an url http://www.egovbpa.org:8080/egi/ where www.egovbpa.org is the domain name and 8080 is the port of the machine where application server is running.
 
 Always start the wildfly server with the below command to access the application using IP address or  domain name.
 ```
@@ -215,9 +215,9 @@ This section gives more details regarding developing and contributing to eGov su
 
 * Install your favorite IDE for java project. Recommended Eclipse or IntelliJ IDEA
 * Install [maven >= v3.2.x][Maven]
-* Install [PostgreSQL >= v9.4 ][PostgreSQL]
+* Install [PostgreSQL >= v9.6 ][PostgreSQL]
 * Install [Elastic Search >= v2.4.x][Elastic Search]
-* Install [Jboss Wildfly v10.x][Wildfly Customized]
+* Install [Jboss Wildfly v11.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
 * Install [JDK 8 update 112 or later][JDK8 build]
 
@@ -272,7 +272,7 @@ Browser:-
 
 [Git]: https://git-scm.com/downloads
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
-[eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
+[eGov Opensource JIRA]: http://issues.egovernments.org
 [Wildfly Customized]: https://devops.egovernments.org/Downloads/wildfly/wildfly-11.0.0.Final.zip
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
 [Elastic Search]: https://download.elasticsearch.org/elasticsearch/release/org/elasticsearch/distribution/zip/elasticsearch/2.3.5/elasticsearch-2.3.5.zip
