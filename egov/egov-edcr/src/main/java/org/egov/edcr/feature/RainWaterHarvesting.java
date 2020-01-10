@@ -104,7 +104,9 @@ public class RainWaterHarvesting extends FeatureProcess {
                 addOutput(pl, errors, subRule, subRuleDesc);
             } else if (DxfFileConstants.F.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())) {
                 addOutput(pl, errors, subRule, subRuleDesc);
-            }
+            } else if (DxfFileConstants.G.equalsIgnoreCase(mostRestrictiveFarHelper.getType().getCode())) {
+                addOutput(pl, errors, subRule, subRuleDesc);
+            }    
         }
 
         /*
