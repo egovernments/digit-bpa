@@ -49,8 +49,12 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.DxfFileConstants.B;
+import static org.egov.edcr.constants.DxfFileConstants.D;
+import static org.egov.edcr.constants.DxfFileConstants.F;
 import static org.egov.edcr.constants.DxfFileConstants.F_CB;
 import static org.egov.edcr.constants.DxfFileConstants.F_RT;
+import static org.egov.edcr.constants.DxfFileConstants.G;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -65,7 +69,6 @@ import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -74,8 +77,8 @@ public class RoadWidth extends FeatureProcess {
     private static final Logger LOG = Logger.getLogger(RoadWidth.class);
     private static final String RULE_34 = "34-1";
     public static final String ROADWIDTH_DESCRIPTION = "Minimum Road Width";
-    public static final Double TWELVE_POINT_TWENTY = 12.20;
-    public static final String ERROR_MSG = "Minimum_roadWidth";
+    public static final BigDecimal TWELVE_POINT_TWENTY = BigDecimal.valueOf(12.20);
+    public static final String NEW = "NEW";
 
     @Override
     public Map<String, Date> getAmendments() {
@@ -90,49 +93,47 @@ public class RoadWidth extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
 
-        if (pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
-                && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null &&
-                !DxfFileConstants.A.equalsIgnoreCase(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-            scrutinyDetail.setKey("Common_Road Width");
-            scrutinyDetail.addColumnHeading(1, RULE_NO);
-            scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-            scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-            scrutinyDetail.addColumnHeading(4, PERMITTED);
-            scrutinyDetail.addColumnHeading(5, PROVIDED);
-            scrutinyDetail.addColumnHeading(6, STATUS);
+        BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
+        if (roadWidth != null) {
+            String typeOfArea = pl.getPlanInformation().getTypeOfArea();
+            if (typeOfArea != null && NEW.equalsIgnoreCase(typeOfArea)) {
+                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+                scrutinyDetail.setKey("Common_Road Width");
+                scrutinyDetail.addColumnHeading(1, RULE_NO);
+                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+                scrutinyDetail.addColumnHeading(3, OCCUPANCY);
+                scrutinyDetail.addColumnHeading(4, PERMITTED);
+                scrutinyDetail.addColumnHeading(5, PROVIDED);
+                scrutinyDetail.addColumnHeading(6, STATUS);
 
-            HashMap<String, String> errors = new HashMap<>();
+                Map<String, String> details = new HashMap<>();
+                details.put(RULE_NO, RULE_34);
+                details.put(DESCRIPTION, ROADWIDTH_DESCRIPTION);
 
-            BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
-            if (roadWidth != null) {
+                Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues();
 
                 Set<OccupancyTypeHelper> occupancyTypes = pl.getVirtualBuilding().getOccupancyTypes();
                 for (OccupancyTypeHelper o : occupancyTypes) {
-                    Map<String, String> details = new HashMap<>();
-                    details.put(RULE_NO, RULE_34);
-                    details.put(DESCRIPTION, ROADWIDTH_DESCRIPTION);
                     OccupancyHelperDetail occupancyType = o.getSubtype() != null ? o.getSubtype() : o.getType();
 
                     if (occupancyType != null) {
                         details.put(OCCUPANCY, occupancyType.getName());
-                        double occupancyValues = getOccupancyValues(occupancyType.getCode());
-                        if (roadWidth.compareTo(BigDecimal.valueOf(occupancyValues)) >= 0) {
-                            details.put(PERMITTED, String.valueOf(occupancyValues) + "m");
-                            details.put(PROVIDED, roadWidth.toString() + "m");
-                            details.put(STATUS, Result.Accepted.getResultVal());
-                            scrutinyDetail.getDetail().add(details);
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
-                        } else {
-
-                            details.put(PERMITTED, String.valueOf(occupancyValues) + "m");
-                            details.put(PROVIDED, roadWidth.toString() + "m");
-                            details.put(STATUS, Result.Not_Accepted.getResultVal());
-                            scrutinyDetail.getDetail().add(details);
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                        BigDecimal roadWidthRequired = occupancyValuesMap.get(occupancyType.getCode());
+                        if (roadWidthRequired != null) {
+                            if (roadWidth.compareTo(roadWidthRequired) >= 0) {
+                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
+                                details.put(PROVIDED, roadWidth.toString() + "m");
+                                details.put(STATUS, Result.Accepted.getResultVal());
+                                scrutinyDetail.getDetail().add(details);
+                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                            } else {
+                                details.put(PERMITTED, String.valueOf(roadWidthRequired) + "m");
+                                details.put(PROVIDED, roadWidth.toString() + "m");
+                                details.put(STATUS, Result.Not_Accepted.getResultVal());
+                                scrutinyDetail.getDetail().add(details);
+                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                            }
                         }
-
                     }
                 }
             }
@@ -140,11 +141,18 @@ public class RoadWidth extends FeatureProcess {
         return pl;
     }
 
-    public double getOccupancyValues(String occupancyCode) {
+    public Map<String, BigDecimal> getOccupancyValues() {
 
-        if (F_RT.equals(occupancyCode) || F_CB.equals(occupancyCode)) {
-            return TWELVE_POINT_TWENTY;
-        }
-        return 0;
+        Map<String, BigDecimal> roadWidthValues = new HashMap<>();
+
+        roadWidthValues.put(B, TWELVE_POINT_TWENTY);
+        roadWidthValues.put(D, TWELVE_POINT_TWENTY);
+        roadWidthValues.put(G, TWELVE_POINT_TWENTY);
+        roadWidthValues.put(F, TWELVE_POINT_TWENTY);
+        roadWidthValues.put(F_RT, TWELVE_POINT_TWENTY);
+        roadWidthValues.put(F_CB, TWELVE_POINT_TWENTY);
+
+        return roadWidthValues;
+
     }
 }
