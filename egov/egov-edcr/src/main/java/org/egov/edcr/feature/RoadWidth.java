@@ -61,11 +61,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
@@ -112,9 +110,9 @@ public class RoadWidth extends FeatureProcess {
 
                 Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues();
 
-                Set<OccupancyTypeHelper> occupancyTypes = pl.getVirtualBuilding().getOccupancyTypes();
-                for (OccupancyTypeHelper o : occupancyTypes) {
-                    OccupancyHelperDetail occupancyType = o.getSubtype() != null ? o.getSubtype() : o.getType();
+                OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null
+                        ? pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
+                        : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
 
                     if (occupancyType != null) {
                         details.put(OCCUPANCY, occupancyType.getName());
@@ -134,8 +132,7 @@ public class RoadWidth extends FeatureProcess {
                                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                             }
                         }
-                    }
-                }
+                    }  
             }
         }
         return pl;
