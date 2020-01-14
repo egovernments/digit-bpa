@@ -47,6 +47,14 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.DxfFileConstants.A;
+import static org.egov.edcr.constants.DxfFileConstants.B;
+import static org.egov.edcr.constants.DxfFileConstants.D;
+import static org.egov.edcr.constants.DxfFileConstants.F;
+import static org.egov.edcr.constants.DxfFileConstants.G;
+import static org.egov.edcr.constants.DxfFileConstants.H;
+import static org.egov.edcr.constants.DxfFileConstants.I;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,6 +62,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.egov.common.entity.edcr.Block;
+import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
@@ -65,44 +74,81 @@ import org.springframework.stereotype.Service;
 @Service
 public class TravelDistanceToExit extends FeatureProcess {
 
-    private static final String SUBRULE_43_2 = "43-2";
-    private static final String SUBRULE_43_2_DESC = "Maximum travel distance to emergency exit";
+    private static final String SUBRULE_42_2 = "42-2";
+    private static final String SUBRULE_42_2_DESC = "Maximum travel distance to emergency exit";
     public static final BigDecimal VAL_30 = BigDecimal.valueOf(30);
+    public static final BigDecimal VAL_20 = BigDecimal.valueOf(20);
 
     @Override
-    public Plan validate(Plan pl) {/*
-                                    * HashMap<String, String> errors = new HashMap<>(); if (pl != null) { if
-                                    * (pl.getTravelDistancesToExit().isEmpty()) { errors.put(DcrConstants.TRAVEL_DIST_EXIT,
-                                    * edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[] {
-                                    * DcrConstants.TRAVEL_DIST_EXIT }, LocaleContextHolder.getLocale())); pl.addErrors(errors); }
-                                    * }
-                                    */
+    public Plan validate(Plan pl) {
         return pl;
     }
 
     @Override
-    public Plan process(Plan pl) {/*
-                                   * Boolean exemption = Boolean.FALSE; if (pl != null && pl.getVirtualBuilding() != null &&
-                                   * !pl.getVirtualBuilding().getOccupancies().isEmpty() && !pl.getBlocks().isEmpty()) { boolean
-                                   * floorsAboveGroundLessThanOrEqualTo3ForAllBlks = true; for (Block block : pl.getBlocks()) { if
-                                   * (block.getBuilding() != null && block.getBuilding().getFloorsAboveGround() != null &&
-                                   * block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) > 0) {
-                                   * floorsAboveGroundLessThanOrEqualTo3ForAllBlks = false; break; } } if
-                                   * ((pl.getVirtualBuilding().getResidentialBuilding().equals(Boolean.TRUE) &&
-                                   * floorsAboveGroundLessThanOrEqualTo3ForAllBlks == true) || (ProcessHelper.isSmallPlot(pl))) {
-                                   * exemption = Boolean.TRUE; } } if (!exemption) { validate(pl); String subRule = SUBRULE_43_2;
-                                   * String subRuleDesc = SUBRULE_43_2_DESC; scrutinyDetail = new ScrutinyDetail();
-                                   * scrutinyDetail.setKey("Common_Travel Distance To Emergency Exits");
-                                   * scrutinyDetail.addColumnHeading(1, RULE_NO); scrutinyDetail.addColumnHeading(2, REQUIRED);
-                                   * scrutinyDetail.addColumnHeading(3, PROVIDED); scrutinyDetail.addColumnHeading(4, STATUS);
-                                   * scrutinyDetail.setSubHeading(SUBRULE_43_2_DESC); if (pl != null) { for (BigDecimal
-                                   * maximumTravelDistance : pl.getTravelDistancesToExit()) { boolean valid = false; if
-                                   * (maximumTravelDistance.compareTo(VAL_30) <= 0) { valid = true; } if (valid) {
-                                   * setReportOutputDetails(pl, subRule, VAL_30 + DcrConstants.IN_METER, maximumTravelDistance +
-                                   * DcrConstants.IN_METER, Result.Accepted.getResultVal()); } else { setReportOutputDetails(pl,
-                                   * subRule, VAL_30 + DcrConstants.IN_METER, maximumTravelDistance + DcrConstants.IN_METER,
-                                   * Result.Not_Accepted.getResultVal()); } } } }
-                                   */
+    public Plan process(Plan pl) {
+        Boolean exemption = Boolean.FALSE;
+        if (pl != null && pl.getVirtualBuilding() != null &&
+                !pl.getVirtualBuilding().getOccupancyTypes().isEmpty() && !pl.getBlocks().isEmpty()) {
+            boolean floorsAboveGroundLessThanOrEqualTo3ForAllBlks = true;
+            for (Block block : pl.getBlocks()) {
+                if (block.getBuilding() != null && block.getBuilding().getFloorsAboveGround() != null &&
+                        block.getBuilding().getFloorsAboveGround().compareTo(BigDecimal.valueOf(3)) > 0) {
+                    floorsAboveGroundLessThanOrEqualTo3ForAllBlks = false;
+                    break;
+                }
+            }
+            if ((pl.getVirtualBuilding().getResidentialBuilding().equals(Boolean.TRUE) &&
+                    floorsAboveGroundLessThanOrEqualTo3ForAllBlks == true) || (ProcessHelper.isSmallPlot(pl))) {
+                exemption = Boolean.TRUE;
+            }
+        }
+        if (!exemption) {
+            HashMap<String, String> errors = new HashMap<>();
+            if (pl != null) {
+                if (pl.getTravelDistancesToExit().isEmpty()) {
+                    errors.put(DcrConstants.TRAVEL_DIST_EXIT,
+                            edcrMessageSource.getMessage(DcrConstants.OBJECTNOTDEFINED, new String[] {
+                                    DcrConstants.TRAVEL_DIST_EXIT }, LocaleContextHolder.getLocale()));
+                    pl.addErrors(errors);
+                    return pl;
+                }
+            }
+            String subRule = SUBRULE_42_2;
+            String subRuleDesc = SUBRULE_42_2_DESC;
+            scrutinyDetail = new ScrutinyDetail();
+            scrutinyDetail.setKey("Common_Travel Distance To Emergency Exits");
+            scrutinyDetail.addColumnHeading(1, RULE_NO);
+            scrutinyDetail.addColumnHeading(2, REQUIRED);
+            scrutinyDetail.addColumnHeading(3, PROVIDED);
+            scrutinyDetail.addColumnHeading(4, STATUS);
+            scrutinyDetail.setSubHeading(SUBRULE_42_2_DESC);
+            if (pl != null && pl.getVirtualBuilding() != null) {
+
+                OccupancyTypeHelper mostRestrictiveFarHelper = pl.getVirtualBuilding().getMostRestrictiveFarHelper();
+
+                String code = mostRestrictiveFarHelper.getType().getCode();
+
+                Map<String, BigDecimal> occupancyValues = getOccupancyValues();
+                BigDecimal requiredValue = occupancyValues.get(code);
+                if (requiredValue != null) {
+                    for (BigDecimal maximumTravelDistance : pl.getTravelDistancesToExit()) {
+                        boolean valid = false;
+                        if (maximumTravelDistance.compareTo(requiredValue) <= 0) {
+                            valid = true;
+                        }
+                        if (valid) {
+                            setReportOutputDetails(pl, subRule, requiredValue + DcrConstants.IN_METER, maximumTravelDistance +
+                                    DcrConstants.IN_METER, Result.Accepted.getResultVal());
+                        } else {
+                            setReportOutputDetails(pl,
+                                    subRule, requiredValue + DcrConstants.IN_METER, maximumTravelDistance + DcrConstants.IN_METER,
+                                    Result.Not_Accepted.getResultVal());
+                        }
+                    }
+                }
+            }
+        }
+
         return pl;
     }
 
@@ -119,5 +165,21 @@ public class TravelDistanceToExit extends FeatureProcess {
     @Override
     public Map<String, Date> getAmendments() {
         return new LinkedHashMap<>();
+    }
+
+    public Map<String, BigDecimal> getOccupancyValues() {
+
+        Map<String, BigDecimal> roadWidthValues = new HashMap<>();
+
+        roadWidthValues.put(D, VAL_30);
+        roadWidthValues.put(G, VAL_30);
+        roadWidthValues.put(F, VAL_30);
+        roadWidthValues.put(H, VAL_30);
+
+        roadWidthValues.put(A, VAL_20);
+        roadWidthValues.put(I, VAL_20);
+        roadWidthValues.put(B, VAL_20);
+
+        return roadWidthValues;
     }
 }
