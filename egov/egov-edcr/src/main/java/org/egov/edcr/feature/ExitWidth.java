@@ -175,6 +175,7 @@ public class ExitWidth extends FeatureProcess {
                                 } else {
                                     value = VAL_1_2;
                                 }
+                                if(occupancyHelperDetail != null)
                                 occupancyTypeValueMap.put(OCCUPANCY, occupancyHelperDetail.getName());
                                 occupancyTypeValueMap.put(EXIT_WIDTH, value);
                                 occupancyTypeValueListMap.add(occupancyTypeValueMap);
@@ -188,7 +189,7 @@ public class ExitWidth extends FeatureProcess {
                                 for (Map<String, Object> occupancyValueMap : occupancyTypeValueListMap) {
                                     if (((BigDecimal) occupancyValueMap.get(EXIT_WIDTH)).compareTo(
                                             (BigDecimal) mostRestrictiveOccupancyAndMaxValueMap.get(EXIT_WIDTH)) == 0) {
-                                        if (!(occupancyValueMap.get(OCCUPANCY))
+                                        if (mostRestrictiveOccupancyAndMaxValueMap.get(OCCUPANCY) != null && !(occupancyValueMap.get(OCCUPANCY))
                                                 .equals(mostRestrictiveOccupancyAndMaxValueMap.get(OCCUPANCY))) {
                                             SortedSet<String> uniqueOccupancies = new TreeSet<>();
                                             String[] occupancyString = (occupancyValueMap.get(OCCUPANCY) + " , " +

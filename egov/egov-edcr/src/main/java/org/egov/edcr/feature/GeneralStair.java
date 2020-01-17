@@ -127,7 +127,7 @@ public class GeneralStair extends FeatureProcess {
                                     if (!landings.isEmpty()) {
                                         validateLanding(plan, block, scrutinyDetailLanding, mostRestrictiveOccupancyType,
                                                 floor,
-                                                typicalFloorValues, generalStair, landings);
+                                                typicalFloorValues, generalStair, landings, errors);
                                     } else {
                                         errors.put(
                                                 "General Stair landing not defined in block " + block.getNumber() + " floor "
@@ -172,9 +172,10 @@ public class GeneralStair extends FeatureProcess {
 
     private void validateLanding(Plan plan, Block block, ScrutinyDetail scrutinyDetailLanding,
             OccupancyTypeHelper mostRestrictiveOccupancyType, Floor floor, Map<String, Object> typicalFloorValues,
-            org.egov.common.entity.edcr.GeneralStair generalStair, List<StairLanding> landings) {
+            org.egov.common.entity.edcr.GeneralStair generalStair, List<StairLanding> landings, HashMap<String, String> errors) {
         for (StairLanding landing : landings) {
             List<BigDecimal> widths = landing.getWidths();
+            if(!widths.isEmpty()) {
             BigDecimal landingWidth = widths.stream().reduce(BigDecimal::min).get();
             BigDecimal minWidth = BigDecimal.ZERO;
             boolean valid = false;
@@ -205,6 +206,16 @@ public class GeneralStair extends FeatureProcess {
                             String.valueOf(minWidth), Result.Not_Accepted.getResultVal(),
                             scrutinyDetailLanding);
                 }
+            }
+            }else {
+                errors.put(
+                        "General Stair landing width not defined in block " + block.getNumber() + " floor "
+                                + floor.getNumber()
+                                + " stair " + generalStair.getNumber(),
+                        "General Stair landing width not defined in block " + block.getNumber() + " floor "
+                                + floor.getNumber()
+                                + " stair " + generalStair.getNumber());
+                plan.addErrors(errors);
             }
         }
     }

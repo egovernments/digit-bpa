@@ -182,8 +182,8 @@ public class FireStair extends FeatureProcess {
 
                                 List<StairLanding> landings = fireStair.getLandings();
                                 if (!landings.isEmpty()) {
-                                    validateLanding(plan, scrutinyDetailLanding, floor, typicalFloorValues,
-                                            fireStair, landings);
+                                    validateLanding(plan,  block, scrutinyDetailLanding, floor, typicalFloorValues,
+                                            fireStair, landings, errors);
                                 } else {
                                     errors.put(
                                             "Fire Stair landing not defined in blk " + block.getNumber() + " floor "
@@ -244,11 +244,12 @@ public class FireStair extends FeatureProcess {
         return plan;
     }
 
-    private void validateLanding(Plan plan, ScrutinyDetail scrutinyDetailLanding, Floor floor,
+    private void validateLanding(Plan plan, Block block, ScrutinyDetail scrutinyDetailLanding, Floor floor,
             Map<String, Object> typicalFloorValues, org.egov.common.entity.edcr.FireStair fireStair,
-            List<StairLanding> landings) {
+            List<StairLanding> landings, HashMap<String, String> errors) {
         for (StairLanding landing : landings) {
             List<BigDecimal> widths = landing.getWidths();
+            if(!widths.isEmpty()) {
             BigDecimal landingWidth = widths.stream().reduce(BigDecimal::min).get();
             BigDecimal minWidth = BigDecimal.ZERO;
             boolean valid = false;
@@ -276,7 +277,14 @@ public class FireStair extends FeatureProcess {
                             scrutinyDetailLanding);
                 }
             }
-
+            }else {
+                errors.put(
+                        "Fire Stair landing width not defined in blk " + block.getNumber() + " floor "
+                                + floor.getNumber() + " fire stair " + fireStair.getNumber(),
+                        "Fire Stair landing width not defined in blk " + block.getNumber() + " floor "
+                                + floor.getNumber() + " fire stair " + fireStair.getNumber());
+                plan.addErrors(errors);
+            }
         }
     }
 
