@@ -126,43 +126,92 @@ public class Sanitation extends FeatureProcess {
     public static final String MINIMUM_DIMENSION_SPWC = "1.5 M";
 
     @Override
-    public Plan validate(Plan pl) {/*
-                                    * for (Block b : pl.getBlocks()) { if (!b.getCompletelyExisting()) { int totalSpecialWC = 0;
-                                    * int totalWashBasins = 0; for (Floor f : b.getBuilding().getFloors()) { totalSpecialWC +=
-                                    * f.getSpecialWaterClosets().size(); totalWashBasins += f.getWashBasins().size(); }
-                                    * b.getSanityDetails().setTotalSPWC(totalSpecialWC);
-                                    * b.getSanityDetails().setTotalwashBasins(totalWashBasins); If block is small plot and floors
-                                    * above ground less than or equal to three and occupancy type of entire block is either
-                                    * Residential or Commercial then sanitation validation not require. List<Occupancy>
-                                    * occupancies = b.getBuilding().getTotalArea(); SanityDetails sanityDetails =
-                                    * b.getSanityDetails(); validateDimensions(pl, b, sanityDetails); for (Occupancy occupancy :
-                                    * occupancies) { OccupancyHelperDetail o = occupancy.getTypeHelper().getSubtype() != null ?
-                                    * occupancy.getTypeHelper().getSubtype() : occupancy.getTypeHelper().getType(); switch
-                                    * (o.getCode()) { case DxfFileConstants.A: case DxfFileConstants.A_SR: case
-                                    * DxfFileConstants.A_AF: if (sanityDetails.getTotalSPWC() == 0)
-                                    * pl.addError(BLDG_PART_SPECIAL_WATER_CLOSET, getLocaleMessage(MSG_ERROR_MANDATORY,
-                                    * FEATURE_NAME, BLDG_PART_SPECIAL_WATER_CLOSET, b.getNumber())); break; case
-                                    * DxfFileConstants.A_HE: commonSanitationValidations(pl, b, sanityDetails, o);
-                                    * validateBathRoom(pl, b, sanityDetails); break; case DxfFileConstants.B: case
-                                    * DxfFileConstants.B2: case DxfFileConstants.B_HEI: commonSanitationValidations(pl, b,
-                                    * sanityDetails, o); break; case DxfFileConstants.C_MIP: commonSanitationValidations(pl, b,
-                                    * sanityDetails, o); if (pl.getPlanInformation().getNoOfBeds() == null) pl.addError(NOOFBEDS,
-                                    * getLocaleMessage(MSG_ERROR_MANDATORY, FEATURE_NAME, NOOFBEDS, b.getNumber())); break; case
-                                    * DxfFileConstants.C_MOP: case DxfFileConstants.C_MA: commonSanitationValidations(pl, b,
-                                    * sanityDetails, o); break; case DxfFileConstants.D: case DxfFileConstants.D_AW: case
-                                    * DxfFileConstants.D_BT: commonSanitationValidations(pl, b, sanityDetails, o); break; case
-                                    * DxfFileConstants.E: case DxfFileConstants.F: case DxfFileConstants.F_K:
-                                    * commonSanitationValidations(pl, b, sanityDetails, o); break; case DxfFileConstants.F_H:
-                                    * commonSanitationValidations(pl, b, sanityDetails, o); validateBathRoom(pl, b,
-                                    * sanityDetails); break; case DxfFileConstants.G: case DxfFileConstants.G_SI: case
-                                    * DxfFileConstants.H: case DxfFileConstants.I1: case DxfFileConstants.I2: if
-                                    * (sanityDetails.getMaleWaterClosets().isEmpty() &&
-                                    * sanityDetails.getFemaleWaterClosets().isEmpty()) { pl.addError(BLDG_PART_WATER_CLOSET,
-                                    * getLocaleMessage(MSG_ERROR_MANDATORY, FEATURE_NAME, BLDG_PART_WATER_CLOSET, b.getNumber()));
-                                    * } if (sanityDetails.getUrinals().isEmpty()) { pl.addError(BLDG_PART_URINAL,
-                                    * getLocaleMessage(MSG_ERROR_MANDATORY, FEATURE_NAME, BLDG_PART_URINAL, b.getNumber())); }
-                                    * break; } } } }
-                                    */
+    public Plan validate(Plan pl) {
+
+        for (Block b : pl.getBlocks()) {
+            if (!b.getCompletelyExisting()) {
+
+                int totalSpecialWC = 0;
+                int totalWashBasins = 0;
+                for (Floor f : b.getBuilding().getFloors()) {
+                    totalSpecialWC += f.getSpecialWaterClosets().size();
+                    totalWashBasins += f.getWashBasins().size();
+                }
+                b.getSanityDetails().setTotalSPWC(totalSpecialWC);
+                b.getSanityDetails().setTotalwashBasins(totalWashBasins);
+
+                /*
+                 * If block is small plot and floors above ground less than or equal to three and occupancy type of entire block
+                 * is either Residential or Commercial then sanitation validation not require.
+                 */
+                List<Occupancy> occupancies = b.getBuilding().getTotalArea();
+                SanityDetails sanityDetails = b.getSanityDetails();
+                validateDimensions(pl, b, sanityDetails);
+                for (Occupancy occupancy : occupancies) {
+                    OccupancyHelperDetail o = occupancy.getTypeHelper().getSubtype() != null
+                            ? occupancy.getTypeHelper().getSubtype()
+                            : occupancy.getTypeHelper().getType();
+                    switch (o.getCode()) {
+                    case DxfFileConstants.A:
+                    case DxfFileConstants.A_SR:
+                    case DxfFileConstants.A_AF:
+                        if (sanityDetails.getTotalSPWC() == 0)
+                            pl.addError(BLDG_PART_SPECIAL_WATER_CLOSET, getLocaleMessage(MSG_ERROR_MANDATORY,
+                                    FEATURE_NAME, BLDG_PART_SPECIAL_WATER_CLOSET, b.getNumber()));
+                        break;
+                    case DxfFileConstants.A_HE:
+                        commonSanitationValidations(pl, b, sanityDetails, o);
+                        validateBathRoom(pl, b, sanityDetails);
+                        break;
+                    case DxfFileConstants.B:
+                    case DxfFileConstants.B2:
+                    case DxfFileConstants.B_HEI:
+                        commonSanitationValidations(pl, b, sanityDetails, o);
+                        break;
+                    case DxfFileConstants.C_MIP:
+                        commonSanitationValidations(pl, b, sanityDetails, o);
+                        if (pl.getPlanInformation().getNoOfBeds() == null)
+                            pl.addError(NOOFBEDS,
+                                    getLocaleMessage(MSG_ERROR_MANDATORY, FEATURE_NAME, NOOFBEDS, b.getNumber()));
+                        break;
+                    case DxfFileConstants.C_MOP:
+                    case DxfFileConstants.C_MA:
+                        commonSanitationValidations(pl, b, sanityDetails, o);
+                        break;
+                    case DxfFileConstants.D:
+                    case DxfFileConstants.D_AW:
+                    case DxfFileConstants.D_BT:
+                        commonSanitationValidations(pl, b, sanityDetails, o);
+                        break;
+                    case DxfFileConstants.E:
+                    case DxfFileConstants.F:
+                    case DxfFileConstants.F_K:
+                        commonSanitationValidations(pl, b, sanityDetails, o);
+                        break;
+                    case DxfFileConstants.F_H:
+                        commonSanitationValidations(pl, b, sanityDetails, o);
+                        validateBathRoom(pl, b, sanityDetails);
+                        break;
+                    case DxfFileConstants.G:
+                    case DxfFileConstants.G_SI:
+                    case DxfFileConstants.H:
+                    case DxfFileConstants.I1:
+                    case DxfFileConstants.I2:
+                        if (sanityDetails.getMaleWaterClosets().isEmpty()
+                                && sanityDetails.getFemaleWaterClosets().isEmpty()) {
+                            pl.addError(BLDG_PART_WATER_CLOSET, getLocaleMessage(MSG_ERROR_MANDATORY, FEATURE_NAME,
+                                    BLDG_PART_WATER_CLOSET, b.getNumber()));
+                        }
+
+                        if (sanityDetails.getUrinals().isEmpty()) {
+                            pl.addError(BLDG_PART_URINAL, getLocaleMessage(MSG_ERROR_MANDATORY, FEATURE_NAME,
+                                    BLDG_PART_URINAL, b.getNumber()));
+                        }
+                        break;
+                    }
+                }
+            }
+        }
         return pl;
     }
 
@@ -274,9 +323,8 @@ public class Sanitation extends FeatureProcess {
 
     @Override
     public Plan process(Plan pl) {
-        /*
-         * verifyDimesions(pl); checkCount(pl);
-         */
+        verifyDimesions(pl);
+        checkCount(pl);
         return pl;
     }
 
