@@ -49,6 +49,7 @@ package org.egov.edcr.feature;
 
 import static org.egov.edcr.constants.DxfFileConstants.A;
 import static org.egov.edcr.constants.DxfFileConstants.F;
+import static org.egov.edcr.constants.DxfFileConstants.G;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -82,6 +83,8 @@ public class HeightOfRoom extends FeatureProcess {
     private static final String SUBRULE_41_II_B_AREA_DESC = "Total area of rooms";
     private static final String SUBRULE_41_II_B_TOTAL_WIDTH = "Minimum Width of room";
 
+    public static final BigDecimal MINIMUM_HEIGHT_3_6 = BigDecimal.valueOf(3.6);
+    public static final BigDecimal MINIMUM_HEIGHT_3 = BigDecimal.valueOf(3);
     public static final BigDecimal MINIMUM_HEIGHT_2_75 = BigDecimal.valueOf(2.75);
     public static final BigDecimal MINIMUM_HEIGHT_2_4 = BigDecimal.valueOf(2.4);
     public static final BigDecimal MINIMUM_AREA_9_5 = BigDecimal.valueOf(9.5);
@@ -106,8 +109,9 @@ public class HeightOfRoom extends FeatureProcess {
                     ? pl.getVirtualBuilding().getMostRestrictiveFarHelper()
                     : null;
             if (mostRestrictiveOccupancy != null && mostRestrictiveOccupancy.getType() != null
-                    && (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
-                            || F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))) {
+                    && (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()) ||
+                            (G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())
+                                    || F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode())))) {
                 for (Block block : pl.getBlocks()) {
                     if (block.getBuilding() != null && !block.getBuilding().getFloors().isEmpty()) {
                         scrutinyDetail = new ScrutinyDetail();
@@ -132,8 +136,10 @@ public class HeightOfRoom extends FeatureProcess {
 
                             if (A.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
                                 color = DxfFileConstants.COLOR_RESIDENTIAL_ROOM;
-                            else
+                            else if(F.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
                                 color = DxfFileConstants.COLOR_COMMERCIAL_ROOM;
+                            else if(G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
+                                color = DxfFileConstants.COLOR_INDUSTRIAL_ROOM;
 
                             if (floor.getAcRoom() != null) {
                                 List<BigDecimal> residentialAcRoomHeights = new ArrayList<>();
@@ -156,10 +162,15 @@ public class HeightOfRoom extends FeatureProcess {
                                 if (!residentialAcRoomHeights.isEmpty()) {
                                     BigDecimal minHeight = residentialAcRoomHeights.stream().reduce(BigDecimal::min).get();
 
-                                    minimumHeight = MINIMUM_HEIGHT_2_4;
+                                    if (!G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
+                                        minimumHeight = MINIMUM_HEIGHT_2_4;
+                                    else
+                                        minimumHeight = MINIMUM_HEIGHT_3;
+
                                     subRule = SUBRULE_41_II_A;
                                     subRuleDesc = SUBRULE_41_II_A_AC_DESC;
-
+                                    
+                                    
                                     boolean valid = false;
                                     boolean isTypicalRepititiveFloor = false;
                                     Map<String, Object> typicalFloorValues = ProcessHelper.getTypicalFloorValues(block, floor,
@@ -196,9 +207,14 @@ public class HeightOfRoom extends FeatureProcess {
                                 if (!residentialRoomHeights.isEmpty()) {
                                     BigDecimal minHeight = residentialRoomHeights.stream().reduce(BigDecimal::min).get();
 
-                                    minimumHeight = MINIMUM_HEIGHT_2_75;
+                                    if (!G.equalsIgnoreCase(mostRestrictiveOccupancy.getType().getCode()))
+                                        minimumHeight = MINIMUM_HEIGHT_2_75;
+                                    else
+                                        minimumHeight = MINIMUM_HEIGHT_3_6;
+
                                     subRule = SUBRULE_41_II_A;
                                     subRuleDesc = SUBRULE_41_II_A_REGULAR_DESC;
+
 
                                     boolean valid = false;
                                     boolean isTypicalRepititiveFloor = false;
