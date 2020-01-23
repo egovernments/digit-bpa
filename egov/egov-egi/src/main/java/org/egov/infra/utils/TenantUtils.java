@@ -99,9 +99,9 @@ public final class TenantUtils {
                     ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
                         if (key.startsWith(TENANT)) {
                             tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")
-                                    + (url.getPort() == -1 ? "" : ":" + url.getPort()) + "/");
+                                    + (url.getPort() == -1 ? "" : ":" + url.getPort()));
                             LOG.info("*****override tenants******" + value.toString() + url.getProtocol() + "://"
-                                    + key.replace(TENANT, "") + (url.getPort() == -1 ? "" : ":" + url.getPort()) + "/");
+                                    + key.replace(TENANT, "") + (url.getPort() == -1 ? "" : ":" + url.getPort()));
                         }
                     });
                 }
@@ -118,10 +118,10 @@ public final class TenantUtils {
                     ((MapPropertySource) propertySource).getSource().forEach((key, value) -> {
                         if (key.startsWith(TENANT) && !tenants.containsKey(value)) {
                             tenants.put(value.toString(), url.getProtocol() + "://" + key.replace(TENANT, "")
-                                    + (url.getPort() == -1 ? "" : ":" + url.getPort()) + "/");
+                                    + (url.getPort() == -1 ? "" : ":" + url.getPort()));
                             LOG.info(
                                     "*****application config tenants******" + value.toString() + url.getProtocol() + "://"
-                                            + key.replace(TENANT, "") + (url.getPort() == -1 ? "" : ":" + url.getPort()) + "/");
+                                            + key.replace(TENANT, "") + (url.getPort() == -1 ? "" : ":" + url.getPort()));
                         }
                     });
                 }

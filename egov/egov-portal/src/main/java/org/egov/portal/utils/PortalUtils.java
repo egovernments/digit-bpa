@@ -25,12 +25,11 @@ public class PortalUtils {
 
         for (Map.Entry<String, String> map : temp.entrySet()) {
             if (!map.getKey().equalsIgnoreCase("state")) {
-                if (map.getKey().equalsIgnoreCase("generic")) {
+               /* if (map.getKey().equalsIgnoreCase("generic")) {
                     if (!multitenancyEnabled)
                         tenants.put(map.getKey(), temp.get(map.getKey()));
-                } else {
+                } else {*/
                     tenants.put(map.getKey(), temp.get(map.getKey()));
-                }
             }
         }
         return tenants;
