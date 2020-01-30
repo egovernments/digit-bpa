@@ -47,6 +47,7 @@
 
 package org.egov.common.entity.edcr;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,6 +62,8 @@ public class Stair extends Measurement {
     private List<Flight> flights = new ArrayList<>();
 
     private List<StairLanding> landings = new ArrayList<>();
+    
+    private BigDecimal floorHeight;
 
     public String getNumber() {
         return number;
@@ -93,4 +96,13 @@ public class Stair extends Measurement {
     public void setStairMeasurements(List<Measurement> stairMeasurements) {
         this.stairMeasurements = stairMeasurements;
     }
+
+    public BigDecimal getFloorHeight() {
+        return floorHeight;
+    }
+
+    public void setFloorHeight(BigDecimal floorHeight) {
+        this.floorHeight = floorHeight;
+    }
+    
 }
