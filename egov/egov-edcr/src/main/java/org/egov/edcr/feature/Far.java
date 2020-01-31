@@ -255,7 +255,8 @@ public class Far extends FeatureProcess {
                                 BigDecimal blockWiseExistingBuiltupArea = BigDecimal.ZERO;
                                 for (Floor flr : blk.getBuilding().getFloors()) {
                                         for (Occupancy occupancy : flr.getOccupancies()) {
-                                                if (occupancyType.getType() != null && occupancy.getTypeHelper() != null
+                                                if (occupancyType.getType() != null && occupancyType.getType().getCode()!=null && occupancy.getTypeHelper() != null && 
+                                                		occupancy.getTypeHelper().getType()!=null && occupancy.getTypeHelper().getType().getCode()!=null
                                                                 && occupancy.getTypeHelper().getType().getCode().equals(occupancyType.getType().getCode())) {
                                                         blockWiseFloorArea = blockWiseFloorArea.add(occupancy.getFloorArea());
                                                         blockWiseBuiltupArea = blockWiseBuiltupArea.add(occupancy.getBuiltUpArea() == null
@@ -347,7 +348,7 @@ public class Far extends FeatureProcess {
                                 int allResidentialOrCommercialOccTypes = 0;
 
                                 for (Occupancy occupancy : listOfOccupanciesOfAParticularblock) {
-                                        if (occupancy.getTypeHelper() != null) {
+                                        if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getType()!=null) {
                                                 // setting residentialBuilding
                                                 int residentialOccupancyType = 0;
                                                 if (A.equals(occupancy.getTypeHelper().getType().getCode())) {
@@ -363,7 +364,7 @@ public class Far extends FeatureProcess {
                                 }
                                 blk.setResidentialBuilding(allResidentialOccTypes == 1);
                                 for (Occupancy occupancy : listOfOccupanciesOfAParticularblock) {
-                                        if (occupancy.getTypeHelper() != null) {
+                                        if (occupancy.getTypeHelper() != null && occupancy.getTypeHelper().getType()!=null) {
                                                 // setting residentialOrCommercial Occupancy Type
                                                 int residentialOrCommercialOccupancyType = 0;
                                                 if (A.equals(occupancy.getTypeHelper().getType().getCode())
@@ -406,7 +407,7 @@ public class Far extends FeatureProcess {
                         Building building = blk.getBuilding();
                         List<OccupancyTypeHelper> blockWiseOccupancyTypes = new ArrayList<>();
                         for (Occupancy occupancy : blk.getBuilding().getOccupancies()) {
-                                if (occupancy.getTypeHelper() != null)
+                                if (occupancy.getTypeHelper() != null )
                                         blockWiseOccupancyTypes.add(occupancy.getTypeHelper());
                         }
                         Set<OccupancyTypeHelper> setOfBlockDistinctOccupancyTypes = new HashSet<>(blockWiseOccupancyTypes);
@@ -533,7 +534,7 @@ public class Far extends FeatureProcess {
                                 LOG.info("occupancy :" + occupancy);
                                 // setting residentialBuilding
                                 int residentialOccupancyType = 0;
-                                if (A.equals(occupancy.getType().getCode())) {
+                                if (occupancy.getType()!=null && A.equals(occupancy.getType().getCode())) {
                                         residentialOccupancyType = 1;
                                 }
                                 if (residentialOccupancyType == 0) {
@@ -547,7 +548,7 @@ public class Far extends FeatureProcess {
                         int allResidentialOrCommercialOccTypesForPlan = 0;
                         for (OccupancyTypeHelper occupancyType : distinctOccupancyTypesHelper) {
                                 int residentialOrCommercialOccupancyTypeForPlan = 0;
-                                if (A.equals(occupancyType.getType().getCode()) || F.equals(occupancyType.getType().getCode())) {
+                                if (occupancyType.getType()!=null  && (A.equals(occupancyType.getType().getCode()) || F.equals(occupancyType.getType().getCode()))) {
                                         residentialOrCommercialOccupancyTypeForPlan = 1;
                                 }
                                 if (residentialOrCommercialOccupancyTypeForPlan == 0) {
