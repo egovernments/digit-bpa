@@ -92,7 +92,8 @@ public class EdcrApplicationService {
     @Transactional
     public EdcrApplication create(final EdcrApplication edcrApplication) {
 
-        edcrApplication.setApplicationDate(new Date());
+       // edcrApplication.setApplicationDate(new Date("01/01/2020"));  
+    	edcrApplication.setApplicationDate(new Date());
         edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
         edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         edcrApplication.setStatus(ABORTED);

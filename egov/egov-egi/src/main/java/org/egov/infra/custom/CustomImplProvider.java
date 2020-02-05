@@ -26,7 +26,7 @@ public class CustomImplProvider {
 
 	@Value("${client.id}")
 	private String clientId;
-	
+
 	@Autowired
 	private ApplicationContext applicationContext;
 	@Autowired
@@ -59,9 +59,29 @@ public class CustomImplProvider {
 	}
 
 	public Object find(String beanName, Map<String, String> cityDetails) {
-		Object bean = applicationContext.getBean(beanName);
+		Object bean = null;
+		try {
+			bean = applicationContext.getBean(beanName);
+			if (bean == null)
+				return null;
+		} catch (BeansException e) {
+			return null;
+			// Ignore as you may not find right class
+		}
 		return find(bean.getClass(), cityDetails);
 
+	}
+	
+	public Object getBeanByName(String beanName)
+	{
+		Object bean = null;
+		try {
+			bean = applicationContext.getBean(beanName);
+		} catch (BeansException e) {
+			//Ignore error . Handle by callee
+		}
+		return bean;
+		
 	}
 
 	/**
@@ -103,8 +123,7 @@ public class CustomImplProvider {
 					ulbBean = c;
 					break;
 				}
-				if(ApplicationThreadLocals.getDistrictName()==null)
-				{
+				if (ApplicationThreadLocals.getDistrictName() == null) {
 					throw new RuntimeException("District name is not present. Please update and try again");
 				}
 				if (!ApplicationThreadLocals.getDistrictName().isEmpty()
@@ -113,9 +132,8 @@ public class CustomImplProvider {
 						districtBean = c;
 					}
 				}
-				
-				if(ApplicationThreadLocals.getStateName()==null)
-				{
+
+				if (ApplicationThreadLocals.getStateName() == null) {
 					throw new RuntimeException("State  name is not present. Please update and try again");
 				}
 
@@ -162,6 +180,84 @@ public class CustomImplProvider {
 			LOG.error("No Bean Defined for the Rule " + parentClazz, e);
 		} catch (Exception e) {
 			LOG.error("Exception in finding bean" + parentClazz, e);
+		}
+		return bean;
+	}
+
+	public Object find(String beanName) {
+		Object ulbBean = null;
+		Object districtBean = null;
+		Object stateBean = null;
+		Object gradeBean = null;
+		Object defaultBean = null;
+		Object bean = null;
+		beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
+
+		try {
+
+			//get City wise bean
+			
+			if (ApplicationThreadLocals.getCityName() == null || ApplicationThreadLocals.getCityName().isEmpty()) {
+				throw new RuntimeException("City name is not present. Please update and try again");
+			} else {
+				ulbBean = getBeanByName(beanName + "_" + ApplicationThreadLocals.getCityName());
+			}
+
+			//get District wise bean
+			if (ApplicationThreadLocals.getDistrictName() == null) {
+				throw new RuntimeException("District name is not present. Please update and try again");
+			} else {
+				districtBean = getBeanByName(
+						beanName + "_" + ApplicationThreadLocals.getDistrictName() + "_District");
+			}
+
+			//get State wise bean
+			
+			if (ApplicationThreadLocals.getStateName() == null || ApplicationThreadLocals.getStateName().isEmpty()) {
+				throw new RuntimeException("State  name is not present. Please update and try again");
+			} else {
+				stateBean = getBeanByName(beanName + "_" + ApplicationThreadLocals.getStateName());
+			}
+
+			//get ULB grade wise bean
+			if (ApplicationThreadLocals.getGrade().isEmpty()) {
+				throw new RuntimeException("ULB grade not defined. Please update and try again");
+			} else {
+				gradeBean = getBeanByName(beanName + "_" + ApplicationThreadLocals.getGrade()); 
+			}
+
+			//decide the order in which to return
+			
+			if (ulbBean != null) {
+				bean = ulbBean;
+				LOG.debug(
+						"Returning ulb implementation for service " + beanName + " : " + ulbBean.getClass().getName());
+			} else if (districtBean != null) {
+				bean = districtBean;
+				LOG.debug("Returning district implementation for service " + beanName + " : "
+						+ bean.getClass().getName());
+			} else if (gradeBean != null) {
+				bean = gradeBean;
+				LOG.debug("Returning Gradewise implementation for service " + beanName + " : "
+						+ gradeBean.getClass().getName());
+			} else if (stateBean != null) {
+				bean = stateBean;
+			}
+
+			else {
+				LOG.debug("returning default implementation for " + beanName);
+				defaultBean = getBeanByName(beanName);
+				bean = defaultBean;
+			}
+
+			if (bean == null) {
+				LOG.debug("No Service Found for " + beanName);
+			}
+
+		} catch (BeansException e) {
+			LOG.error("No Bean Defined for the Rule " + beanName, e);
+		} catch (Exception e) {
+			LOG.error("Exception in finding bean" + beanName, e);
 		}
 		return bean;
 	}

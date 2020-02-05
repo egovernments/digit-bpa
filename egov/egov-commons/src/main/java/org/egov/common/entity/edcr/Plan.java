@@ -81,6 +81,10 @@ public class Plan implements Serializable {
     private Boolean edcrPassed = false;
     // Submission date of plan scrutiny.
     private Date applicationDate;
+    /**
+     * decides on what date scrutiny should be done
+     */
+    private Date asOnDate;
 
     /**
      * Planinformation captures the declarations of the plan.Plan information captures the boundary, building location
@@ -172,6 +176,8 @@ public class Plan implements Serializable {
     @Transient
     @JsonIgnore
     private List<EdcrPdfDetail> edcrPdfDetails;
+   
+    
     
     
     private Gate gate;
@@ -559,6 +565,14 @@ public class Plan implements Serializable {
 
 	public void setGate(Gate gate) {
 		this.gate = gate;
+	}
+
+	public Date getAsOnDate() {
+		return asOnDate;
+	}
+
+	public void setAsOnDate(Date asOnDate) {
+		this.asOnDate = asOnDate;
 	}
 
 }
