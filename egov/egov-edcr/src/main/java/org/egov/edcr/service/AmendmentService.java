@@ -6,8 +6,7 @@ import org.springframework.stereotype.Service;
 public class AmendmentService {
 	protected Amendment getAmendments()
 	{
-		Amendment amd=new Amendment();
-		return amd;
+		return new Amendment();
 	}
 	
 

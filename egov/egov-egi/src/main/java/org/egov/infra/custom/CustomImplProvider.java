@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CustomImplProvider {
+	private static final String COLON = " : ";
 	public static final String ULB_CODE = "ULB_CODE";
 	public static final String ULB_NAME = "ULB_NAME";
 	public static final String DISTRICT_CODE = "DISTRICT_CODE";
@@ -150,15 +151,15 @@ public class CustomImplProvider {
 
 			if (ulbBean != null) {
 				bean = ulbBean;
-				LOG.debug("Returning ulb implementation for service " + parentClazz + " : "
+				LOG.debug("Returning ulb implementation for service " + parentClazz + COLON
 						+ ulbBean.getClass().getName());
 			} else if (districtBean != null) {
 				bean = districtBean;
-				LOG.debug("Returning district implementation for service " + parentClazz + " : "
+				LOG.debug("Returning district implementation for service " + parentClazz + COLON
 						+ bean.getClass().getName());
 			} else if (gradeBean != null) {
 				bean = gradeBean;
-				LOG.debug("Returning Gradewise implementation for service " + parentClazz + " : "
+				LOG.debug("Returning Gradewise implementation for service " + parentClazz + COLON
 						+ gradeBean.getClass().getName());
 			} else if (stateBean != null) {
 				bean = stateBean;
@@ -231,14 +232,14 @@ public class CustomImplProvider {
 			if (ulbBean != null) {
 				bean = ulbBean;
 				LOG.debug(
-						"Returning ulb implementation for service " + beanName + " : " + ulbBean.getClass().getName());
+						"Returning ulb implementation for service " + beanName + COLON + ulbBean.getClass().getName());
 			} else if (districtBean != null) {
 				bean = districtBean;
-				LOG.debug("Returning district implementation for service " + beanName + " : "
+				LOG.debug("Returning district implementation for service " + beanName + COLON
 						+ bean.getClass().getName());
 			} else if (gradeBean != null) {
 				bean = gradeBean;
-				LOG.debug("Returning Gradewise implementation for service " + beanName + " : "
+				LOG.debug("Returning Gradewise implementation for service " + beanName + COLON
 						+ gradeBean.getClass().getName());
 			} else if (stateBean != null) {
 				bean = stateBean;

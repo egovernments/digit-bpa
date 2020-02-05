@@ -22,17 +22,13 @@ import org.egov.edcr.entity.Amendment;
 import org.egov.edcr.entity.AmendmentDetails;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
-import org.egov.edcr.entity.blackbox.PlanDetail;
-import org.egov.edcr.feature.FeatureExtract;
 import org.egov.edcr.feature.FeatureProcess;
 import org.egov.edcr.utility.DcrConstants;
 import org.egov.infra.custom.CustomImplProvider;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.jfree.util.Log;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -42,9 +38,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 
 @Service
 public class PlanService {
-	private Logger LOG = Logger.getLogger(PlanService.class);
-	@Autowired
-	private ApplicationContext applicationContext;
+	private static final Logger LOG = Logger.getLogger(PlanService.class);
 	@Autowired
 	private PlanFeatureService featureService;
 	@Autowired
@@ -65,7 +59,6 @@ public class PlanService {
 
 		Date asOnDate = null;
 		if (dcrApplication.getPermitApplicationDate() != null) {
-
 			asOnDate = dcrApplication.getPermitApplicationDate();
 		} else if (dcrApplication.getApplicationDate() != null) {
 			asOnDate = dcrApplication.getApplicationDate();
@@ -76,18 +69,13 @@ public class PlanService {
 		AmendmentService repo = (AmendmentService) specificRuleService.find("amendmentService");
 		Amendment amd = repo.getAmendments();
 
-		// if(amd.getDetails().isEmpty())
-
-		Plan plan = extractService.extract(dcrApplication.getSavedDxfFile(), amd, dcrApplication.getApplicationDate(),
+		Plan plan = extractService.extract(dcrApplication.getSavedDxfFile(), amd, asOnDate,
 				featureService.getFeatures());
-		// plan.setApplicationDate(dcrApplication.getApplicationDate());
 
 		plan = applyRules(plan, amd, cityDetails);
 
 		InputStream reportStream = generateReport(plan, amd, dcrApplication);
-
 		saveOutputReport(dcrApplication, reportStream, plan);
-
 		return plan;
 	}
 
@@ -97,7 +85,6 @@ public class PlanService {
 			LOG.info("*************Before serialization******************");
 		File f = new File("plandetail.txt");
 		try (FileOutputStream fos = new FileOutputStream(f); ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-			// oos.writeObject(plan);
 			ObjectMapper mapper = new ObjectMapper();
 			mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false);
 			mapper.writeValue(f, plan);
@@ -131,7 +118,7 @@ public class PlanService {
 			str = str.substring(0, 1).toLowerCase() + str.substring(1);
 			LOG.info("Looking for bean " + str);
 			// when amendments are not present
-			if (a.length == 0 || index == -1)
+			if (amd.getDetails().isEmpty() || index == -1)
 				rule = (FeatureProcess) specificRuleService.find(ruleClass.getRuleClass(), cityDetails);
 			// when amendments are present
 			else {
@@ -170,17 +157,17 @@ public class PlanService {
 
 	private InputStream generateReport(Plan plan, Amendment amd, EdcrApplication dcrApplication) {
 
-		Object bean = null;
+		 
 		String beanName = "PlanReportService";
 		PlanReportService service = null;
 		int index = -1;
-		AmendmentDetails[] a = null;
+		AmendmentDetails[] amdArray = null;
 		InputStream reportStream = null;
 		int length = amd.getDetails().size();
 		if (!amd.getDetails().isEmpty()) {
 			index = amd.getIndex(plan.getApplicationDate());
-			a = new AmendmentDetails[amd.getDetails().size()];
-			amd.getDetails().toArray(a);
+			amdArray = new AmendmentDetails[amd.getDetails().size()];
+			amd.getDetails().toArray(amdArray);
 		}
 
 		try {
@@ -190,9 +177,9 @@ public class PlanService {
 				service = (PlanReportService) specificRuleService.find(beanName);
 			else if (index >= 0) {
 				for (int i = index; i < length; i++) {
-					
+
 					service = (PlanReportService) specificRuleService
-							.find(beanName + "_" + a[i].getDateOfBylawString());
+							.find(beanName + "_" + amdArray[i].getDateOfBylawString());
 					if (service != null)
 						break;
 				}
@@ -210,21 +197,7 @@ public class PlanService {
 		return reportStream;
 	}
 
-	private FeatureProcess getRuleBean(String beanName) {
-		Object bean = null;
-		FeatureProcess rule = null;
-		try {
-			beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
-			bean = applicationContext.getBean(beanName);
-			rule = (FeatureProcess) bean;
-			if (bean == null) {
-				LOG.error("No Service Found for " + beanName);
-			}
-		} catch (BeansException e) {
-			LOG.error("No Bean Defined for the Rule " + beanName);
-		}
-		return rule;
-	}
+	
 
 	@Transactional
 	public void saveOutputReport(EdcrApplication edcrApplication, InputStream reportOutputStream, Plan plan) {
@@ -239,8 +212,6 @@ public class PlanService {
 		buildDocuments(edcrApplication, null, fileStoreMapper, plan);
 
 		PlanInformation planInformation = plan.getPlanInformation();
-
-		// planinfoService.save(planInformation);
 		edcrApplication.getEdcrApplicationDetails().get(0).setPlanInformation(planInformation);
 		edcrApplicationDetailService.saveAll(edcrApplication.getEdcrApplicationDetails());
 	}
@@ -278,9 +249,9 @@ public class PlanService {
 			edcrApplicationDetails.add(edcrApplicationDetail);
 			savePlanDetail(plan, edcrApplicationDetail);
 
-			ArrayList<org.egov.edcr.entity.EdcrPdfDetail> edcrPdfDetails = new ArrayList();
+			ArrayList<org.egov.edcr.entity.EdcrPdfDetail> edcrPdfDetails = new ArrayList<>();
 
-			if (plan.getEdcrPdfDetails() != null && plan.getEdcrPdfDetails().size() > 0) {
+			if (plan.getEdcrPdfDetails() != null && !plan.getEdcrPdfDetails().isEmpty() ) {
 				for (EdcrPdfDetail edcrPdfDetail : plan.getEdcrPdfDetails()) {
 					org.egov.edcr.entity.EdcrPdfDetail pdfDetail = new org.egov.edcr.entity.EdcrPdfDetail();
 					pdfDetail.setLayer(edcrPdfDetail.getLayer());
@@ -296,7 +267,7 @@ public class PlanService {
 				}
 			}
 
-			if (edcrPdfDetails != null && edcrPdfDetails.size() > 0) {
+			if (!edcrPdfDetails.isEmpty()) {
 				for (org.egov.edcr.entity.EdcrPdfDetail edcrPdfDetail : edcrPdfDetails) {
 					edcrPdfDetail.setEdcrApplicationDetail(edcrApplicationDetail);
 				}
