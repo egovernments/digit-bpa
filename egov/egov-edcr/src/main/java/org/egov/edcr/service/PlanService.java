@@ -119,7 +119,7 @@ public class PlanService {
 			LOG.info("Looking for bean " + str);
 			// when amendments are not present
 			if (amd.getDetails().isEmpty() || index == -1)
-				rule = (FeatureProcess) specificRuleService.find(ruleClass.getRuleClass(), cityDetails);
+				rule = (FeatureProcess) specificRuleService.find(ruleClass.getRuleClass().getSimpleName());
 			// when amendments are present
 			else {
 				if (index >= 0) {
@@ -134,7 +134,7 @@ public class PlanService {
 					}
 					// when amendment specific beans not found
 					if (rule == null) {
-						rule = (FeatureProcess) specificRuleService.find(ruleClass.getRuleClass(), cityDetails);
+						rule = (FeatureProcess) specificRuleService.find(ruleClass.getRuleClass().getSimpleName());
 					}
 
 				}
@@ -284,7 +284,7 @@ public class PlanService {
 
 		Date asOnDate = new Date();
 
-		AmendmentService repo = (AmendmentService) specificRuleService.find("amendmentService");
+		AmendmentService repo = (AmendmentService) specificRuleService.find(AmendmentService.class.getSimpleName());
 		Amendment amd = repo.getAmendments();
 
 		Plan plan = extractService.extract(planFile, amd, asOnDate, featureService.getFeatures());
