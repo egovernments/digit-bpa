@@ -49,33 +49,33 @@
 
 package org.egov.edcr.feature;
 
+import static org.egov.edcr.constants.DxfFileConstants.E_PS;
 import static org.egov.edcr.constants.DxfFileConstants.F_CB;
 import static org.egov.edcr.constants.DxfFileConstants.F_RT;
+import static org.egov.edcr.constants.DxfFileConstants.M_NAPI;
+import static org.egov.edcr.constants.DxfFileConstants.S_MCH;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.dcr.helper.OccupancyHelperDetail;
-import org.egov.common.entity.edcr.OccupancyTypeHelper;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.Result;
 import org.egov.common.entity.edcr.ScrutinyDetail;
-import org.egov.edcr.constants.DxfFileConstants;
 import org.springframework.stereotype.Service;
 
 @Service
 public class PlotArea extends FeatureProcess {
 
-    private static final Logger LOG = Logger.getLogger(RoadWidth.class);
+    private static final Logger LOG = Logger.getLogger(PlotArea.class);
     private static final String RULE_34 = "34-1";
     public static final String PLOTAREA_DESCRIPTION = "Minimum Plot Area";
-    public static final int THREE_ZERO = 300;
-    public static final String ERROR_MSG = "Minimum_plotArea";
+    public static final BigDecimal THREE_ZERO = BigDecimal.valueOf(300);
+    public static final BigDecimal FIVE_ZERO = BigDecimal.valueOf(500);
 
     @Override
     public Map<String, Date> getAmendments() {
@@ -90,59 +90,63 @@ public class PlotArea extends FeatureProcess {
     @Override
     public Plan process(Plan pl) {
 
-        if (pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null
-                && pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType() != null &&
-                !DxfFileConstants.A.equalsIgnoreCase(pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType().getCode())) {
-            ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
-            scrutinyDetail.setKey("Common_Plot Area");
-            scrutinyDetail.addColumnHeading(1, RULE_NO);
-            scrutinyDetail.addColumnHeading(2, DESCRIPTION);
-            scrutinyDetail.addColumnHeading(3, OCCUPANCY);
-            scrutinyDetail.addColumnHeading(4, PERMITTED);
-            scrutinyDetail.addColumnHeading(5, PROVIDED);
-            scrutinyDetail.addColumnHeading(6, STATUS);
-
-            HashMap<String, String> errors = new HashMap<>();
-
-            BigDecimal plotArea = pl.getPlanInformation().getPlotArea();
+        if (pl.getPlot() != null) {
+            BigDecimal plotArea = pl.getPlot().getArea();
             if (plotArea != null) {
-                Set<OccupancyTypeHelper> occupancyTypes = pl.getVirtualBuilding().getOccupancyTypes();
-                for (OccupancyTypeHelper o : occupancyTypes) {
-                    Map<String, String> details = new HashMap<>();
-                    details.put(RULE_NO, RULE_34);
-                    details.put(DESCRIPTION, PLOTAREA_DESCRIPTION);
+                ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
+                scrutinyDetail.setKey("Common_Plot Area");
+                scrutinyDetail.addColumnHeading(1, RULE_NO);
+                scrutinyDetail.addColumnHeading(2, DESCRIPTION);
+                scrutinyDetail.addColumnHeading(3, OCCUPANCY);
+                scrutinyDetail.addColumnHeading(4, PERMITTED);
+                scrutinyDetail.addColumnHeading(5, PROVIDED);
+                scrutinyDetail.addColumnHeading(6, STATUS);
 
-                    OccupancyHelperDetail occupancyType = o.getSubtype() != null ? o.getSubtype() : o.getType();
+                Map<String, String> details = new HashMap<>();
+                details.put(RULE_NO, RULE_34);
+                details.put(DESCRIPTION, PLOTAREA_DESCRIPTION);
+
+                Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues();
+
+                if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null) {
+                    OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+                            .getSubtype() != null
+                                    ? pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
+                                    : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
+
                     if (occupancyType != null) {
                         details.put(OCCUPANCY, occupancyType.getName());
-                        double occupancyValues = getOccupancyValues(occupancyType.getCode());
-                        if (plotArea.compareTo(BigDecimal.valueOf(occupancyValues)) >= 0) {
-                            details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
-                            details.put(PROVIDED, plotArea.toString() + "m2");
-                            details.put(STATUS, Result.Accepted.getResultVal());
-                            scrutinyDetail.getDetail().add(details);
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
-
-                        } else {
-                            details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
-                            details.put(PROVIDED, plotArea.toString() + "m2");
-                            details.put(STATUS, Result.Not_Accepted.getResultVal());
-                            scrutinyDetail.getDetail().add(details);
-                            pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                        BigDecimal occupancyValues = occupancyValuesMap.get(occupancyType.getCode());
+                        if (occupancyValues != null) {
+                            if (plotArea.compareTo(occupancyValues) >= 0) {
+                                details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
+                                details.put(PROVIDED, plotArea.toString() + "m2");
+                                details.put(STATUS, Result.Accepted.getResultVal());
+                                scrutinyDetail.getDetail().add(details);
+                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                            } else {
+                                details.put(PERMITTED, String.valueOf(occupancyValues) + "m2");
+                                details.put(PROVIDED, plotArea.toString() + "m2");
+                                details.put(STATUS, Result.Not_Accepted.getResultVal());
+                                scrutinyDetail.getDetail().add(details);
+                                pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
+                            }
                         }
-
                     }
                 }
             }
         }
-
         return pl;
     }
 
-    public double getOccupancyValues(String occupancyCode) {
-        if (F_RT.equals(occupancyCode) || F_CB.equals(occupancyCode)) {
-            return THREE_ZERO;
-        }
-        return 0;
+    public Map<String, BigDecimal> getOccupancyValues() {
+
+        Map<String, BigDecimal> plotAreaValues = new HashMap<>();
+        plotAreaValues.put(F_RT, THREE_ZERO);
+        plotAreaValues.put(M_NAPI, THREE_ZERO);
+        plotAreaValues.put(F_CB, THREE_ZERO);
+        plotAreaValues.put(S_MCH, FIVE_ZERO);
+        plotAreaValues.put(E_PS, THREE_ZERO);
+        return plotAreaValues;
     }
 }

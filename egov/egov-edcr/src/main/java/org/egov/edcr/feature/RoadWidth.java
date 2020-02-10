@@ -90,9 +90,9 @@ public class RoadWidth extends FeatureProcess {
 
     @Override
     public Plan process(Plan pl) {
-
-        BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
-        if (roadWidth != null) {
+       
+        if (pl.getPlanInformation() != null && pl.getPlanInformation().getRoadWidth() != null) {
+            BigDecimal roadWidth = pl.getPlanInformation().getRoadWidth();
             String typeOfArea = pl.getPlanInformation().getTypeOfArea();
             if (typeOfArea != null && NEW.equalsIgnoreCase(typeOfArea)) {
                 ScrutinyDetail scrutinyDetail = new ScrutinyDetail();
@@ -110,9 +110,11 @@ public class RoadWidth extends FeatureProcess {
 
                 Map<String, BigDecimal> occupancyValuesMap = getOccupancyValues();
 
-                OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype() != null
-                        ? pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
-                        : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
+                if (pl.getVirtualBuilding() != null && pl.getVirtualBuilding().getMostRestrictiveFarHelper() != null) {
+                    OccupancyHelperDetail occupancyType = pl.getVirtualBuilding().getMostRestrictiveFarHelper()
+                            .getSubtype() != null
+                                    ? pl.getVirtualBuilding().getMostRestrictiveFarHelper().getSubtype()
+                                    : pl.getVirtualBuilding().getMostRestrictiveFarHelper().getType();
 
                     if (occupancyType != null) {
                         details.put(OCCUPANCY, occupancyType.getName());
@@ -132,7 +134,8 @@ public class RoadWidth extends FeatureProcess {
                                 pl.getReportOutput().getScrutinyDetails().add(scrutinyDetail);
                             }
                         }
-                    }  
+                    }
+                }
             }
         }
         return pl;
@@ -141,14 +144,12 @@ public class RoadWidth extends FeatureProcess {
     public Map<String, BigDecimal> getOccupancyValues() {
 
         Map<String, BigDecimal> roadWidthValues = new HashMap<>();
-
         roadWidthValues.put(B, TWELVE_POINT_TWENTY);
         roadWidthValues.put(D, TWELVE_POINT_TWENTY);
         roadWidthValues.put(G, TWELVE_POINT_TWENTY);
         roadWidthValues.put(F, TWELVE_POINT_TWENTY);
         roadWidthValues.put(F_RT, TWELVE_POINT_TWENTY);
         roadWidthValues.put(F_CB, TWELVE_POINT_TWENTY);
-
         return roadWidthValues;
 
     }
