@@ -121,25 +121,29 @@ public class RainWaterHarvesting extends FeatureProcess {
     }
 
     private void addOutput(Plan pl, HashMap<String, String> errors, String subRule, String subRuleDesc) {
-        if (pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NO)
-                || pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NA)) {
-            errors.put(DxfFileConstants.RWH_DECLARED, RWH_DECLARATION_ERROR);
-            pl.addErrors(errors);
-            addReportOutput(pl, subRule, subRuleDesc);
-        } else {
-            addReportOutput(pl, subRule, subRuleDesc);
+        if (pl.getPlanInformation() != null &&  pl.getPlanInformation().getRwhDeclared()!= null) {
+            if (pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NO)
+                    || pl.getPlanInformation().getRwhDeclared().equalsIgnoreCase(DcrConstants.NA)) {
+                errors.put(DxfFileConstants.RWH_DECLARED, RWH_DECLARATION_ERROR);
+                pl.addErrors(errors);
+                addReportOutput(pl, subRule, subRuleDesc);
+            } else {
+                addReportOutput(pl, subRule, subRuleDesc);
+            }
         }
     }
 
     private void addReportOutput(Plan pl, String subRule, String subRuleDesc) {
-        if (!pl.getUtility().getRainWaterHarvest().isEmpty()) {
-            setReportOutputDetails(pl, subRule, subRuleDesc, null,
-                    "Defined in the plan",
-                    Result.Verify.getResultVal());
-        } else {
-            setReportOutputDetails(pl, subRule, subRuleDesc, null,
-                    "Not Defined in the plan",
-                    Result.Not_Accepted.getResultVal());
+        if (pl.getUtility() != null) {
+            if (pl.getUtility().getRainWaterHarvest() != null && !pl.getUtility().getRainWaterHarvest().isEmpty()) {
+                setReportOutputDetails(pl, subRule, subRuleDesc, null,
+                        "Defined in the plan",
+                        Result.Verify.getResultVal());
+            } else {
+                setReportOutputDetails(pl, subRule, subRuleDesc, null,
+                        "Not Defined in the plan",
+                        Result.Not_Accepted.getResultVal());
+            }
         }
     }
 
