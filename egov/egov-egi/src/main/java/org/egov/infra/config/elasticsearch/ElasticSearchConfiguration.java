@@ -63,31 +63,34 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 @Configuration
-@EnableElasticsearchRepositories(basePackages = {"org.egov.**.repository.es", "org.egov.**.elasticsearch.repository"})
+@EnableElasticsearchRepositories(basePackages = { "org.egov.**.repository.es", "org.egov.**.elasticsearch.repository" })
 public class ElasticSearchConfiguration {
 
-    @Value("${elasticsearch.cluster.name}")
-    private String clusterName;
+	@Value("${elasticsearch.cluster.name}")
+	private String clusterName;
 
-    @Value("#{'${elasticsearch.hosts}'.split(',')}")
-    private List<String> searchHosts;
+	@Value("#{'${elasticsearch.hosts}'.split(',')}")
+	private List<String> searchHosts;
 
-    @Value("${elasticsearch.port}")
-    private Integer searchPort;
+	@Value("${elasticsearch.port}")
+	private Integer searchPort;
 
-    private Client transportClient() {
-        Settings settings = Settings.settingsBuilder()
-                .put("cluster.name", clusterName).build();
-        Client client = TransportClient.builder().settings(settings).build();
-        searchHosts.forEach(host ->
-                ((TransportClient) client).addTransportAddress(
-                        new InetSocketTransportAddress(new InetSocketAddress(host, searchPort)))
-        );
-        return client;
-    }
+	@Value("${elasticsearch.enable}")
+	private Boolean enable;
 
-    @Bean
-    public ElasticsearchOperations elasticsearchTemplate() {
-        return new ElasticsearchTemplate(transportClient());
-    }
+	private Client transportClient() {
+		if (enable) {
+			Settings settings = Settings.settingsBuilder().put("cluster.name", clusterName).build();
+			Client client = TransportClient.builder().settings(settings).build();
+			searchHosts.forEach(host -> ((TransportClient) client)
+					.addTransportAddress(new InetSocketTransportAddress(new InetSocketAddress(host, searchPort))));
+			return client;
+		} else
+			return TransportClient.builder().build();
+	}
+
+	@Bean
+	public ElasticsearchOperations elasticsearchTemplate() {
+		return new ElasticsearchTemplate(transportClient());
+	}
 }

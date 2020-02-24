@@ -14,6 +14,7 @@ import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,11 +30,15 @@ public class EdcrIndexService {
 
 	@Autowired
 	private EdcrIndexRepository edcrIndexRepository;
+	
+	   @Value("${elasticsearch.enable}")
+		private Boolean enable;
 
 	@Autowired
 	private ApplicationIndexService applicationIndexService;
 	   
 	public EdcrIndex createEdcrIndex(final EdcrApplication edcrApp) {
+		if(enable){
 		final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 		EdcrIndex edcrIndex = new EdcrIndex();
 		edcrIndex.setId(cityWebsite.getCode() + "-" + edcrApp.getApplicationNumber());
@@ -54,6 +59,10 @@ public class EdcrIndexService {
 		}
 		edcrIndexRepository.save(edcrIndex);
 		return edcrIndex;
+		}else
+		{
+			return null;
+		}
 	}
 
 	private void buildApplicationData(EdcrApplication edcrApp, EdcrIndex edcrIndex) {
@@ -72,6 +81,8 @@ public class EdcrIndexService {
 	}
 	
 	 public void updateIndexes(final EdcrApplication edcrApplication, String applctnType) {
+		 if(enable)
+		 {
 		   ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(edcrApplication
 	                .getApplicationNumber());
 	        if (applicationIndex != null && edcrApplication.getId() != null){
@@ -112,9 +123,9 @@ public class EdcrIndexService {
 	                    .build();
 	            applicationIndexService.createApplicationIndex(applicationIndex);
 	            createEdcrIndex(edcrApplication);
+	        }
 	        
-	    }
-
+	    } 
 	 }
 	 
 	 public void updateEdcrRestIndexes(final EdcrApplication edcrApplication, String applctnType) {

@@ -56,6 +56,7 @@ import org.egov.portal.entity.es.PortalInboxIndex;
 import org.egov.portal.firm.service.FirmUserService;
 import org.egov.portal.repository.es.PortalInboxIndexRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +66,11 @@ public class PortalInboxIndexService {
 
     @Autowired
     private CityService cityService;
+    
+
+	@Value("${elasticsearch.enable}")
+	private Boolean enable;
+
 
     @Autowired
     private FirmUserService firmUserService;
@@ -73,6 +79,8 @@ public class PortalInboxIndexService {
     private PortalInboxIndexRepository portalInboxIndexRepository;
 
     public PortalInboxIndex createPortalInboxIndex(final PortalInbox portalInbox) {
+    	if(enable)
+    	{
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         final PortalInboxIndex portalInboxIndex = new PortalInboxIndex();
         portalInboxIndex.setUlbName(cityWebsite.getName());
@@ -103,6 +111,10 @@ public class PortalInboxIndexService {
         setFirmDetails(portalInbox, portalInboxIndex);
         portalInboxIndexRepository.save(portalInboxIndex);
         return portalInboxIndex;
+    	}else
+    	{
+    		return null;
+    	}
     }
 
     private void setFirmDetails(final PortalInbox portalInbox, final PortalInboxIndex portalInboxIndex) {

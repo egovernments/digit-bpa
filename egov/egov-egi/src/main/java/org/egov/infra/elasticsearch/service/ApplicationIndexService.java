@@ -54,6 +54,7 @@ import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.repository.ApplicationIndexRepository;
 import org.egov.infra.elasticsearch.service.es.ApplicationDocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,6 +73,9 @@ public class ApplicationIndexService {
 
     private final ApplicationIndexRepository applicationIndexRepository;
     private final ApplicationDocumentService applicationDocumentService;
+    
+    @Value("${elasticsearch.enable}")
+	private Boolean enable;
 
     @Autowired
     private CityService cityService;
@@ -85,6 +89,7 @@ public class ApplicationIndexService {
 
     @Transactional
     public ApplicationIndex createApplicationIndex(ApplicationIndex applicationIndex) {
+    	if(enable){
         Map<String, Object> cityInfo = cityService.cityDataAsMap();
         applicationIndex.setCityCode(defaultString((String) cityInfo.get(CITY_CODE_KEY)));
         applicationIndex.setCityName(defaultString((String) cityInfo.get(CITY_NAME_KEY)));
@@ -94,18 +99,28 @@ public class ApplicationIndexService {
         applicationIndexRepository.save(applicationIndex);
         applicationDocumentService.createOrUpdateApplicationDocument(applicationIndex);
         return applicationIndex;
+    	}
+    	else
+    		return null;
     }
 
     @Transactional
     public ApplicationIndex updateApplicationIndex(ApplicationIndex applicationIndex) {
+    	if(enable){
         applicationIndexRepository.save(applicationIndex);
         applicationDocumentService.createOrUpdateApplicationDocument(applicationIndex);
         return applicationIndex;
+    	}
+        else
+        	return null;
     }
 
     public ApplicationIndex findByApplicationNumber(String applicationNumber) {
+    	if(enable){
         return applicationIndexRepository.findByApplicationNumberAndCityName(applicationNumber,
-                ApplicationThreadLocals.getCityName());
+                ApplicationThreadLocals.getCityName());}
+    	else
+    		return null;
     }
 
 }
