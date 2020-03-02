@@ -65,7 +65,7 @@ public class MezzanineFloorService extends FeatureProcess {
                         }
                         totalBuiltupArea = totalBuiltupArea.add(builtupArea);
                         for (Occupancy mezzanineFloor : floor.getOccupancies()) {
-                            if (mezzanineFloor.getIsMezzanine()) {
+                            if (mezzanineFloor.getIsMezzanine() && floor.getNumber() != 0) {
                                 if (mezzanineFloor.getBuiltUpArea() != null && mezzanineFloor.getBuiltUpArea().doubleValue() > 0
                                         && mezzanineFloor.getTypeHelper() == null) {
                                     pl.addError(OBJECTNOTDEFINED_DESC,
