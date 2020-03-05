@@ -251,19 +251,24 @@ public class Floor extends Measurement {
         if (occupancies == null) {
             occupancies = new ArrayList<>();
             occupancies.add(occupancy);
-        } else if (occupancies.contains(occupancy)) {
-            occupancies.get(occupancies.indexOf(occupancy)).setCarpetAreaDeduction(
-                    (occupancies.get(occupancies.indexOf(occupancy)).getCarpetAreaDeduction() == null ? BigDecimal.ZERO
-                            : occupancies.get(occupancies.indexOf(occupancy)).getCarpetAreaDeduction())
-                                    .add(occupancy.getCarpetAreaDeduction()));
-
-            occupancies.get(occupancies.indexOf(occupancy)).setExistingCarpetAreaDeduction(
-                    (occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetAreaDeduction() == null
-                            ? BigDecimal.ZERO
-                            : occupancies.get(occupancies.indexOf(occupancy)).getExistingCarpetAreaDeduction())
-                                    .add(occupancy.getExistingCarpetAreaDeduction()));
-        } else
-            occupancies.add(occupancy);
+        } else {
+            List<Occupancy> collect = occupancies.stream().filter(o -> o.getTypeHelper() != null
+                    && (o.getTypeHelper().getType().getCode()
+                            .equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())))
+                    .collect(Collectors.toList());
+            if (!collect.isEmpty()) {
+                collect.get(0)
+                        .setCarpetAreaDeduction(collect.get(0).getCarpetAreaDeduction() == null
+                                ? BigDecimal.ZERO
+                                : collect.get(0).getCarpetAreaDeduction()
+                                        .add(occupancy.getCarpetAreaDeduction()));
+                collect.get(0).setExistingCarpetAreaDeduction(
+                        (collect.get(0).getExistingCarpetAreaDeduction() == null ? BigDecimal.ZERO
+                                : collect.get(0).getExistingCarpetAreaDeduction())
+                                        .add(occupancy.getExistingCarpetAreaDeduction()));
+            } else
+                occupancies.add(occupancy);
+        }
 
     }
 
