@@ -29,7 +29,10 @@ public class PortalUtils {
                     if (!multitenancyEnabled)
                         tenants.put(map.getKey(), temp.get(map.getKey()));
                 } else {*/
-                    tenants.put(map.getKey(), temp.get(map.getKey()));
+            	if(!temp.get(map.getKey()).endsWith("/"))
+                    tenants.put(map.getKey(), temp.get(map.getKey())+"/");
+            	else
+            		 tenants.put(map.getKey(), temp.get(map.getKey()));
             }
         }
         return tenants;

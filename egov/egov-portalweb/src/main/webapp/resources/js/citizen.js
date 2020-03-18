@@ -371,7 +371,7 @@ function configureTableData(dataset, dataKey){
 		item.serviceRequestDate = epochToYmd(item.serviceRequestDate);
 		item.srNo = index+1;
 		return item;
-	})
+	});
 }
 
 function initiateTable(tableData, serviceGroup, dataKey){
