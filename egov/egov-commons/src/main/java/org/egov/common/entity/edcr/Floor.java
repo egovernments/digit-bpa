@@ -65,7 +65,7 @@ public class Floor extends Measurement {
     private List<Lift> lifts = new ArrayList<>();
     private List<Lift> daLifts = new ArrayList<>();
     private Measurement exterior;
-   // private List<Measurement> openSpaces = new ArrayList<>();
+    // private List<Measurement> openSpaces = new ArrayList<>();
     // this is for differently able people
     private List<Measurement> specialWaterClosets = new ArrayList<>();
     private List<Measurement> coverageDeduct = new ArrayList<>();
@@ -88,14 +88,15 @@ public class Floor extends Measurement {
     private Room bathRoomWaterClosets;
     private List<BigDecimal> heightFromTheFloorToCeiling;
     private List<BigDecimal> heightOfTheCeilingOfUpperBasement;
-    private InteriorOpenSpace interiorOpenSpace=new InteriorOpenSpace();
+    private InteriorOpenSpace interiorOpenSpace = new InteriorOpenSpace();
     private MeasurementWithHeight verandah = new MeasurementWithHeight();
-    private MeasurementWithHeight lightAndVentilation =  new MeasurementWithHeight();
-     
+    private MeasurementWithHeight lightAndVentilation = new MeasurementWithHeight();
+    private List<RoofArea> roofAreas;
+
     private List<Balcony> balconies = new ArrayList<>();
 
     private List<Measurement> overHangs;
-    
+
     public List<FireStair> getFireStairs() {
         return fireStairs;
     }
@@ -228,9 +229,10 @@ public class Floor extends Measurement {
             occupancies = new ArrayList<>();
             occupancies.add(occupancy);
         } else {
-          List<Occupancy> collect = occupancies.stream().filter(o -> o.getTypeHelper() != null
+            List<Occupancy> collect = occupancies.stream().filter(o -> o.getTypeHelper() != null
                     && (o.getTypeHelper().getType().getCode()
-                            .equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode()))).collect(Collectors.toList());
+                            .equalsIgnoreCase(occupancy.getTypeHelper().getType().getCode())))
+                    .collect(Collectors.toList());
             if (!collect.isEmpty()) {
                 collect.get(0)
                         .setDeduction(collect.get(0).getDeduction() == null
@@ -312,18 +314,15 @@ public class Floor extends Measurement {
         this.exterior = exterior;
     }
 
-   /* public List<Measurement> getOpenSpaces() {
-        return openSpaces;
-    }
-
-    public void setOpenSpaces(List<Measurement> openSpaces) {
-        this.openSpaces = openSpaces;
-    }*/
+    /*
+     * public List<Measurement> getOpenSpaces() { return openSpaces; } public void setOpenSpaces(List<Measurement> openSpaces) {
+     * this.openSpaces = openSpaces; }
+     */
 
     @Override
     public String toString() {
 
-        return "Floor :" + number + " [\n exterior=" + exterior + ""  + "]";
+        return "Floor :" + number + " [\n exterior=" + exterior + "" + "]";
 
     }
 
@@ -518,30 +517,36 @@ public class Floor extends Measurement {
         this.overHangs = overHangs;
     }
 
-	public InteriorOpenSpace getInteriorOpenSpace() {
-		return interiorOpenSpace;
-	}
+    public InteriorOpenSpace getInteriorOpenSpace() {
+        return interiorOpenSpace;
+    }
 
-	public void setInteriorOpenSpace(InteriorOpenSpace interiorOpenSpace) {
-		this.interiorOpenSpace = interiorOpenSpace;
-	}
+    public void setInteriorOpenSpace(InteriorOpenSpace interiorOpenSpace) {
+        this.interiorOpenSpace = interiorOpenSpace;
+    }
 
-	public MeasurementWithHeight getVerandah() {
-		return verandah;
-	}
+    public MeasurementWithHeight getVerandah() {
+        return verandah;
+    }
 
-	public void setVerandah(MeasurementWithHeight verandah) {
-		this.verandah = verandah;
-	}
+    public void setVerandah(MeasurementWithHeight verandah) {
+        this.verandah = verandah;
+    }
 
-	public MeasurementWithHeight getLightAndVentilation() {
-		return lightAndVentilation;
-	}
+    public MeasurementWithHeight getLightAndVentilation() {
+        return lightAndVentilation;
+    }
 
-	public void setLightAndVentilation(MeasurementWithHeight lightAndVentilation) {
-		this.lightAndVentilation = lightAndVentilation;
-	}
+    public void setLightAndVentilation(MeasurementWithHeight lightAndVentilation) {
+        this.lightAndVentilation = lightAndVentilation;
+    }
 
-	 
+    public List<RoofArea> getRoofAreas() {
+        return roofAreas;
+    }
+
+    public void setRoofAreas(List<RoofArea> roofAreas) {
+        this.roofAreas = roofAreas;
+    }
 
 }
