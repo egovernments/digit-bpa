@@ -91,7 +91,7 @@ public class Floor extends Measurement {
     private InteriorOpenSpace interiorOpenSpace = new InteriorOpenSpace();
     private MeasurementWithHeight verandah = new MeasurementWithHeight();
     private MeasurementWithHeight lightAndVentilation = new MeasurementWithHeight();
-    private List<RoofArea> roofAreas;
+    private List<RoofArea> roofAreas = new ArrayList<>();
 
     private List<Balcony> balconies = new ArrayList<>();
 
