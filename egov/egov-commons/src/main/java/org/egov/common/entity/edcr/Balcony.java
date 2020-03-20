@@ -48,6 +48,7 @@
 package org.egov.common.entity.edcr;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Balcony extends Measurement {
@@ -60,10 +61,10 @@ public class Balcony extends Measurement {
 
     private BigDecimal deductions;
 
-    private transient List<Measurement> measurements;
+    private transient List<Measurement> measurements = new ArrayList<>();
 
-    private List<BigDecimal> widths;
-    
+    private List<BigDecimal> widths = new ArrayList<>();
+
     public String getNumber() {
         return number;
     }
@@ -103,5 +104,5 @@ public class Balcony extends Measurement {
     public void setWidths(List<BigDecimal> widths) {
         this.widths = widths;
     }
-    
+
 }
