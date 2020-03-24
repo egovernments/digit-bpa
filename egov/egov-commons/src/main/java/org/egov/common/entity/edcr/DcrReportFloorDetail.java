@@ -57,6 +57,8 @@ public class DcrReportFloorDetail {
 
     private BigDecimal builtUpArea;
 
+    private BigDecimal builtUpDeductionArea;
+
     private BigDecimal floorArea;
 
     private BigDecimal carpetArea;
@@ -99,5 +101,13 @@ public class DcrReportFloorDetail {
 
     public void setCarpetArea(BigDecimal carpetArea) {
         this.carpetArea = carpetArea;
+    }
+
+    public BigDecimal getBuiltUpDeductionArea() {
+        return builtUpDeductionArea;
+    }
+
+    public void setBuiltUpDeductionArea(BigDecimal builtUpDeductionArea) {
+        this.builtUpDeductionArea = builtUpDeductionArea;
     }
 }

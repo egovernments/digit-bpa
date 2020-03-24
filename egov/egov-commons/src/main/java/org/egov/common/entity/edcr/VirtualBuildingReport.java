@@ -53,11 +53,15 @@ public class VirtualBuildingReport {
 
     private BigDecimal proposedBuitUpArea;
 
+    private BigDecimal proposedBuiltUpDeductionArea;
+
     private BigDecimal proposedFloorArea;
 
     private BigDecimal proposedCarpetArea;
 
     private BigDecimal totalExistingBuiltUpArea;
+
+    private BigDecimal totalExistingBuiltUpDeductionArea;
 
     private BigDecimal totalExistingFloorArea;
 
@@ -66,6 +70,8 @@ public class VirtualBuildingReport {
     private BigDecimal totalCoverageArea;
 
     private BigDecimal totalBuitUpArea;
+
+    private BigDecimal totalBuiltUpDeductionArea;
 
     private BigDecimal totalFloorArea;
 
@@ -150,4 +156,29 @@ public class VirtualBuildingReport {
     public void setTotalCarpetArea(BigDecimal totalCarpetArea) {
         this.totalCarpetArea = totalCarpetArea;
     }
+
+    public BigDecimal getProposedBuiltUpDeductionArea() {
+        return proposedBuiltUpDeductionArea;
+    }
+
+    public void setProposedBuiltUpDeductionArea(BigDecimal proposedBuiltUpDeductionArea) {
+        this.proposedBuiltUpDeductionArea = proposedBuiltUpDeductionArea;
+    }
+
+    public BigDecimal getTotalExistingBuiltUpDeductionArea() {
+        return totalExistingBuiltUpDeductionArea;
+    }
+
+    public void setTotalExistingBuiltUpDeductionArea(BigDecimal totalExistingBuiltUpDeductionArea) {
+        this.totalExistingBuiltUpDeductionArea = totalExistingBuiltUpDeductionArea;
+    }
+
+    public BigDecimal getTotalBuiltUpDeductionArea() {
+        return totalBuiltUpDeductionArea;
+    }
+
+    public void setTotalBuiltUpDeductionArea(BigDecimal totalBuiltUpDeductionArea) {
+        this.totalBuiltUpDeductionArea = totalBuiltUpDeductionArea;
+    }
+
 }
