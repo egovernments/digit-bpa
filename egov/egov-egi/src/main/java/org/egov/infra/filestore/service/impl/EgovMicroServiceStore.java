@@ -53,25 +53,22 @@ import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.slf4j.LoggerFactory.getLogger;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.math.RandomUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.microservice.contract.EgFile;
 import org.egov.infra.microservice.contract.StorageResponse;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -79,14 +76,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.multipart.MultipartFile;
 
 @Component("egovMicroServiceStore")
 public class EgovMicroServiceStore implements FileStoreService {
@@ -119,8 +118,10 @@ public class EgovMicroServiceStore implements FileStoreService {
 	public FileStoreMapper store(File file, String fileName, String mimeType, String moduleName, boolean deleteFile) {
 		try {
 			HttpHeaders headers = new HttpHeaders();
-			LOG.debug(file.getName() + "---------------" + file.length());  
- 			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+			if(LOG.isDebugEnabled())
+			LOG.debug(String.format("Uploaded file   %s   with size  %s " ,file.getName() , file.length()));
+			
+			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 			map.add("file", new FileSystemResource(file.getName()));
 			map.add("tenantId", ApplicationThreadLocals.getTenantID());
@@ -130,12 +131,19 @@ public class EgovMicroServiceStore implements FileStoreService {
 			ResponseEntity<StorageResponse> result = restTemplate.postForEntity(url, request, StorageResponse.class);
 			FileStoreMapper fileMapper = new FileStoreMapper(result.getBody().getFiles().get(0).getFileStoreId(),
 					fileName);
-			LOG.debug("uploaded file  " + fileMapper.getFileStoreId());
+			if(LOG.isDebugEnabled())
+			LOG.debug(String.format("Uploaded file   %s   with filestoreid  %s " ,file.getName() , fileMapper.getFileStoreId()));
+		
 			fileMapper.setContentType(mimeType);
+			
+			Files.deleteIfExists(Paths.get(fileName));
+
 			return fileMapper;
-		} catch (RestClientException e  ) {
+		} catch (RestClientException e) {
 			LOG.error("Error while Saving to FileStore", e);
 
+		} catch (IOException e) {
+			LOG.error("Error while Deleting temp file", e);
 		}
 		return null;
 	}
@@ -151,7 +159,9 @@ public class EgovMicroServiceStore implements FileStoreService {
 			if (closeStream) {
 				fileStream.close();
 			}
-			LOG.info("Uploading ..."+f.getName() + "---------------" + f.length());
+			if(LOG.isDebugEnabled())
+			LOG.debug(String.format("Uploading .....  %s    with size %s   " ,f.getName() , f.length()));  
+			
 			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 			MultiValueMap<String, Object> map = new LinkedMultiValueMap<String, Object>();
 			map.add("file", new FileSystemResource(f.getName()));
@@ -162,14 +172,16 @@ public class EgovMicroServiceStore implements FileStoreService {
 			ResponseEntity<StorageResponse> result = restTemplate.postForEntity(url, request, StorageResponse.class);
 			FileStoreMapper fileMapper = new FileStoreMapper(result.getBody().getFiles().get(0).getFileStoreId(),
 					fileName);
-			LOG.info("Upload completed for   " + f.getName() +"with filestoreid "+ fileMapper.getFileStoreId());
+			if(LOG.isDebugEnabled())
+			LOG.debug(String.format("Upload completed for  %s   with filestoreid   " ,f.getName() , fileMapper.getFileStoreId()));
+			
 			fileMapper.setContentType(mimeType);
 			if (closeStream)
-				f.delete();
+				Files.deleteIfExists(Paths.get(fileName));
 
 			return fileMapper;
 		} catch (RestClientException | IOException e) {
-			LOG.error("Error while Saving to FileStore", e);
+			LOG.error("Error while Saving to FileStore", e);   
 
 		}
 		return null;
@@ -189,37 +201,32 @@ public class EgovMicroServiceStore implements FileStoreService {
 
 	@Override
 	public File fetch(String fileStoreId, String moduleName) {
-		OutputStream os =null;
-		try {
-			String urls = url + "/id?tenantId=" + ApplicationThreadLocals.getTenantID() + "&fileStoreId=" + fileStoreId;
-			LOG.info("Downloading.... "+urls);
-			ResponseEntity<String> files = restTemplate.getForEntity(urls, String.class);
-			byte[] b = files.getBody().getBytes();
-			File file = new File(fileStoreId);
-			os = new FileOutputStream(file);
-			os.write(b);
-			os.flush();
-			os.close();
-			LOG.info("Downloaded .... "+file.getName() +"  "+file.length());
-			return file;
 
-		} catch (RestClientException e) {
-			throw new RuntimeException("File not found ");
-		} catch (IOException e) {
-		LOG.error(e.getMessage(),e);
-		}
-		finally{
-			
-		}
+		
+		String urls = url + "/id?tenantId=" + ApplicationThreadLocals.getTenantID() + "&fileStoreId=" + fileStoreId;
+		if(LOG.isDebugEnabled())
+			LOG.debug(String.format("fetch file fron url   %s   " ,urls) );
 
-		return null;
+		RequestCallback requestCallback = request -> request.getHeaders()
+				.setAccept(Arrays.asList(MediaType.APPLICATION_OCTET_STREAM, MediaType.ALL));
+		Path path = Paths.get("/tmp/" + RandomUtils.nextLong());
+		ResponseExtractor<Void> responseExtractor = response -> {
+			Files.copy(response.getBody(), path);
+			return null;
+		};
+		restTemplate.execute(URI.create(urls), HttpMethod.GET, requestCallback, responseExtractor);
+		
+		LOG.debug("fetch completed....   ");
+		return path.toFile();
 
-	}
+	}  
+
+	 
 
 	@Override
 	public Path fetchAsPath(String fileStoreId, String moduleName) {
-		Path fileDirPath = Paths.get(fetch(fileStoreId, moduleName).getPath());
-		return fileDirPath;
+		return Paths.get(fetch(fileStoreId, moduleName).getPath());
+		 
 	}
 
 	@Override
@@ -236,16 +243,7 @@ public class EgovMicroServiceStore implements FileStoreService {
 		}
 	}
 
-	private Path createNewFilePath(FileStoreMapper fileMapper, String moduleName) throws IOException {
-		Path fileDirPath = this.getFileDirectoryPath(moduleName);
-		if (!fileDirPath.toFile().exists()) {
-			LOG.info("File Store Directory {}/{}/{} not found, creating one", this.url, getCityCode(), moduleName);
-			Files.createDirectories(fileDirPath);
-			LOG.info("Created File Store Directory {}/{}/{}", this.url, getCityCode(), moduleName);
-		}
-		return this.getFilePath(fileDirPath, fileMapper.getFileStoreId());
-	}
-
+	 
 	private Path getFileDirectoryPath(String moduleName) {
 		return Paths.get(new StringBuilder().append(this.url).append(separator).append(getCityCode()).append(separator)
 				.append(moduleName).toString());
