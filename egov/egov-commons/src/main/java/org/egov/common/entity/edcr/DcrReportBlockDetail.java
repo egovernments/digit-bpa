@@ -60,6 +60,8 @@ public class DcrReportBlockDetail {
 
     private List<DcrReportFloorDetail> dcrReportFloorDetails;
 
+    private BigDecimal constructedArea = BigDecimal.ZERO;
+    
     public String getBlockNo() {
         return blockNo;
     }
@@ -91,4 +93,13 @@ public class DcrReportBlockDetail {
     public void setDcrReportFloorDetails(List<DcrReportFloorDetail> dcrReportFloorDetails) {
         this.dcrReportFloorDetails = dcrReportFloorDetails;
     }
+
+    public BigDecimal getConstructedArea() {
+        return constructedArea;
+    }
+
+    public void setConstructedArea(BigDecimal constructedArea) {
+        this.constructedArea = constructedArea;
+    }
+    
 }

@@ -96,7 +96,9 @@ public class Floor extends Measurement {
     private List<Balcony> balconies = new ArrayList<>();
 
     private List<Measurement> overHangs;
-
+    
+    private List<Measurement> constructedAreas = new ArrayList<>();
+    
     public List<FireStair> getFireStairs() {
         return fireStairs;
     }
@@ -547,6 +549,14 @@ public class Floor extends Measurement {
 
     public void setRoofAreas(List<RoofArea> roofAreas) {
         this.roofAreas = roofAreas;
+    }
+
+    public List<Measurement> getConstructedAreas() {
+        return constructedAreas;
+    }
+
+    public void setConstructedAreas(List<Measurement> constructedAreas) {
+        this.constructedAreas = constructedAreas;
     }
 
 }

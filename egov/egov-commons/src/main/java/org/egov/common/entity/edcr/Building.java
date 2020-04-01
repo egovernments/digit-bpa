@@ -115,6 +115,8 @@ public class Building extends Measurement {
 
     private Boolean isHighRise = false;
 
+    private BigDecimal totalConstructedArea = BigDecimal.ZERO;
+    
     public List<Occupancy> getOccupancies() {
         return occupancies;
     }
@@ -363,6 +365,14 @@ public class Building extends Measurement {
 
     public void setHeadRoom(HeadRoom headRoom) {
         this.headRoom = headRoom;
+    }
+
+    public BigDecimal getTotalConstructedArea() {
+        return totalConstructedArea;
+    }
+
+    public void setTotalConstructedArea(BigDecimal totalConstructedArea) {
+        this.totalConstructedArea = totalConstructedArea;
     }
 
 }

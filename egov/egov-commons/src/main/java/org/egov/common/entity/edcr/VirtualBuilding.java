@@ -72,7 +72,8 @@ public class VirtualBuilding implements Serializable {
     private BigDecimal totalCoverageArea;
     private transient Boolean residentialOrCommercialBuilding = false;
     private transient Boolean residentialBuilding = false;
-
+    private BigDecimal totalConstructedArea;
+    
     public BigDecimal getTotalCarpetArea() {
         return totalCarpetArea;
     }
@@ -208,4 +209,13 @@ public class VirtualBuilding implements Serializable {
     public void setResidentialOrCommercialBuilding(Boolean residentialOrCommercialBuilding) {
         this.residentialOrCommercialBuilding = residentialOrCommercialBuilding;
     }
+
+    public BigDecimal getTotalConstructedArea() {
+        return totalConstructedArea;
+    }
+
+    public void setTotalConstructedArea(BigDecimal totalConstructedArea) {
+        this.totalConstructedArea = totalConstructedArea;
+    }
+    
 }
