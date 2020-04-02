@@ -312,6 +312,16 @@ public class PlanReportService {
 
                     text = text.append(coveredAreaText).append("\\n").append(blgHgtText);
 
+                    if (dcrReportBlockDetail.getConstructedArea().compareTo(BigDecimal.ZERO) > 0) {
+                        String constructedAreaText = "3. Already constructed area is "
+                                + (dcrReportBlockDetail.getConstructedArea() != null ? dcrReportBlockDetail
+                                        .getConstructedArea().setScale(DcrConstants.DECIMALDIGITS_MEASUREMENTS,
+                                                DcrConstants.ROUNDMODE_MEASUREMENTS)
+                                        : BigDecimal.ZERO)
+                                + " m²";
+                        text = text.append("\\n").append(constructedAreaText);
+                    }
+                    
                     AutoText autoText = new AutoText(text.toString(), AutoText.POSITION_FOOTER,
                             HorizontalBandAlignment.LEFT, 530);
 
@@ -414,32 +424,62 @@ public class PlanReportService {
         return null;
     }
 
-    private Subreport getTotalAreaDetails() {
+    private Subreport getTotalAreaDetails(VirtualBuildingReport virtualBuildingReport) {
         try {
 
             FastReportBuilder frb = new FastReportBuilder();
 
-            AbstractColumn builtUpArea = ColumnBuilder.getNew()
-                    .setColumnProperty("totalBuitUpArea", BigDecimal.class.getName()).setTitle("Built Up Area in m²")
-                    .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
+            if (virtualBuildingReport.getTotalConstructedArea() != null
+                    && virtualBuildingReport.getTotalConstructedArea().compareTo(BigDecimal.ZERO) > 0) {
+                AbstractColumn builtUpArea = ColumnBuilder.getNew()
+                        .setColumnProperty("totalBuitUpArea", BigDecimal.class.getName()).setTitle("Built Up Area in m²")
+                        .setWidth(100).setStyle(reportService.getTotalNumberStyle()).build();
 
-            AbstractColumn floorArea = ColumnBuilder.getNew()
-                    .setColumnProperty("totalFloorArea", BigDecimal.class.getName()).setTitle("Floor Area in m²")
-                    .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
+                AbstractColumn floorArea = ColumnBuilder.getNew()
+                        .setColumnProperty("totalFloorArea", BigDecimal.class.getName()).setTitle("Floor Area in m²")
+                        .setWidth(100).setStyle(reportService.getTotalNumberStyle()).build();
 
-            AbstractColumn carpetArea = ColumnBuilder.getNew()
-                    .setColumnProperty("totalCarpetArea", BigDecimal.class.getName()).setTitle("Carpet Area in m²")
-                    .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
+                AbstractColumn carpetArea = ColumnBuilder.getNew()
+                        .setColumnProperty("totalCarpetArea", BigDecimal.class.getName()).setTitle("Carpet Area in m²")
+                        .setWidth(100).setStyle(reportService.getTotalNumberStyle()).build();
 
-            AbstractColumn coverageArea = ColumnBuilder.getNew()
-                    .setColumnProperty("totalCoverageArea", BigDecimal.class.getName()).setTitle("Covered Area in m²")
-                    .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
+                AbstractColumn coverageArea = ColumnBuilder.getNew()
+                        .setColumnProperty("totalCoverageArea", BigDecimal.class.getName()).setTitle("Covered Area in m²")
+                        .setWidth(100).setStyle(reportService.getTotalNumberStyle()).build();
 
-            frb.addColumn(builtUpArea);
-            frb.addColumn(floorArea);
-            frb.addColumn(carpetArea);
-            frb.addColumn(coverageArea);
+                AbstractColumn constructedArea = ColumnBuilder.getNew()
+                        .setColumnProperty("totalConstructedArea", BigDecimal.class.getName())
+                        .setTitle("Already Constructed Area in m²").setWidth(100)
+                        .setStyle(reportService.getTotalNumberStyle()).build();
 
+                frb.addColumn(builtUpArea);
+                frb.addColumn(floorArea);
+                frb.addColumn(carpetArea);
+                frb.addColumn(coverageArea);
+                frb.addColumn(constructedArea);
+            } else {
+                AbstractColumn builtUpArea = ColumnBuilder.getNew()
+                        .setColumnProperty("totalBuitUpArea", BigDecimal.class.getName()).setTitle("Built Up Area in m²")
+                        .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
+
+                AbstractColumn floorArea = ColumnBuilder.getNew()
+                        .setColumnProperty("totalFloorArea", BigDecimal.class.getName()).setTitle("Floor Area in m²")
+                        .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
+
+                AbstractColumn carpetArea = ColumnBuilder.getNew()
+                        .setColumnProperty("totalCarpetArea", BigDecimal.class.getName()).setTitle("Carpet Area in m²")
+                        .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
+
+                AbstractColumn coverageArea = ColumnBuilder.getNew()
+                        .setColumnProperty("totalCoverageArea", BigDecimal.class.getName()).setTitle("Covered Area in m²")
+                        .setWidth(120).setStyle(reportService.getTotalNumberStyle()).build();
+
+                frb.addColumn(builtUpArea);
+                frb.addColumn(floorArea);
+                frb.addColumn(carpetArea);
+                frb.addColumn(coverageArea);
+            }
+            
             frb.setTitle("Total Area");
             frb.setTitleStyle(reportService.getTitleStyle());
             frb.setHeaderHeight(5);
@@ -633,7 +673,7 @@ public class PlanReportService {
             valuesMap.put(COMBINED_BLOCKS_SUMMARY_DETAILS, combinedSummary);
 
             // Add total area details
-            drb.addConcatenatedReport(getTotalAreaDetails());
+            drb.addConcatenatedReport(getTotalAreaDetails(virtualBuildingReport));
             valuesMap.put("Total Area Details", Arrays.asList(virtualBuildingReport));
 
             List<String> blockSummary = new ArrayList<>();
@@ -953,6 +993,7 @@ public class PlanReportService {
                     dcrReportBlockDetail.setBlockNo(block.getNumber());
                     dcrReportBlockDetail.setCoverageArea(building.getCoverageArea());
                     dcrReportBlockDetail.setBuildingHeight(building.getBuildingHeight());
+                    dcrReportBlockDetail.setConstructedArea(building.getTotalConstructedArea());
                     List<Floor> floors = building.getFloors();
 
                     if (!floors.isEmpty()) {
@@ -1106,6 +1147,8 @@ public class PlanReportService {
             virtualBuildingReport.setTotalBuitUpArea(virtualBuilding.getTotalBuitUpArea());
             virtualBuildingReport.setTotalFloorArea(virtualBuilding.getTotalFloorArea());
             virtualBuildingReport.setTotalCarpetArea(virtualBuilding.getTotalCarpetArea());
+            
+            virtualBuildingReport.setTotalConstructedArea(virtualBuilding.getTotalConstructedArea());
         }
         return virtualBuildingReport;
     }

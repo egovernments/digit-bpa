@@ -63,6 +63,7 @@ import org.egov.edcr.feature.BuildingHeight;
 import org.egov.edcr.feature.Chimney;
 import org.egov.edcr.feature.CommonFeature;
 import org.egov.edcr.feature.CompoundWallService;
+import org.egov.edcr.feature.ConstructedArea;
 import org.egov.edcr.feature.Coverage;
 import org.egov.edcr.feature.DepthCuttingService;
 import org.egov.edcr.feature.DistanceToRoad;
@@ -343,6 +344,9 @@ public class PlanFeatureRepository {
         pf = new PlanFeature(GateService.class);
         features.add(pf);
 
+        pf = new PlanFeature(ConstructedArea.class);
+        features.add(pf);
+        
         return features;
     }
 
