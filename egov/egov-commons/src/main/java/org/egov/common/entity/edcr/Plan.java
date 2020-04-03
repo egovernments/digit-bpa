@@ -176,10 +176,10 @@ public class Plan implements Serializable {
     @Transient
     @JsonIgnore
     private List<EdcrPdfDetail> edcrPdfDetails;
-   
-    
-    
-    
+
+    @Transient
+    private Boolean strictlyValidateDimension = false;
+
     private Gate gate;
 
     // Used to show drawing mistakes, General errors, mistakes in following layer/color coding standard etc
@@ -559,20 +559,28 @@ public class Plan implements Serializable {
         this.planInfoProperties = planInfoProperties;
     }
 
-	public Gate getGate() {
-		return gate;
-	}
+    public Gate getGate() {
+        return gate;
+    }
 
-	public void setGate(Gate gate) {
-		this.gate = gate;
-	}
+    public void setGate(Gate gate) {
+        this.gate = gate;
+    }
 
-	public Date getAsOnDate() {
-		return asOnDate;
-	}
+    public Date getAsOnDate() {
+        return asOnDate;
+    }
 
-	public void setAsOnDate(Date asOnDate) {
-		this.asOnDate = asOnDate;
-	}
+    public void setAsOnDate(Date asOnDate) {
+        this.asOnDate = asOnDate;
+    }
+
+    public Boolean getStrictlyValidateDimension() {
+        return strictlyValidateDimension;
+    }
+
+    public void setStrictlyValidateDimension(Boolean strictlyValidateDimension) {
+        this.strictlyValidateDimension = strictlyValidateDimension;
+    }
 
 }
