@@ -60,6 +60,7 @@ import org.egov.edcr.contract.EdcrDetail;
 import org.egov.edcr.contract.EdcrRequest;
 import org.egov.edcr.contract.EdcrResponse;
 import org.egov.edcr.contract.PlanResponse;
+import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.service.EdcrRestService;
 import org.egov.edcr.service.PlanService;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
@@ -92,7 +93,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 @RequestMapping(value = "/rest/dcr")
 public class RestEdcrApplicationController {
 
-    private static final Logger LOGGER = Logger.getLogger(RestEdcrApplicationController.class);
+    private static final String INCORRECT_REQUEST = "INCORRECT_REQUEST";
+	private static final Logger LOGGER = Logger.getLogger(RestEdcrApplicationController.class);
     private static final String DIGIT_DCR = "Digit DCR";
 
     @Autowired
@@ -120,12 +122,39 @@ public class RestEdcrApplicationController {
             }
 
         } catch (IOException e) {
-            ErrorResponse error = new ErrorResponse("INCORRECT_REQUEST", e.getLocalizedMessage(),
+            ErrorResponse error = new ErrorResponse(INCORRECT_REQUEST, e.getLocalizedMessage(),
                     HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }
         return getSuccessResponse(Arrays.asList(edcrDetail), edcr.getRequestInfo());
     }
+    
+    @PostMapping(value = "/scrutinizeocplan", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<?> scrutinizeOccupancyPlan(@RequestBody MultipartFile planFile,
+            @RequestParam String edcrRequest) {
+        EdcrDetail edcrDetail = new EdcrDetail();
+        EdcrRequest edcr = new EdcrRequest();
+        try {
+            edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
+            ErrorDetail errorResponses = (edcrRestService.validateEdcrOcRequest(edcr, planFile));
+            
+            if (errorResponses != null)
+                return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
+            else {
+            	edcr.setAppliactionType(ApplicationType.OCCUPANCY_CERTIFICATE.toString());
+            	
+                edcrDetail = edcrRestService.createEdcr(edcr, planFile);
+            }
+
+        } catch (IOException e) {
+            ErrorResponse error = new ErrorResponse(INCORRECT_REQUEST, e.getLocalizedMessage(),
+                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+        return getSuccessResponse(Arrays.asList(edcrDetail), edcr.getRequestInfo());
+    }
+    
 
     @PostMapping(value = "/scrutinydetails", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -155,7 +184,7 @@ public class RestEdcrApplicationController {
                 plan = planService.extractPlan(edcr, planFile);   
           }
         } catch (IOException e) {
-            ErrorResponse error = new ErrorResponse("INCORRECT_REQUEST", e.getLocalizedMessage(),
+            ErrorResponse error = new ErrorResponse(INCORRECT_REQUEST, e.getLocalizedMessage(),
                     HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
         }

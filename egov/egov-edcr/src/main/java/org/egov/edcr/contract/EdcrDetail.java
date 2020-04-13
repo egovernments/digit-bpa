@@ -78,6 +78,17 @@ public class EdcrDetail {
     private List<String> planPdfs;
 
     private Plan planDetail;
+    
+	private String permitNumber;
+
+	private Date permitDate;
+	
+	
+	private String appliactionType;
+
+	private String applicationSubType;
+
+
 
     public String getPlanReport() {
         return planReport;
@@ -174,4 +185,36 @@ public class EdcrDetail {
     public void setErrors(String errors) {
         this.errors = errors;
     }
+
+	public String getPermitNumber() {
+		return permitNumber;
+	}
+
+	public void setPermitNumber(String permitNumber) {
+		this.permitNumber = permitNumber;
+	}
+
+	public Date getPermitDate() {
+		return permitDate;
+	}
+
+	public void setPermitDate(Date permitDate) {
+		this.permitDate = permitDate;
+	}
+
+	public String getAppliactionType() {
+		return appliactionType;
+	}
+
+	public void setAppliactionType(String appliactionType) {
+		this.appliactionType = appliactionType;
+	}
+
+	public String getApplicationSubType() {
+		return applicationSubType;
+	}
+
+	public void setApplicationSubType(String applicationSubType) {
+		this.applicationSubType = applicationSubType;
+	}
 }

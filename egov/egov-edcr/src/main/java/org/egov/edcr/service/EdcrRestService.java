@@ -149,7 +149,20 @@ public class EdcrRestService {
             edcrApplication.setApplicantName(DxfFileConstants.ANONYMOUS_APPLICANT);
         edcrApplication.setArchitectInformation(DxfFileConstants.ANONYMOUS_APPLICANT);
         edcrApplication.setServiceType(DxfFileConstants.NEWCONSTRUCTION_SERVICE);
+        if(edcrRequest.getAppliactionType()==null)
         edcrApplication.setApplicationType(ApplicationType.PERMIT);
+        else
+         edcrApplication.setApplicationType(ApplicationType.valueOf(edcrRequest.getAppliactionType()));
+        if(edcrRequest.getPermitNumber()!=null)
+        	edcrApplication.setPlanPermitNumber(edcrRequest.getPermitNumber());
+        
+        
+        if(edcrRequest.getPermitDate()!=null)
+        {
+        	edcrApplication.setApplicationDate(edcrRequest.getPermitDate());
+        	edcrApplication.setPermitApplicationDate(edcrRequest.getPermitDate());
+        }
+       
         edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
         edcrApplication.setDxfFile(file);
 
@@ -185,6 +198,19 @@ public class EdcrRestService {
         edcrDetail.setApplicationNumber(edcrApplnDtl.getApplication().getApplicationNumber());
         edcrDetail.setApplicationDate(edcrApplnDtl.getApplication().getApplicationDate());
 
+        if(edcrApplnDtl.getApplication().getPlanPermitNumber()!=null)
+        {
+        	edcrDetail.setPermitNumber(edcrApplnDtl.getApplication().getPlanPermitNumber());   
+        }
+        if(edcrApplnDtl.getApplication().getPermitApplicationDate()!=null)
+        {
+        edcrDetail.setPermitDate(edcrApplnDtl.getApplication().getPermitApplicationDate());
+        if(edcrApplnDtl.getApplication().getApplicationType()!=null)
+        edcrDetail.setAppliactionType(edcrApplnDtl.getApplication().getApplicationType().getApplicationTypeVal());
+        if(edcrApplnDtl.getApplication().getServiceType()!=null)
+        edcrDetail.setApplicationSubType(edcrApplnDtl.getApplication().getServiceType());
+        }
+        
         if (edcrApplnDtl.getDxfFileId() != null)
             edcrDetail.setDxfFile(
                     format(getFileDownloadUrl(
@@ -256,6 +282,7 @@ public class EdcrRestService {
         edcrDetail.setApplicationDate(new LocalDate(String.valueOf(applnDtls[9])).toDate());
         edcrDetail.setApplicationNumber(String.valueOf(applnDtls[10]));
 
+       
         if (String.valueOf(applnDtls[5]) != null)
             edcrDetail.setDxfFile(
                     format(getFileDownloadUrl(String.valueOf(applnDtls[5]), String.valueOf(applnDtls[0]))));
@@ -373,10 +400,29 @@ public class EdcrRestService {
         List<String> dcrAllowedExtenstions = new ArrayList<>(
                 Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.extenstions").split(",")));
 
-        List<String> dcrMimeTypes = new ArrayList<>(
-                Arrays.asList(edcrApplicationSettings.getValue("dcr.dxf.allowed.mime.types").split(",")));
+        
         String fileSize = edcrApplicationSettings.getValue("dcr.dxf.max.size");
-        return validateParam(dcrAllowedExtenstions, dcrMimeTypes, file, fileSize);
+		final String maxAllowSizeInMB = fileSize;
+        String extension;
+		if (file != null && !file.isEmpty()) {
+		    extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
+		    if (extension != null && !extension.isEmpty()) {
+		       
+		        if (!dcrAllowedExtenstions.contains(extension.toLowerCase())) {
+		            return new ErrorDetail("BPA-02", "Please upload " + dcrAllowedExtenstions + " format file only");
+		        } else if (file.getSize() > (Long.valueOf(maxAllowSizeInMB) * 1024 * 1024)) {
+		            return new ErrorDetail("BPA-04", "File size should not exceed 30 MB");
+		        } /*
+		           * else if (allowedExtenstions.contains(extension.toLowerCase()) && (!mimeTypes.contains(mimeType) ||
+		           * StringUtils.countMatches(file.getOriginalFilename(), ".") > 1 || file.getOriginalFilename().contains("%00")))
+		           * { return new ErrorDetail("BPA-03", "Malicious file upload"); }
+		           */
+		    }
+		} else {
+		    return new ErrorDetail(BPA_05, "Please upload plan file, It is mandatory");
+		}
+		
+		return null;
     }
 
     public ErrorDetail validateEdcrRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
@@ -391,8 +437,30 @@ public class EdcrRestService {
                 && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber()) != null) {
             return new ErrorDetail("BPA-01", "Transaction Number should be unique");
         }
+        
         return validatePlanFile(planFile);
     }
+    
+    public ErrorDetail validateEdcrOcRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
+    	if (edcrRequest.getRequestInfo() == null)
+            return new ErrorDetail("BPA-07", "Required request body is missing");
+    	else if (edcrRequest.getRequestInfo().getUserInfo() == null || (edcrRequest.getRequestInfo().getUserInfo() != null && isBlank(edcrRequest.getRequestInfo().getUserInfo().getId())))
+            return new ErrorDetail("BPA-07", "User id is mandatory");
+    	
+        if (isBlank(edcrRequest.getTransactionNumber()))
+            return new ErrorDetail("BPA-07", "Transaction number is mandatory");
+        
+        if (null==edcrRequest.getPermitDate())
+            return new ErrorDetail("BPA-08", "Permit Date is mandatory");
+        if (isNotBlank(edcrRequest.getTransactionNumber())
+                && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber()) != null) {
+            return new ErrorDetail("BPA-01", "Transaction Number should be unique");
+            
+        }
+        
+        return validatePlanFile(planFile);
+    }
+    
 
     public ErrorDetail validateSearchRequest(final String edcrNumber, final String transactionNumber) {
         ErrorDetail errorDetail = null;

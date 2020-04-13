@@ -281,7 +281,8 @@ public class EdcrApplicationService {
     
     @Transactional
     public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication) {
-        edcrApplication.setApplicationDate(new Date());
+        if(edcrApplication.getApplicationDate()==null)
+    	edcrApplication.setApplicationDate(new Date());
         edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
         edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         edcrApplication.setStatus(ABORTED);

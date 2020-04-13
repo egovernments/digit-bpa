@@ -49,8 +49,10 @@
 package org.egov.edcr.contract;
 
 import java.io.File;
+import java.util.Date;
 
 import org.egov.infra.microservice.models.RequestInfo;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -58,64 +60,104 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EdcrRequest {
 
-    @JsonProperty("RequestInfo")
-    private RequestInfo requestInfo;
+	@JsonProperty("RequestInfo")
+	private RequestInfo requestInfo;
 
-    private String applicantName;
+	private String applicantName;
 
-    private String transactionNumber;
+	private String transactionNumber;
 
-    private String edcrNumber;
+	private String edcrNumber;
 
-    private File planFile;
+	private String permitNumber;
 
-    private String tenantId;
+	private Date permitDate;
 
-    public RequestInfo getRequestInfo() {
-        return requestInfo;
-    }
+	private File planFile;
 
-    public void setRequestInfo(RequestInfo requestInfo) {
-        this.requestInfo = requestInfo;
-    }
+	private String tenantId;
 
-    public String getApplicantName() {
-        return applicantName;
-    }
+	private String appliactionType;
 
-    public void setApplicantName(String applicantName) {
-        this.applicantName = applicantName;
-    }
+	private String applicationSubType;
 
-    public String getTransactionNumber() {
-        return transactionNumber;
-    }
+	public RequestInfo getRequestInfo() {
+		return requestInfo;
+	}
 
-    public void setTransactionNumber(String transactionNumber) {
-        this.transactionNumber = transactionNumber;
-    }
+	public void setRequestInfo(RequestInfo requestInfo) {
+		this.requestInfo = requestInfo;
+	}
 
-    public File getPlanFile() {
-        return planFile;
-    }
+	public String getApplicantName() {
+		return applicantName;
+	}
 
-    public void setPlanFile(File planFile) {
-        this.planFile = planFile;
-    }
+	public void setApplicantName(String applicantName) {
+		this.applicantName = applicantName;
+	}
 
-    public String getEdcrNumber() {
-        return edcrNumber;
-    }
+	public String getTransactionNumber() {
+		return transactionNumber;
+	}
 
-    public void setEdcrNumber(String edcrNumber) {
-        this.edcrNumber = edcrNumber;
-    }
+	public void setTransactionNumber(String transactionNumber) {
+		this.transactionNumber = transactionNumber;
+	}
 
-    public String getTenantId() {
-        return tenantId;
-    }
+	public File getPlanFile() {
+		return planFile;
+	}
 
-    public void setTenantId(String tenantId) {
-        this.tenantId = tenantId;
-    }
+	public void setPlanFile(File planFile) {
+		this.planFile = planFile;
+	}
+
+	public String getEdcrNumber() {
+		return edcrNumber;
+	}
+
+	public void setEdcrNumber(String edcrNumber) {
+		this.edcrNumber = edcrNumber;
+	}
+
+	public String getTenantId() {
+		return tenantId;
+	}
+
+	public void setTenantId(String tenantId) {
+		this.tenantId = tenantId;
+	}
+
+	public String getPermitNumber() {
+		return permitNumber;
+	}
+
+	public void setPermitNumber(String permitNumber) {
+		this.permitNumber = permitNumber;
+	}
+
+	public Date getPermitDate() {
+		return permitDate;
+	}
+
+	public void setPermitDate(Date permitDate) {
+		this.permitDate = permitDate;
+	}
+
+	public String getAppliactionType() {
+		return appliactionType;
+	}
+
+	public void setAppliactionType(String appliactionType) {
+		this.appliactionType = appliactionType;
+	}
+
+	public String getApplicationSubType() {
+		return applicationSubType;
+	}
+
+	public void setApplicationSubType(String applicationSubType) {
+		this.applicationSubType = applicationSubType;
+	}
 }
