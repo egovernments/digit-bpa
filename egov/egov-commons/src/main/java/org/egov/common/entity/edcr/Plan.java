@@ -101,7 +101,7 @@ public class Plan implements Serializable {
     // Records Accessory building details. Building has outdoor structures such as attached or detached garages, sheds, storage
     // building etc.This will not consider as another block.
     private List<AccessoryBlock> accessoryBlocks = new ArrayList<>();
-
+    private List<BigDecimal> accessoryBlockDistances = new ArrayList<>();
     // Temporary building object used to validate rules based on overall plot/buildings details. Eg: Total buildup area of all the
     // blocks, Unique occupancies present in this plot etc.
     private VirtualBuilding virtualBuilding = new VirtualBuilding();
@@ -192,6 +192,7 @@ public class Plan implements Serializable {
     // System will evaluate the list of noc's required based on the plan input
     private transient Map<String, String> noObjectionCertificates = new HashMap<>();
     private List<String> nocDeptCodes = new ArrayList<String>();
+    private HashMap<String, String> featureAmendments = new LinkedHashMap<>();
 
     public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
         return canopyDistanceFromPlotBoundary;
@@ -225,6 +226,14 @@ public class Plan implements Serializable {
 
     public void setAccessoryBlocks(List<AccessoryBlock> accessoryBlocks) {
         this.accessoryBlocks = accessoryBlocks;
+    }
+    
+    public List<BigDecimal> getAccessoryBlockDistances() {
+        return accessoryBlockDistances;
+    }
+
+    public void setAccessoryBlockDistances(List<BigDecimal> accessoryBlockDistances) {
+        this.accessoryBlockDistances = accessoryBlockDistances;
     }
 
     public List<Occupancy> getOccupancies() {
@@ -581,6 +590,14 @@ public class Plan implements Serializable {
 
     public void setStrictlyValidateDimension(Boolean strictlyValidateDimension) {
         this.strictlyValidateDimension = strictlyValidateDimension;
+    }
+
+    public HashMap<String, String> getFeatureAmendments() {
+        return featureAmendments;
+    }
+
+    public void setFeatureAmendments(HashMap<String, String> featureAmendments) {
+        this.featureAmendments = featureAmendments;
     }
 
 }
