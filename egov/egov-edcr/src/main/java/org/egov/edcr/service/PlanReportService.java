@@ -55,8 +55,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.google.gson.JsonObject;
-
 import ar.com.fdvs.dj.core.DJConstants;
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
@@ -100,8 +98,7 @@ public class PlanReportService {
     private OCPlanScrutinyNumberGenerator ocPlanScrutinyNumberGenerator;
     @Autowired
     private JasperReportService reportService;
-    @Autowired
-    private BpaRestService bpaRestService;
+
 
     public static final String FRONT_YARD_DESC = "Front Setback";
     public static final String REAR_YARD_DESC = "Rear Setback";
@@ -887,17 +884,8 @@ public class PlanReportService {
         drb.setTemplateFile("/reports/templates/edcr_report.jrxml");
         drb.setMargins(5, 0, 33, 20);
         if (ApplicationType.OCCUPANCY_CERTIFICATE.equals(dcrApplication.getApplicationType())) {
-            Map<String, Object> application = bpaRestService
-                    .findByPermitNumber(dcrApplication.getPlanPermitNumber());
             valuesMap.put("planPermissionNumber", dcrApplication.getPlanPermitNumber());
-
-            if (application != null && application.get("applicationDate") != null) {
-                Long date = (Long) application.get("applicationDate");
-                LocalDate date2 = new LocalDate(date);
-                String bpaApplicationDate = DateUtils.toDefaultDateFormat(date2);
-                valuesMap.put("bpaApplicationDate", bpaApplicationDate.toString());
-            }
-
+            valuesMap.put("bpaApplicationDate", dcrApplication.getPermitApplicationDate().toString());
         }
         if (finalReportStatus) {
             String dcrApplicationNumber = "";
