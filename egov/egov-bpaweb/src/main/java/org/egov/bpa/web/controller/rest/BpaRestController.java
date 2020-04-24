@@ -107,6 +107,7 @@ public class BpaRestController {
     @Autowired
     private StakeholderTypeService stakeholderTypeService;
 
+    
     @GetMapping(value = "/getstakeholder/{id}", produces = APPLICATION_JSON_VALUE)
     public StakeHolder getStakeHolderById(@PathVariable final String id) {
         return stakeHolderService.findById(Long.valueOf(id));
@@ -210,4 +211,17 @@ public class BpaRestController {
         return stakeHolderService.validateStakeholder(stakeHolder);
     }
 
+    @GetMapping(value = "/getbpaApplicationByPlanPermissionNo/{permitNumber}", produces = APPLICATION_JSON_VALUE)
+    public Map<String, Object> getApplicationDetailsByPlanPermissionNumber(@PathVariable final String permitNumber) {
+        Map<String, Object> appNoPrmsnNoMap = new ConcurrentHashMap<>();
+        BpaApplication application = applicationBpaService.findByPermitNumber(permitNumber);
+        if (application != null) {
+            appNoPrmsnNoMap.put("applicationNumber", application.getApplicationNumber());
+            appNoPrmsnNoMap.put("applicationDate", application.getApplicationDate());
+            appNoPrmsnNoMap.put("permitNumber", application.getPlanPermissionNumber());
+            appNoPrmsnNoMap.put("permitDate", application.getPlanPermissionDate());
+        }
+        return appNoPrmsnNoMap;
+    }
+    
 }
