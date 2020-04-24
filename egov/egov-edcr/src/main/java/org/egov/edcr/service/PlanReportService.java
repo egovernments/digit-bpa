@@ -885,7 +885,7 @@ public class PlanReportService {
         drb.setMargins(5, 0, 33, 20);
         if (ApplicationType.OCCUPANCY_CERTIFICATE.equals(dcrApplication.getApplicationType())) {
             valuesMap.put("planPermissionNumber", dcrApplication.getPlanPermitNumber());
-            valuesMap.put("bpaApplicationDate", dcrApplication.getPermitApplicationDate().toString());
+            valuesMap.put("bpaApplicationDate", DateUtils.toDefaultDateFormat(dcrApplication.getPermitApplicationDate()));
         }
         if (finalReportStatus) {
             String dcrApplicationNumber = "";
