@@ -198,18 +198,16 @@ public class EdcrRestService {
         edcrDetail.setApplicationNumber(edcrApplnDtl.getApplication().getApplicationNumber());
         edcrDetail.setApplicationDate(edcrApplnDtl.getApplication().getApplicationDate());
 
-        if(edcrApplnDtl.getApplication().getPlanPermitNumber()!=null)
-        {
-        	edcrDetail.setPermitNumber(edcrApplnDtl.getApplication().getPlanPermitNumber());   
+        if (edcrApplnDtl.getApplication().getPlanPermitNumber() != null) {
+            edcrDetail.setPermitNumber(edcrApplnDtl.getApplication().getPlanPermitNumber());
         }
-        if(edcrApplnDtl.getApplication().getPermitApplicationDate()!=null)
-        {
-        edcrDetail.setPermitDate(edcrApplnDtl.getApplication().getPermitApplicationDate());
-        if(edcrApplnDtl.getApplication().getApplicationType()!=null)
-        edcrDetail.setAppliactionType(edcrApplnDtl.getApplication().getApplicationType().getApplicationTypeVal());
-        if(edcrApplnDtl.getApplication().getServiceType()!=null)
-        edcrDetail.setApplicationSubType(edcrApplnDtl.getApplication().getServiceType());
+        if (edcrApplnDtl.getApplication().getPermitApplicationDate() != null) {
+            edcrDetail.setPermitDate(edcrApplnDtl.getApplication().getPermitApplicationDate());
         }
+        if (edcrApplnDtl.getApplication().getApplicationType() != null)
+            edcrDetail.setAppliactionType(edcrApplnDtl.getApplication().getApplicationType().getApplicationTypeVal());
+        if (edcrApplnDtl.getApplication().getServiceType() != null)
+            edcrDetail.setApplicationSubType(edcrApplnDtl.getApplication().getServiceType());
         
         if (edcrApplnDtl.getDxfFileId() != null)
             edcrDetail.setDxfFile(
