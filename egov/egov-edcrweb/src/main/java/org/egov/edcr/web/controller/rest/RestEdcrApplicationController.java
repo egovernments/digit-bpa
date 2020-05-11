@@ -49,13 +49,18 @@ package org.egov.edcr.web.controller.rest;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.common.entity.edcr.Plan;
+import org.egov.commons.mdms.BpaMdmsUtil;
+import org.egov.commons.mdms.config.MdmsConfiguration;
+import org.egov.commons.mdms.validator.MDMSValidator;
 import org.egov.edcr.contract.EdcrDetail;
 import org.egov.edcr.contract.EdcrRequest;
 import org.egov.edcr.contract.EdcrResponse;
@@ -106,6 +111,15 @@ public class RestEdcrApplicationController {
     @Autowired
     protected FileStoreUtils fileStoreUtils;
 
+    @Autowired
+    private MdmsConfiguration mdmsConfiguration;
+
+    @Autowired
+    private MDMSValidator mDMSValidator;
+    
+    @Autowired
+    private BpaMdmsUtil bpaMdmsUtil;
+    
     @PostMapping(value = "/scrutinizeplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> scrutinizePlan(@RequestBody MultipartFile planFile,
@@ -118,7 +132,7 @@ public class RestEdcrApplicationController {
             if (errorResponses != null)
                 return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
             else {
-                edcrDetail = edcrRestService.createEdcr(edcr, planFile);
+                edcrDetail = edcrRestService.createEdcr(edcr, planFile, new HashMap());
             }
 
         } catch (IOException e) {
@@ -144,7 +158,7 @@ public class RestEdcrApplicationController {
             else {
             	edcr.setAppliactionType(ApplicationType.OCCUPANCY_CERTIFICATE.toString());
             	
-                edcrDetail = edcrRestService.createEdcr(edcr, planFile);
+                edcrDetail = edcrRestService.createEdcr(edcr, planFile, new HashMap());
             }
 
         } catch (IOException e) {
@@ -155,6 +169,62 @@ public class RestEdcrApplicationController {
         return getSuccessResponse(Arrays.asList(edcrDetail), edcr.getRequestInfo());
     }
     
+    @PostMapping(value = "/scrutinize", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<?> scrutinize(@RequestBody MultipartFile planFile,
+            @RequestParam String edcrRequest) {
+        EdcrDetail edcrDetail = new EdcrDetail();
+        EdcrRequest edcr = new EdcrRequest();
+        try {
+            ErrorDetail errorResponses = null;
+            edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
+            List<ErrorDetail> errors = edcrRestService.validateEdcrMandatoryFields(edcr);
+            if (!errors.isEmpty())
+                return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+
+            String applicationType = edcr.getAppliactionType();
+            Map<String, List<String>> masterData = new HashMap<>();
+            Boolean mdmsEnabled = mdmsConfiguration.getMdmsEnabled();
+            if (mdmsEnabled != null && mdmsEnabled) {
+                Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), edcr.getTenantId());
+                HashMap<String, String> data = new HashMap();
+                data.put("applicationType", applicationType);
+                masterData = mDMSValidator.getAttributeValues(mdmsData);
+                List<ErrorDetail> mdmsErrors = mDMSValidator.validateMdmsData(masterData, data);
+                if (!mdmsErrors.isEmpty())
+                    return new ResponseEntity<>(mdmsErrors, HttpStatus.BAD_REQUEST);
+
+                if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
+                    errorResponses = (edcrRestService.validateEdcrOcRequest(edcr, planFile));
+                    edcr.setAppliactionType(ApplicationType.OCCUPANCY_CERTIFICATE.toString());
+                } else if ("BUILDING_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
+                    errorResponses = (edcrRestService.validateEdcrRequest(edcr, planFile));
+                    edcr.setAppliactionType(ApplicationType.PERMIT.toString());
+                }
+
+            } else {
+                if (ApplicationType.OCCUPANCY_CERTIFICATE.getApplicationTypeVal().equalsIgnoreCase(applicationType)) {
+                    errorResponses = (edcrRestService.validateEdcrOcRequest(edcr, planFile));
+                    edcr.setAppliactionType(ApplicationType.OCCUPANCY_CERTIFICATE.toString());
+                } else if (ApplicationType.PERMIT.getApplicationTypeVal().equalsIgnoreCase(applicationType)) {
+                    errorResponses = (edcrRestService.validateEdcrRequest(edcr, planFile));
+                    edcr.setAppliactionType(ApplicationType.PERMIT.toString());
+                }
+            }
+
+            if (errorResponses != null)
+                return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
+            else {
+                edcrDetail = edcrRestService.createEdcr(edcr, planFile, masterData);
+            }
+
+        } catch (IOException e) {
+            ErrorResponse error = new ErrorResponse(INCORRECT_REQUEST, e.getLocalizedMessage(),
+                    HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+        }
+        return getSuccessResponse(Arrays.asList(edcrDetail), edcr.getRequestInfo());
+    }
 
     @PostMapping(value = "/scrutinydetails", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody

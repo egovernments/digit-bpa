@@ -193,7 +193,8 @@ public class Plan implements Serializable {
     private transient Map<String, String> noObjectionCertificates = new HashMap<>();
     private List<String> nocDeptCodes = new ArrayList<String>();
     private HashMap<String, String> featureAmendments = new LinkedHashMap<>();
-
+    private transient Map<String, List<String>> mdmsMasterData;
+    
     public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
         return canopyDistanceFromPlotBoundary;
     }
@@ -598,6 +599,14 @@ public class Plan implements Serializable {
 
     public void setFeatureAmendments(HashMap<String, String> featureAmendments) {
         this.featureAmendments = featureAmendments;
+    }
+
+    public Map<String, List<String>> getMdmsMasterData() {
+        return mdmsMasterData;
+    }
+
+    public void setMdmsMasterData(Map<String, List<String>> mdmsMasterData) {
+        this.mdmsMasterData = mdmsMasterData;
     }
 
 }

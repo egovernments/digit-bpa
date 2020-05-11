@@ -71,7 +71,9 @@ public class PlanService {
 
 		Plan plan = extractService.extract(dcrApplication.getSavedDxfFile(), amd, asOnDate,
 				featureService.getFeatures());
-
+		plan.setMdmsMasterData(dcrApplication.getMdmsMasterData());
+		if(StringUtils.isNotBlank(plan.getPlanInformation().getServiceType()))
+		dcrApplication.setServiceType(plan.getPlanInformation().getServiceType());
 		plan = applyRules(plan, amd, cityDetails);
 
 		InputStream reportStream = generateReport(plan, amd, dcrApplication);

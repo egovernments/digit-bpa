@@ -69,6 +69,7 @@ import org.apache.log4j.Logger;
 import org.egov.common.entity.dcr.helper.ErrorDetail;
 import org.egov.common.entity.edcr.Plan;
 import org.egov.common.entity.edcr.PlanInformation;
+import org.egov.commons.mdms.config.MdmsConfiguration;
 import org.egov.edcr.config.properties.EdcrApplicationSettings;
 import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.contract.EdcrDetail;
@@ -132,13 +133,17 @@ public class EdcrRestService {
     @Autowired
     private CityService cityService;
 
+    @Autowired
+    private MdmsConfiguration mdmsConfiguration;
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     @Transactional
-    public EdcrDetail createEdcr(final EdcrRequest edcrRequest, final MultipartFile file) {
+    public EdcrDetail createEdcr(final EdcrRequest edcrRequest, final MultipartFile file, Map<String, List<String>> masterData ) {
         EdcrApplication edcrApplication = new EdcrApplication();
+        edcrApplication.setMdmsMasterData(masterData);
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
         edcrApplicationDetails.add(edcrApplicationDetail);
@@ -204,8 +209,20 @@ public class EdcrRestService {
         if (edcrApplnDtl.getApplication().getPermitApplicationDate() != null) {
             edcrDetail.setPermitDate(edcrApplnDtl.getApplication().getPermitApplicationDate());
         }
-        if (edcrApplnDtl.getApplication().getApplicationType() != null)
-            edcrDetail.setAppliactionType(edcrApplnDtl.getApplication().getApplicationType().getApplicationTypeVal());
+        ApplicationType applicationType = edcrApplnDtl.getApplication().getApplicationType();
+        if (applicationType != null) {
+            Boolean mdmsEnabled = mdmsConfiguration.getMdmsEnabled();
+            if (mdmsEnabled != null && mdmsEnabled) {
+                if (ApplicationType.PERMIT.getApplicationTypeVal()
+                        .equalsIgnoreCase(edcrApplnDtl.getApplication().getApplicationType().getApplicationTypeVal())) {
+                    edcrDetail.setAppliactionType("BUILDING_PLAN_SCRUTINY");
+                } else {
+                    edcrDetail.setAppliactionType("BUILDING_OC_PLAN_SCRUTINY");
+                }
+            } else
+                edcrDetail.setAppliactionType(applicationType.getApplicationTypeVal());
+
+        }
         if (edcrApplnDtl.getApplication().getServiceType() != null)
             edcrDetail.setApplicationSubType(edcrApplnDtl.getApplication().getServiceType());
         
@@ -459,6 +476,17 @@ public class EdcrRestService {
         return validatePlanFile(planFile);
     }
     
+    public List<ErrorDetail> validateEdcrMandatoryFields(final EdcrRequest edcrRequest) {
+        List<ErrorDetail> errors = new ArrayList<>();
+        if (StringUtils.isBlank(edcrRequest.getAppliactionType())) {
+            errors.add(new ErrorDetail("BPA-10", "Application type is missing"));
+        }
+        /*
+         * if (StringUtils.isBlank(edcrRequest.getApplicationSubType())) { errors.add(new ErrorDetail("BPA-11",
+         * "Service type is missing")); }
+         */
+        return errors;
+    }
 
     public ErrorDetail validateSearchRequest(final String edcrNumber, final String transactionNumber) {
         ErrorDetail errorDetail = null;

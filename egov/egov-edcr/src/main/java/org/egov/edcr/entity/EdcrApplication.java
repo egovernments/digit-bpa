@@ -6,6 +6,7 @@ import static javax.persistence.FetchType.LAZY;
 import java.io.File;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -100,6 +101,8 @@ public class EdcrApplication extends AbstractAuditable {
     
     private transient String permitDateTemp;
 
+    private transient  Map<String, List<String>> mdmsMasterData;
+    
     @Override
     public Long getId() {
         return id;
@@ -285,5 +288,13 @@ public class EdcrApplication extends AbstractAuditable {
 	public void setThirdPartyUserTenant(String thirdPartyUserTenant) {
 		this.thirdPartyUserTenant = thirdPartyUserTenant;
 	}
+
+    public Map<String, List<String>> getMdmsMasterData() {
+        return mdmsMasterData;
+    }
+
+    public void setMdmsMasterData(Map<String, List<String>> mdmsMasterData) {
+        this.mdmsMasterData = mdmsMasterData;
+    }
     
 }

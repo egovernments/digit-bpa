@@ -12,6 +12,9 @@ public class MdmsConfiguration {
     @Value("${mdms.searchurl}")
     private String mdmsSearchUrl;
 
+    @Value("${mdms.enable}")
+    private Boolean mdmsEnabled;
+
     public String getMdmsHost() {
         return mdmsHost;
     }
@@ -26,6 +29,14 @@ public class MdmsConfiguration {
 
     public void setMdmsSearchUrl(String mdmsSearchUrl) {
         this.mdmsSearchUrl = mdmsSearchUrl;
+    }
+
+    public Boolean getMdmsEnabled() {
+        return mdmsEnabled;
+    }
+
+    public void setMdmsEnabled(Boolean mdmsEnabled) {
+        this.mdmsEnabled = mdmsEnabled;
     }
 
 }
