@@ -153,7 +153,7 @@ public class EdcrRestService {
         else
             edcrApplication.setApplicantName(DxfFileConstants.ANONYMOUS_APPLICANT);
         edcrApplication.setArchitectInformation(DxfFileConstants.ANONYMOUS_APPLICANT);
-        edcrApplication.setServiceType(DxfFileConstants.NEWCONSTRUCTION_SERVICE);
+        edcrApplication.setServiceType(edcrRequest.getApplicationSubType());
         if(edcrRequest.getAppliactionType()==null)
         edcrApplication.setApplicationType(ApplicationType.PERMIT);
         else
@@ -481,10 +481,11 @@ public class EdcrRestService {
         if (StringUtils.isBlank(edcrRequest.getAppliactionType())) {
             errors.add(new ErrorDetail("BPA-10", "Application type is missing"));
         }
-        /*
-         * if (StringUtils.isBlank(edcrRequest.getApplicationSubType())) { errors.add(new ErrorDetail("BPA-11",
-         * "Service type is missing")); }
-         */
+
+        if (StringUtils.isBlank(edcrRequest.getApplicationSubType())) {
+            errors.add(new ErrorDetail("BPA-11", "Service type is missing"));
+        }
+         
         return errors;
     }
 

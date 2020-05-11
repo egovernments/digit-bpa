@@ -183,12 +183,14 @@ public class RestEdcrApplicationController {
                 return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
 
             String applicationType = edcr.getAppliactionType();
+            String serviceType = edcr.getApplicationSubType();
             Map<String, List<String>> masterData = new HashMap<>();
             Boolean mdmsEnabled = mdmsConfiguration.getMdmsEnabled();
             if (mdmsEnabled != null && mdmsEnabled) {
                 Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), edcr.getTenantId());
                 HashMap<String, String> data = new HashMap();
                 data.put("applicationType", applicationType);
+                data.put("serviceType", serviceType);
                 masterData = mDMSValidator.getAttributeValues(mdmsData);
                 List<ErrorDetail> mdmsErrors = mDMSValidator.validateMdmsData(masterData, data);
                 if (!mdmsErrors.isEmpty())

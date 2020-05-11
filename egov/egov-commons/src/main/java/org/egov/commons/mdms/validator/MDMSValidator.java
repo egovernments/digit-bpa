@@ -26,9 +26,11 @@ public class MDMSValidator {
         validateIfMasterPresent(masterArray, masterData, errors);
 
         if (!masterData.get("ApplicationType").contains(data.get("applicationType")))
-            errors.add(new ErrorDetail("INVALID APPLICATIONTYPE", "The applicationType '" + data.get("applicationType") +
+            errors.add(new ErrorDetail("INVALID APPLICATIONTYPE", "The application type '" + data.get("applicationType") +
                     "' does not exists"));
-
+        if (!masterData.get("ServiceType").contains(data.get("serviceType")))
+            errors.add(new ErrorDetail("INVALID SERVICETYPE", "The service type '" + data.get("serviceType") +
+                    "' does not exists"));
         return errors;
     }
 
@@ -58,7 +60,6 @@ public class MDMSValidator {
         for (String masterName : masterNames) {
             if (CollectionUtils.isEmpty(codes.get(masterName))) {
                 errors.add(new ErrorDetail("MDMS DATA ERROR ", "Unable to fetch " + masterName + " codes from MDMS"));
-                ;
             }
         }
         return errors;
