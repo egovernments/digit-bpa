@@ -42,6 +42,7 @@ import org.egov.common.entity.edcr.VirtualBuilding;
 import org.egov.common.entity.edcr.VirtualBuildingReport;
 import org.egov.edcr.autonumber.DcrApplicationNumberGenerator;
 import org.egov.edcr.autonumber.OCPlanScrutinyNumberGenerator;
+import org.egov.edcr.constants.DxfFileConstants;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
@@ -901,7 +902,11 @@ public class PlanReportService {
             valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(dcrApplication, finalReportStatus)));
         }
         valuesMap.put("applicationType", dcrApplication.getApplicationType().getApplicationTypeVal());
-
+        Map<String, String> serviceTypeList = DxfFileConstants.getServiceTypeList();
+        if (StringUtils.isNotBlank(dcrApplication.getServiceType())) {
+            String serviceType = serviceTypeList.get(dcrApplication.getServiceType());
+            valuesMap.put("serviceType", serviceType);
+        }
         final DynamicReport dr = drb.build();
         plan.setEdcrPassed(finalReportStatus);
         InputStream exportPdf = null;

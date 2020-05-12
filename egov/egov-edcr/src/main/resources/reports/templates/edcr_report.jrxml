@@ -52,6 +52,7 @@
 	<parameter name="surrenderRoadArea" class="java.math.BigDecimal"/>
 	<parameter name="bpaApplicationDate" class="java.lang.String"/>
 	<parameter name="planPermissionNumber" class="java.lang.String"/>
+	<parameter name="serviceType" class="java.lang.String"/>
 	<field name="planInformation" class="org.egov.common.entity.edcr.PlanInformation"/>
 	<field name="plot" class="org.egov.common.entity.edcr.Plot"/>
 	<field name="electricLine" class="org.egov.common.entity.edcr.ElectricLine"/>
@@ -1503,6 +1504,51 @@
 					<printWhenExpression><![CDATA[$P{planPermissionNumber}  != null && $P{bpaApplicationDate} != null]]></printWhenExpression>
 				</reportElement>
 				<textFieldExpression><![CDATA["The occupancy certificate plan is scrutinised with the by-laws which were prevailing on the date "+  $P{bpaApplicationDate}+" on which the eDCR scrutiny of the building permit application with plan permission number "+ $P{planPermissionNumber} +" was done"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="304" y="186" width="114" height="21" uuid="a174acc9-e176-4a25-8fa9-d465d96e1cf7"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA["SERVICE TYPE"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="418" y="186" width="130" height="21" uuid="92293f5a-c1a9-4b35-904e-bf0d019ce000"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font size="8"/>
+					<paragraph leftIndent="3"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{serviceType}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="false">
+				<reportElement x="288" y="186" width="16" height="21" uuid="ddb3ea09-9d48-4e5d-9217-a104d90645f6"/>
+				<box>
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font size="8"/>
+					<paragraph leftIndent="0"/>
+				</textElement>
+				<textFieldExpression><![CDATA["8"]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>

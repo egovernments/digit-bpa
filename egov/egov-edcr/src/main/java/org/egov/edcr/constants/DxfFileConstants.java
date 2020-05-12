@@ -1,5 +1,9 @@
 package org.egov.edcr.constants;
 
+import java.util.Collections;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 public class DxfFileConstants {
 
     // occupancies code
@@ -344,4 +348,13 @@ public class DxfFileConstants {
     public static final String NEWCONSTRUCTION_SERVICE = "New Construction";
     public static final String MAINRIVER = "MainRiver";
     public static final String SUBRIVER = "SubRiver";
+    
+    private static final Map<String, String> SERVICE_TYPE = new ConcurrentHashMap<>();
+    static {
+    SERVICE_TYPE.put("NEW_CONSTRUCTION", "New Construction");
+    }
+    
+    public static Map<String, String> getServiceTypeList() {
+        return Collections.unmodifiableMap(SERVICE_TYPE);
+    }
 }
