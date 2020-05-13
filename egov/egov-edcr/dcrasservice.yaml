@@ -37,7 +37,35 @@ paths:
                 $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ErrorRes'
       tags:
         - Scrutinize Plan
-        
+
+paths:
+  /rest/dcr/scrutinize:
+    post:
+      summary: This API will scrutinize the building plan drawing(dxf) file send along and gives the plan scrutiny result as response along with a unique eDCR number on successful processing.
+      requestBody:
+        content:
+          multipart/mixed:
+            schema:
+              $ref: '#/components/schemas/ScrutinizeReq'
+            encoding:
+              dxfFile:
+                contentType: application/dxf
+      responses:
+        '200':
+          description: Plan scrutanized successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScrutinizePlanResponse'
+        '400':
+          description: Invalid Input
+          content:
+            application/json:
+              schema:
+                $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/definitions/ErrorRes'
+      tags:
+        - Scrutinize Plan
+                
   /rest/dcr/scrutinydetails:
     post:
       summary:  This API is used to fetch the details of the plan that is already scrutinized in the system by providing a transaction number or a eDCR number.
@@ -148,6 +176,23 @@ components:
             - Accepted
             - Not Accepted
             - Aborted
+        permitNumber:
+          type: string
+          maxLength: 32
+          description: Permit number.
+        permitDate:
+          type: integer
+          format: int64
+          x-displayformat: 'dd/MM/yyyy'
+          description: Plan permit date of application  
+        appliactionType:
+          type: string
+          maxLength: 32
+          description: Application Type of application.
+        applicationSubType:
+          type: string
+          maxLength: 32
+          description: Service Type of application.      
         tenantId:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
 
@@ -163,22 +208,43 @@ components:
           type: string
           maxLength: 32
           description: Unique Transaction Number for each request.
+        appliactionType:
+          type: string
+          maxLength: 32
+          description: Application type 
+        applicationSubType:
+          type: string
+          maxLength: 32
+          description: Service type   
         requestInfo:
           $ref: '#/components/schemas/RequestInfo'
         dxfFile:
           type: string
           x-mimetype: application/dxf
           description: The builing plan drawing file, in .dxf format, which needs to be scrutinized.
+        permitNumber:
+          type: string
+          maxLength: 32
+          description: Permit number.
+        permitDate:
+          type: integer
+          format: int64
+          x-displayformat: 'dd/MM/yyyy'
+          description: Plan permit date of application   
       example:
         tenantId: sonpur
         transactionNumber: '1'
         requestInfo: {}
         dxfFile: ''
+        appliactionType: 'BUILDING_PLAN_SCRUTINY'
+        applicationSubType: 'NEW_CONSTRUCTION'
       required:
         - tenantId
         - transactionNumber
         - dxfFile
-        
+        - appliactionType
+        - applicationSubType
+                
     ScrutinizePlanResponse:
       description: This object contains the response of a file scrutiny along with all the reports and status. 
       properties:
