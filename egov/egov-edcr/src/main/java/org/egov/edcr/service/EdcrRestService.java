@@ -373,8 +373,7 @@ public class EdcrRestService {
                         applicationType = ApplicationType.PERMIT;
                     } else if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(appliactionType)) {
                         applicationType = ApplicationType.OCCUPANCY_CERTIFICATE;
-                    }
-                    if ("Permit".equalsIgnoreCase(appliactionType)) {
+                    } else if ("Permit".equalsIgnoreCase(appliactionType)) {
                         applicationType = ApplicationType.PERMIT;
                     } else if ("Occupancy certificate".equalsIgnoreCase(appliactionType)) {
                         applicationType = ApplicationType.OCCUPANCY_CERTIFICATE;
