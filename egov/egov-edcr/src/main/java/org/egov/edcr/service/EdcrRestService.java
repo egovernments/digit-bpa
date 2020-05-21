@@ -419,9 +419,7 @@ public class EdcrRestService {
             if (userInfo != null && isNotBlank(userInfo.getId())) {
                 criteria.add(Restrictions.eq("application.thirdPartyUserCode", userInfo.getId()));
             }
-            if (edcrRequest != null && isNotBlank(edcrRequest.getTenantId())) {
-                criteria.add(Restrictions.eq("application.thirdPartyUserTenant", edcrRequest.getTenantId()));
-            }
+            
             String appliactionType = edcrRequest.getAppliactionType();
             
             if (edcrRequest != null && isNotBlank(appliactionType)) {
@@ -447,7 +445,8 @@ public class EdcrRestService {
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             edcrApplications = criteria.list();
         }
-
+        
+        LOG.info("The number of records = " + edcrApplications.size());
         if (edcrApplications.isEmpty()) {
             EdcrDetail edcrDetail = new EdcrDetail();
             edcrDetail.setErrors("No Record Found");
