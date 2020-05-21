@@ -365,6 +365,29 @@ public class EdcrRestService {
                     queryStr.append("and appln.thirdPartyUserCode=:thirdPartyUserCode ");
                     params.put("thirdPartyUserCode", userInfo.getId());
                 }
+                
+                String appliactionType = edcrRequest.getAppliactionType();
+                if (isNotBlank(appliactionType)) {
+                    ApplicationType applicationType = null;
+                    if ("BUILDING_PLAN_SCRUTINY".equalsIgnoreCase(appliactionType)) {
+                        applicationType = ApplicationType.PERMIT;
+                    } else if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(appliactionType)) {
+                        applicationType = ApplicationType.OCCUPANCY_CERTIFICATE;
+                    }
+                    if ("Permit".equalsIgnoreCase(appliactionType)) {
+                        applicationType = ApplicationType.PERMIT;
+                    } else if ("Occupancy certificate".equalsIgnoreCase(appliactionType)) {
+                        applicationType = ApplicationType.OCCUPANCY_CERTIFICATE;
+                    }
+                    queryStr.append("and appln.applicationType=:applicationtype ");
+                    params.put("applicationtype", applicationType.toString());
+                }
+
+                if (isNotBlank(edcrRequest.getApplicationSubType())) {
+                    queryStr.append("and appln.serviceType=:servicetype ");
+                    params.put("servicetype", edcrRequest.getApplicationSubType());
+                }
+                
                 queryStr.append(" order by appln.createddate desc)");
                 if (tenantItr.hasNext()) {
                     queryStr.append(" union ");
@@ -397,6 +420,28 @@ public class EdcrRestService {
             if (userInfo != null && isNotBlank(userInfo.getId())) {
                 criteria.add(Restrictions.eq("application.thirdPartyUserCode", userInfo.getId()));
             }
+            
+            String appliactionType = edcrRequest.getAppliactionType();
+            
+            if (edcrRequest != null && isNotBlank(appliactionType)) {
+                ApplicationType applicationType = null;
+                if ("BUILDING_PLAN_SCRUTINY".equalsIgnoreCase(appliactionType)) {
+                    applicationType = ApplicationType.PERMIT;
+                } else if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(appliactionType)) {
+                    applicationType = ApplicationType.OCCUPANCY_CERTIFICATE;
+                }
+                if ("Permit".equalsIgnoreCase(appliactionType)) {
+                    applicationType = ApplicationType.PERMIT;
+                } else if ("Occupancy certificate".equalsIgnoreCase(appliactionType)) {
+                    applicationType = ApplicationType.OCCUPANCY_CERTIFICATE;
+                }
+                criteria.add(Restrictions.eq("application.applicationType", applicationType));
+            }
+
+            if (edcrRequest != null && isNotBlank(edcrRequest.getApplicationSubType())) {
+                criteria.add(Restrictions.eq("application.serviceType", edcrRequest.getApplicationSubType()));
+            }
+            
             criteria.addOrder(Order.asc("edcrApplicationDetail.createdDate"));
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
             edcrApplications = criteria.list();
