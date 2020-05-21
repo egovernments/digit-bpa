@@ -419,7 +419,9 @@ public class EdcrRestService {
             if (userInfo != null && isNotBlank(userInfo.getId())) {
                 criteria.add(Restrictions.eq("application.thirdPartyUserCode", userInfo.getId()));
             }
-            
+            if (edcrRequest != null && isNotBlank(edcrRequest.getTenantId())) {
+                criteria.add(Restrictions.eq("application.thirdPartyUserTenant", edcrRequest.getTenantId()));
+            }
             String appliactionType = edcrRequest.getAppliactionType();
             
             if (edcrRequest != null && isNotBlank(appliactionType)) {
