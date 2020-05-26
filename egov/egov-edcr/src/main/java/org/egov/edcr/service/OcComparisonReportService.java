@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Level;
@@ -598,7 +599,9 @@ public class OcComparisonReportService {
             qrCodeValue = qrCodeValue.append("Applicant Name : ")
                     .append(dcrApplication.getApplicantName()).append("\n");
         }
-        Map<String, String> serviceTypeList = DxfFileConstants.getServiceTypeList();
+        //Map<String, String> serviceTypeList = DxfFileConstants.getServiceTypeList();
+        Map<String, String> serviceTypeList = new ConcurrentHashMap<>();
+        serviceTypeList.put("NEW_CONSTRUCTION", "New Construction");
         if (StringUtils.isNotBlank(dcrApplication.getServiceType())) {
             String serviceType = serviceTypeList.get(dcrApplication.getServiceType());
             qrCodeValue = qrCodeValue.append("Service Type : ").append(serviceType).append("\n");
