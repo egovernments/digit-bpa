@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.StringUtils;
@@ -902,7 +903,15 @@ public class PlanReportService {
             valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(dcrApplication, finalReportStatus)));
         }
         valuesMap.put("applicationType", dcrApplication.getApplicationType().getApplicationTypeVal());
-        Map<String, String> serviceTypeList = DxfFileConstants.getServiceTypeList();
+       // Map<String, String> serviceTypeList = DxfFileConstants.getServiceTypeList();
+        Map<String, String> serviceTypeList = new ConcurrentHashMap<>();
+        serviceTypeList.put("NEW_CONSTRUCTION", "New Construction");
+
+        if (StringUtils.isNotBlank(dcrApplication.getServiceType())) {
+            String serviceType = serviceTypeList.get(dcrApplication.getServiceType());
+            valuesMap.put("serviceType", serviceType);
+        }
+
         if (StringUtils.isNotBlank(dcrApplication.getServiceType())) {
             String serviceType = serviceTypeList.get(dcrApplication.getServiceType());
             valuesMap.put("serviceType", serviceType);
