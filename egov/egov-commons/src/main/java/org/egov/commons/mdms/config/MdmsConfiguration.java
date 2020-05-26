@@ -6,13 +6,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MdmsConfiguration {
 
-    @Value("${mdms.host}")
+    @Value("${mdms.host:}")
     private String mdmsHost;
 
-    @Value("${mdms.searchurl}")
+    @Value("${mdms.searchurl:}")
     private String mdmsSearchUrl;
 
-    @Value("${mdms.enable}")
+    @Value("${mdms.enable:false}")
     private Boolean mdmsEnabled;
 
     public String getMdmsHost() {

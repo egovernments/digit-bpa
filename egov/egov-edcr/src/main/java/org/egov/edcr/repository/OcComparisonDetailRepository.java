@@ -47,26 +47,21 @@
 
 package org.egov.edcr.repository;
 
-import java.util.List;
-
-import org.egov.edcr.entity.EdcrApplicationDetail;
+import org.egov.edcr.entity.OcComparisonDetail;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EdcrApplicationDetailRepository extends JpaRepository<EdcrApplicationDetail, Long>, JpaSpecificationExecutor<EdcrApplicationDetail> {
+public interface OcComparisonDetailRepository
+        extends JpaRepository<OcComparisonDetail, Long>, JpaSpecificationExecutor<OcComparisonDetail> {
 
-    List<EdcrApplicationDetail> findByApplicationId(Long dcrApplicationId);
-    
-    EdcrApplicationDetail findByDcrNumber(String dcrNumber);
-    
-    EdcrApplicationDetail findByDcrNumberAndApplication_ThirdPartyUserCode(String dcrNumber, String thirdPartyUserCode);
-    
-    EdcrApplicationDetail findByDcrNumberAndApplication_TransactionNumber(String dcrNumber, String transactionNumber);
-    
-    EdcrApplicationDetail findByDcrNumberAndApplication_TransactionNumberAndApplication_ThirdPartyUserCode(String dcrNumber, String transactionNumber, String thirdPartyUserCode);
+    OcComparisonDetail findByDcrNumber(String dcrNumber);
 
-    EdcrApplicationDetail findByDcrNumberAndApplication_ThirdPartyUserTenant(String dcrNumber, String thirdPartyUserTenant);
+    OcComparisonDetail findByOcdcrNumber(String ocdcrNumber);
+
+    OcComparisonDetail findByOcdcrNumberAndDcrNumber(String ocDcrNumber, String dcrNumber);
+    
+    OcComparisonDetail findByOcdcrNumberAndDcrNumberAndTenantId(String ocDcrNumber, String dcrNumber, String tenantId);
 
 }

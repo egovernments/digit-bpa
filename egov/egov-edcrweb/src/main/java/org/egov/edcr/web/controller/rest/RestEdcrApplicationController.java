@@ -61,12 +61,16 @@ import org.egov.common.entity.edcr.Plan;
 import org.egov.commons.mdms.BpaMdmsUtil;
 import org.egov.commons.mdms.config.MdmsConfiguration;
 import org.egov.commons.mdms.validator.MDMSValidator;
+import org.egov.edcr.contract.ComparisonDetail;
+import org.egov.edcr.contract.ComparisonRequest;
+import org.egov.edcr.contract.ComparisonResponse;
 import org.egov.edcr.contract.EdcrDetail;
 import org.egov.edcr.contract.EdcrRequest;
 import org.egov.edcr.contract.EdcrResponse;
 import org.egov.edcr.contract.PlanResponse;
 import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.service.EdcrRestService;
+import org.egov.edcr.service.OcComparisonService;
 import org.egov.edcr.service.PlanService;
 import org.egov.infra.microservice.contract.RequestInfoWrapper;
 import org.egov.infra.microservice.contract.ResponseInfo;
@@ -119,7 +123,10 @@ public class RestEdcrApplicationController {
     
     @Autowired
     private BpaMdmsUtil bpaMdmsUtil;
-    
+
+    @Autowired
+    private OcComparisonService ocComparisonService;
+
     @PostMapping(value = "/scrutinizeplan", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public ResponseEntity<?> scrutinizePlan(@RequestBody MultipartFile planFile,
@@ -310,6 +317,32 @@ public class RestEdcrApplicationController {
         ErrorResponse error = new ErrorResponse("Internal Server Error", errorDesc,
                 HttpStatus.INTERNAL_SERVER_ERROR);
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @PostMapping(value = "/occomparison", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public ResponseEntity<?> ocComparisonReport(@ModelAttribute ComparisonRequest comparisonRequest,
+            @RequestBody @Valid RequestInfoWrapper requestInfoWrapper) {
+
+        List<ErrorDetail> errors = ocComparisonService.validateEdcrMandatoryFields(comparisonRequest);
+        if (!errors.isEmpty())
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+
+        ComparisonDetail comparisonDetail = ocComparisonService.process(comparisonRequest);
+
+        if (comparisonDetail.getErrors() != null && !comparisonDetail.getErrors().isEmpty())
+            return new ResponseEntity<>(comparisonDetail.getErrors(), HttpStatus.BAD_REQUEST);
+
+        return getComparisonSuccessResponse(comparisonDetail, requestInfoWrapper.getRequestInfo());
+    }
+
+    private ResponseEntity<?> getComparisonSuccessResponse(ComparisonDetail comparisonDetail, RequestInfo requestInfo) {
+        ComparisonResponse comparisonResponse = new ComparisonResponse();
+        comparisonResponse.setComparisonDetail(comparisonDetail);
+        ResponseInfo responseInfo = edcrRestService.createResponseInfoFromRequestInfo(requestInfo, true);
+        comparisonResponse.setResponseInfo(responseInfo);
+        return new ResponseEntity<>(comparisonResponse, HttpStatus.OK);
+
     }
 
 }

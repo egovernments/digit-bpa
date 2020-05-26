@@ -2,7 +2,7 @@
  * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *  Copyright (C) <2019>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -45,28 +45,72 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.edcr.repository;
+package org.egov.common.entity.edcr;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.egov.edcr.entity.EdcrApplicationDetail;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.stereotype.Repository;
+public class OcComparisonBlockDetail {
 
-@Repository
-public interface EdcrApplicationDetailRepository extends JpaRepository<EdcrApplicationDetail, Long>, JpaSpecificationExecutor<EdcrApplicationDetail> {
+    private Long number;
 
-    List<EdcrApplicationDetail> findByApplicationId(Long dcrApplicationId);
-    
-    EdcrApplicationDetail findByDcrNumber(String dcrNumber);
-    
-    EdcrApplicationDetail findByDcrNumberAndApplication_ThirdPartyUserCode(String dcrNumber, String thirdPartyUserCode);
-    
-    EdcrApplicationDetail findByDcrNumberAndApplication_TransactionNumber(String dcrNumber, String transactionNumber);
-    
-    EdcrApplicationDetail findByDcrNumberAndApplication_TransactionNumberAndApplication_ThirdPartyUserCode(String dcrNumber, String transactionNumber, String thirdPartyUserCode);
+    private Long noOfFloorsOc;
 
-    EdcrApplicationDetail findByDcrNumberAndApplication_ThirdPartyUserTenant(String dcrNumber, String thirdPartyUserTenant);
+    private Long noOfFloorsPermit;
+
+    private BigDecimal hghtFromGroundOc;
+
+    private BigDecimal hgtFromGroundPermit;
+
+    private List<OcComparisonReportFloorDetail> comparisonReportFloorDetails = new ArrayList<>();
+
+    public Long getNumber() {
+        return number;
+    }
+
+    public void setNumber(Long number) {
+        this.number = number;
+    }
+
+    public Long getNoOfFloorsOc() {
+        return noOfFloorsOc;
+    }
+
+    public void setNoOfFloorsOc(Long noOfFloorsOc) {
+        this.noOfFloorsOc = noOfFloorsOc;
+    }
+
+    public Long getNoOfFloorsPermit() {
+        return noOfFloorsPermit;
+    }
+
+    public void setNoOfFloorsPermit(Long noOfFloorsPermit) {
+        this.noOfFloorsPermit = noOfFloorsPermit;
+    }
+
+    public BigDecimal getHghtFromGroundOc() {
+        return hghtFromGroundOc;
+    }
+
+    public void setHghtFromGroundOc(BigDecimal hghtFromGroundOc) {
+        this.hghtFromGroundOc = hghtFromGroundOc;
+    }
+
+    public BigDecimal getHgtFromGroundPermit() {
+        return hgtFromGroundPermit;
+    }
+
+    public void setHgtFromGroundPermit(BigDecimal hgtFromGroundPermit) {
+        this.hgtFromGroundPermit = hgtFromGroundPermit;
+    }
+
+    public List<OcComparisonReportFloorDetail> getComparisonReportFloorDetails() {
+        return comparisonReportFloorDetails;
+    }
+
+    public void setComparisonReportFloorDetails(List<OcComparisonReportFloorDetail> comparisonReportFloorDetails) {
+        this.comparisonReportFloorDetails = comparisonReportFloorDetails;
+    }
 
 }

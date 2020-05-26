@@ -72,6 +72,10 @@ public class EdcrApplicationDetailService {
     public EdcrApplicationDetail findByDcrAndTransactionNumberAndTPUserCode(final String dcrNumber, final String transactionNumber, final String thirdPartyUserCode) {
         return edcrApplicationDetailRepository.findByDcrNumberAndApplication_TransactionNumberAndApplication_ThirdPartyUserCode(dcrNumber, transactionNumber, thirdPartyUserCode);
     }
+    
+    public EdcrApplicationDetail findByDcrNumberAndTPUserTenant(final String dcrNumber, final String thirdPartyUserTenant) {
+        return edcrApplicationDetailRepository.findByDcrNumberAndApplication_ThirdPartyUserTenant(dcrNumber, thirdPartyUserTenant);
+    }
 
     public void buildBuildingDetailForApprovedPlans(EdcrApplicationDetail edcrApplicationDetail,
             EdcrApplicationInfo applicationInfo) {
