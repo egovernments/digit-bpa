@@ -198,8 +198,10 @@ public class EdcrRestService {
         EdcrDetail edcrDetail = new EdcrDetail();
         List<String> planPdfs = new ArrayList<>();
         edcrDetail.setTransactionNumber(edcrApplnDtl.getApplication().getTransactionNumber());
+        LOG.info("edcr number == " + edcrApplnDtl.getDcrNumber());
         edcrDetail.setEdcrNumber(edcrApplnDtl.getDcrNumber());
         edcrDetail.setStatus(edcrApplnDtl.getStatus());
+        LOG.info("application number ==" + edcrApplnDtl.getApplication().getApplicationNumber());
         edcrDetail.setApplicationNumber(edcrApplnDtl.getApplication().getApplicationNumber());
         edcrDetail.setApplicationDate(edcrApplnDtl.getApplication().getApplicationDate());
 
