@@ -176,9 +176,9 @@ public class EdcrRestService {
                     ? edcrRequest.getRequestInfo().getUserInfo().getId()
                     : StringUtils.EMPTY);
             edcrApplication
-                    .setThirdPartyUserTenant(StringUtils.isNotBlank(edcrRequest.getRequestInfo().getUserInfo().getTenantId())
-                            ? edcrRequest.getRequestInfo().getUserInfo().getTenantId()
-                            : edcrRequest.getTenantId());
+                    .setThirdPartyUserTenant(StringUtils.isNotBlank(edcrRequest.getTenantId())
+                            ? edcrRequest.getTenantId()
+                            : edcrRequest.getRequestInfo().getUserInfo().getTenantId());
         }
 
         edcrApplication = edcrApplicationService.createRestEdcr(edcrApplication);
