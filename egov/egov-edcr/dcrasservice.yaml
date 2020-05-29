@@ -94,6 +94,18 @@ paths:
           required: false
           schema:
             type: string
+        - name: appliactionType
+          in: query
+          description: Application type of application, either permit or occupancy certificate.
+          required: false
+          schema:
+            type: string
+        - name: applicationSubType
+          in: query
+          description: Service type of application .
+          required: false
+          schema:
+            type: string                        
       responses:
         '200':
           description: Successfully list the details of the plan scrutiny if the system can identify the plan as per the details send. In case where system does not find the scrutiny details based on the input send, it will send a message back as "Invalid Input- Record not found".
@@ -255,7 +267,8 @@ components:
         status:
           type: string
           maxLength: 32
-          description: status of comparison report.               
+          description: status of comparison report.
+          example: Accepted or Not Accepted
         tenantId:
           $ref: 'https://raw.githubusercontent.com/egovernments/egov-services/master/docs/common/contracts/v1-0-0.yml#/parameters/tenantId'
 
