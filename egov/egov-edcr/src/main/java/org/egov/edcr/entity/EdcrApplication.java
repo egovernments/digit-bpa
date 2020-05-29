@@ -101,7 +101,7 @@ public class EdcrApplication extends AbstractAuditable {
     
     private transient String permitDateTemp;
 
-    private transient  Map<String, List<String>> mdmsMasterData;
+    private transient  Map<String, List<Object>> mdmsMasterData;
     
     @Override
     public Long getId() {
@@ -289,11 +289,11 @@ public class EdcrApplication extends AbstractAuditable {
 		this.thirdPartyUserTenant = thirdPartyUserTenant;
 	}
 
-    public Map<String, List<String>> getMdmsMasterData() {
+    public Map<String, List<Object>> getMdmsMasterData() {
         return mdmsMasterData;
     }
 
-    public void setMdmsMasterData(Map<String, List<String>> mdmsMasterData) {
+    public void setMdmsMasterData(Map<String, List<Object>> mdmsMasterData) {
         this.mdmsMasterData = mdmsMasterData;
     }
     

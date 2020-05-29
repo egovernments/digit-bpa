@@ -38,6 +38,27 @@ public class BpaMdmsUtil {
         masterDetailServicetype.setFilter(filterCode);
         bpaMasterDtls.add(masterDetailServicetype);
         
+        MasterDetail masterDetailOccupancyType = new MasterDetail();
+        masterDetailOccupancyType.setName("OccupancyType");
+        masterDetailOccupancyType.setFilter("$.[?(@.active==true)]");
+        bpaMasterDtls.add(masterDetailOccupancyType);
+        
+        MasterDetail masterDetailSubOccupancyType = new MasterDetail();
+        masterDetailSubOccupancyType.setName("SubOccupancyType");
+        masterDetailSubOccupancyType.setFilter("$.[?(@.active==true)]");
+        bpaMasterDtls.add(masterDetailSubOccupancyType);
+        
+        MasterDetail masterDetailUsages = new MasterDetail();
+        masterDetailUsages.setName("Usages");
+        masterDetailUsages.setFilter("$.[?(@.active==true)]");
+        bpaMasterDtls.add(masterDetailUsages);
+        
+        /*
+         * MasterDetail masterDetailSubfeatureColorCode = new MasterDetail();
+         * masterDetailSubfeatureColorCode.setName("SubFeatureColorCode"); masterDetailSubfeatureColorCode.setFilter("$.*");
+         * bpaMasterDtls.add(masterDetailSubfeatureColorCode);
+         */
+        
         ModuleDetail bpaModuleDtls = new ModuleDetail();
         bpaModuleDtls.setMasterDetails(bpaMasterDtls);
         bpaModuleDtls.setModuleName("BPA");

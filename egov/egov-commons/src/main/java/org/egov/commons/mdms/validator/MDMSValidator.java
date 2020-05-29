@@ -18,11 +18,12 @@ public class MDMSValidator {
 
     private static final Logger LOG = Logger.getLogger(MDMSValidator.class);
 
-    public List<ErrorDetail> validateMdmsData(Map<String, List<String>> masterData, Map<String, String> data) {
+    public List<ErrorDetail> validateMdmsData(Map<String, List<Object>> masterData, Map<String, String> data) {
 
         List<ErrorDetail> errors = new ArrayList<>();
 
-        String[] masterArray = { "ApplicationType", "ServiceType" };
+        String[] masterArray = { "ApplicationType", "ServiceType", "OccupancyType", "SubOccupancyType", "Usages",
+                /* "SubFeatureColorCode" */ };
         validateIfMasterPresent(masterArray, masterData, errors);
 
         if (!masterData.get("ApplicationType").contains(data.get("applicationType")))
@@ -34,10 +35,10 @@ public class MDMSValidator {
         return errors;
     }
 
-    public Map<String, List<String>> getAttributeValues(Object mdmsData) {
+    public Map<String, List<Object>> getAttributeValues(Object mdmsData) {
 
         List<String> modulepaths = Arrays.asList("$.MdmsRes.BPA");
-        final Map<String, List<String>> mdmsResMap = new HashMap<>();
+        final Map<String, List<Object>> mdmsResMap = new HashMap<>();
         modulepaths.forEach(modulepath -> {
             try {
                 mdmsResMap.putAll(JsonPath.read(mdmsData, modulepath));
@@ -55,7 +56,7 @@ public class MDMSValidator {
      * @param codes
      */
 
-    private List<ErrorDetail> validateIfMasterPresent(String[] masterNames, Map<String, List<String>> codes,
+    private List<ErrorDetail> validateIfMasterPresent(String[] masterNames, Map<String, List<Object>> codes,
             List<ErrorDetail> errors) {
         for (String masterName : masterNames) {
             if (CollectionUtils.isEmpty(codes.get(masterName))) {

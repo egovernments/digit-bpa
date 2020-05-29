@@ -191,7 +191,7 @@ public class RestEdcrApplicationController {
 
             String applicationType = edcr.getAppliactionType();
             String serviceType = edcr.getApplicationSubType();
-            Map<String, List<String>> masterData = new HashMap<>();
+            Map<String, List<Object>> masterData = new HashMap<>();
             Boolean mdmsEnabled = mdmsConfiguration.getMdmsEnabled();
             if (mdmsEnabled != null && mdmsEnabled) {
                 Object mdmsData = bpaMdmsUtil.mDMSCall(new RequestInfo(), edcr.getTenantId());
@@ -212,10 +212,10 @@ public class RestEdcrApplicationController {
                 }
 
             } else {
-                if (ApplicationType.OCCUPANCY_CERTIFICATE.getApplicationTypeVal().equalsIgnoreCase(applicationType)) {
+                if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
                     errorResponses = (edcrRestService.validateEdcrOcRequest(edcr, planFile));
                     edcr.setAppliactionType(ApplicationType.OCCUPANCY_CERTIFICATE.toString());
-                } else if (ApplicationType.PERMIT.getApplicationTypeVal().equalsIgnoreCase(applicationType)) {
+                } else if ("BUILDING_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
                     errorResponses = (edcrRestService.validateEdcrRequest(edcr, planFile));
                     edcr.setAppliactionType(ApplicationType.PERMIT.toString());
                 }
