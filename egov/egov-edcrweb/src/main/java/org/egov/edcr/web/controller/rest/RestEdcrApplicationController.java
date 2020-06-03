@@ -48,6 +48,7 @@
 package org.egov.edcr.web.controller.rest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -183,7 +184,7 @@ public class RestEdcrApplicationController {
         EdcrDetail edcrDetail = new EdcrDetail();
         EdcrRequest edcr = new EdcrRequest();
         try {
-            ErrorDetail errorResponses = null;
+            List<ErrorDetail> errorResponses = new ArrayList<ErrorDetail>();
             edcr = new ObjectMapper().readValue(edcrRequest, EdcrRequest.class);
             List<ErrorDetail> errors = edcrRestService.validateEdcrMandatoryFields(edcr);
             if (!errors.isEmpty())
@@ -204,24 +205,30 @@ public class RestEdcrApplicationController {
                     return new ResponseEntity<>(mdmsErrors, HttpStatus.BAD_REQUEST);
 
                 if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
-                    errorResponses = (edcrRestService.validateEdcrOcRequest(edcr, planFile));
                     edcr.setAppliactionType(ApplicationType.OCCUPANCY_CERTIFICATE.toString());
+                    errorResponses = edcrRestService.validateScrutinizeOcRequest(edcr, planFile);
                 } else if ("BUILDING_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
-                    errorResponses = (edcrRestService.validateEdcrRequest(edcr, planFile));
+                    ErrorDetail validateEdcrRequest = edcrRestService.validateEdcrRequest(edcr, planFile);
+                    if(validateEdcrRequest!=null)
+                    errorResponses = Arrays.asList(validateEdcrRequest);
+                    
                     edcr.setAppliactionType(ApplicationType.PERMIT.toString());
                 }
 
             } else {
                 if ("BUILDING_OC_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
-                    errorResponses = (edcrRestService.validateEdcrOcRequest(edcr, planFile));
                     edcr.setAppliactionType(ApplicationType.OCCUPANCY_CERTIFICATE.toString());
+                    errorResponses = (edcrRestService.validateScrutinizeOcRequest(edcr, planFile));
                 } else if ("BUILDING_PLAN_SCRUTINY".equalsIgnoreCase(applicationType)) {
-                    errorResponses = (edcrRestService.validateEdcrRequest(edcr, planFile));
+                    ErrorDetail validateEdcrRequest = edcrRestService.validateEdcrRequest(edcr, planFile);
+                    if(validateEdcrRequest!=null)
+                    errorResponses = Arrays.asList(validateEdcrRequest);
+                    
                     edcr.setAppliactionType(ApplicationType.PERMIT.toString());
                 }
             }
 
-            if (errorResponses != null)
+            if (!errorResponses.isEmpty())
                 return new ResponseEntity<>(errorResponses, HttpStatus.BAD_REQUEST);
             else {
                 edcrDetail = edcrRestService.createEdcr(edcr, planFile, masterData);

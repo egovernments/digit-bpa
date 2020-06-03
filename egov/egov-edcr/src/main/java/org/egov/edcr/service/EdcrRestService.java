@@ -136,6 +136,12 @@ public class EdcrRestService {
     @Autowired
     private MdmsConfiguration mdmsConfiguration;
     
+    @Autowired 
+    private OcComparisonService ocComparisonService;
+    
+    @Autowired
+    private EdcrApplicationDetailService applicationDetailService;
+    
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
@@ -145,6 +151,10 @@ public class EdcrRestService {
         EdcrApplication edcrApplication = new EdcrApplication();
         edcrApplication.setMdmsMasterData(masterData);
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
+        if (ApplicationType.OCCUPANCY_CERTIFICATE.toString()
+                .equalsIgnoreCase(edcrRequest.getAppliactionType())) {
+            edcrApplicationDetail.setDcrNumber(edcrRequest.getComparisonEdcrNumber());
+        }
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
         edcrApplicationDetails.add(edcrApplicationDetail);
         edcrApplication.setTransactionNumber(edcrRequest.getTransactionNumber());
@@ -182,19 +192,19 @@ public class EdcrRestService {
         }
 
         edcrApplication = edcrApplicationService.createRestEdcr(edcrApplication);
-        return setEdcrResponse(edcrApplication.getEdcrApplicationDetails().get(0), edcrRequest.getTenantId());
+        return setEdcrResponse(edcrApplication.getEdcrApplicationDetails().get(0), edcrRequest);
     }
 
     @Transactional
-    public List<EdcrDetail> edcrDetailsResponse(List<EdcrApplicationDetail> edcrApplications, String tenantId) {
+    public List<EdcrDetail> edcrDetailsResponse(List<EdcrApplicationDetail> edcrApplications, EdcrRequest edcrRequest) {
         List<EdcrDetail> edcrDetails = new ArrayList<>();
         for (EdcrApplicationDetail edcrApp : edcrApplications)
-            edcrDetails.add(setEdcrResponse(edcrApp, tenantId));
+            edcrDetails.add(setEdcrResponse(edcrApp, edcrRequest));
 
         return edcrDetails;
     }
 
-    public EdcrDetail setEdcrResponse(EdcrApplicationDetail edcrApplnDtl, String tenantId) {
+    public EdcrDetail setEdcrResponse(EdcrApplicationDetail edcrApplnDtl, EdcrRequest edcrRequest) {
         EdcrDetail edcrDetail = new EdcrDetail();
         List<String> planPdfs = new ArrayList<>();
         edcrDetail.setTransactionNumber(edcrApplnDtl.getApplication().getTransactionNumber());
@@ -283,8 +293,11 @@ public class EdcrRestService {
                             ApplicationThreadLocals.getTenantID())));
 
         edcrDetail.setPlanPdfs(planPdfs);
-        edcrDetail.setTenantId(tenantId);
-
+        edcrDetail.setTenantId(edcrRequest.getTenantId());
+        
+        if(StringUtils.isNotBlank(edcrRequest.getComparisonEdcrNumber()))
+        edcrDetail.setComparisonEdcrNumber(edcrRequest.getComparisonEdcrNumber());
+        
         if (!edcrApplnDtl.getStatus().equalsIgnoreCase("Accepted"))
             edcrDetail.setStatus(edcrApplnDtl.getStatus());
 
@@ -454,7 +467,7 @@ public class EdcrRestService {
             edcrDetail.setErrors("No Record Found");
             return Arrays.asList(edcrDetail);
         } else {
-            return edcrDetailsResponse(edcrApplications, edcrRequest.getTenantId());
+            return edcrDetailsResponse(edcrApplications, edcrRequest);
         }
     }
 
@@ -523,6 +536,61 @@ public class EdcrRestService {
         return validatePlanFile(planFile);
     }
     
+    public List<ErrorDetail> validateScrutinizeOcRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
+        List<ErrorDetail> errorDetails = new ArrayList<>();
+
+        if (edcrRequest.getRequestInfo() == null)
+            errorDetails.add(new ErrorDetail("BPA-07", "Required request body is missing"));
+        else if (edcrRequest.getRequestInfo().getUserInfo() == null || (edcrRequest.getRequestInfo().getUserInfo() != null
+                && isBlank(edcrRequest.getRequestInfo().getUserInfo().getId())))
+            errorDetails.add(new ErrorDetail("BPA-08", "User id is mandatory"));
+
+        if (isBlank(edcrRequest.getTransactionNumber()))
+            errorDetails.add(new ErrorDetail("BPA-09", "Transaction number is mandatory"));
+
+        if (null == edcrRequest.getPermitDate())
+            errorDetails.add(new ErrorDetail("BPA-10", "Permit Date is mandatory"));
+        if (isNotBlank(edcrRequest.getTransactionNumber())
+                && edcrApplicationService.findByTransactionNumber(edcrRequest.getTransactionNumber()) != null) {
+            errorDetails.add(new ErrorDetail("BPA-11", "Transaction Number should be unique"));
+
+        }
+
+        String dcrNo = edcrRequest.getComparisonEdcrNumber();
+        if (StringUtils.isBlank(dcrNo)) {
+            errorDetails.add(new ErrorDetail("BPA-29", "Comparison eDcr number is mandatory"));
+        } else {
+            EdcrApplicationDetail permitDcr = applicationDetailService.findByDcrNumberAndTPUserTenant(dcrNo,
+                    edcrRequest.getTenantId());
+
+            if (permitDcr != null && permitDcr.getApplication() != null
+                    && StringUtils.isBlank(permitDcr.getApplication().getServiceType())) {
+                errorDetails.add(new ErrorDetail("BPA-26", "No service type found for dcr number " + dcrNo));
+            }
+
+            if (permitDcr == null) {
+                errorDetails.add(new ErrorDetail("BPA-24", "No record found with dcr number " + dcrNo));
+            }
+
+            if (permitDcr != null && permitDcr.getApplication() != null
+                    && edcrRequest.getAppliactionType()
+                            .equalsIgnoreCase(permitDcr.getApplication().getApplicationType().toString())) {
+                errorDetails.add(new ErrorDetail("BPA-27", "Application types are same"));
+            }
+
+            if (permitDcr != null && permitDcr.getApplication() != null
+                    && !edcrRequest.getApplicationSubType().equalsIgnoreCase(permitDcr.getApplication().getServiceType())) {
+                errorDetails.add(new ErrorDetail("BPA-28", "Service types are not mathing"));
+            }
+        }
+
+        ErrorDetail validatePlanFile = validatePlanFile(planFile);
+        if (validatePlanFile != null)
+            errorDetails.add(validatePlanFile);
+
+        return errorDetails;
+    }
+        
     public List<ErrorDetail> validateEdcrMandatoryFields(final EdcrRequest edcrRequest) {
         List<ErrorDetail> errors = new ArrayList<>();
         if (StringUtils.isBlank(edcrRequest.getAppliactionType())) {

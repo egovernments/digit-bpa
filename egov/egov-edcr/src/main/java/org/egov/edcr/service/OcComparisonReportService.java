@@ -475,9 +475,6 @@ public class OcComparisonReportService {
     }
 
     private List<ScrutinyDetail> buildReportObject(List<OcComparisonBlockDetail> ocComparison) {
-        Map<String, String> bltUpAreaDetails = new HashMap<>();
-        Map<String, String> flrAreaDetails = new HashMap<>();
-        Map<String, String> crptAreaDetails = new HashMap<>();
         Map<String, String> floorNos = new HashMap<>();
         Map<String, String> bldngHgts = new HashMap<>();
 
@@ -537,6 +534,10 @@ public class OcComparisonReportService {
             List<OcComparisonReportFloorDetail> comparisonReportFloorDetails = blockDetail.getComparisonReportFloorDetails();
             if (!comparisonReportFloorDetails.isEmpty()) {
                 for (OcComparisonReportFloorDetail floor : comparisonReportFloorDetails) {
+                    Map<String, String> bltUpAreaDetails = new HashMap<>();
+                    Map<String, String> flrAreaDetails = new HashMap<>();
+                    Map<String, String> crptAreaDetails = new HashMap<>();
+                    
                     bltUpAreaDetails.put("Floor", floor.getNumber().toString());
                     bltUpAreaDetails.put("Oc built up area", floor.getOcBltUpArea().toString() + "m²");
                     bltUpAreaDetails.put("Permit built up area", floor.getPermitBltUpArea().toString() + "m²");

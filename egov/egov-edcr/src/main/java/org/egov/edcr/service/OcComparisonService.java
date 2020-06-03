@@ -113,6 +113,33 @@ public class OcComparisonService {
         return comparisonDetail;
     }
 
+    public OcComparisonDetail processCombined(ComparisonRequest comparisonRequest) {
+        String ocdcrNo = comparisonRequest.getOcdcrNumber();
+        String dcrNo = comparisonRequest.getEdcrNumber();
+        String tenantId = comparisonRequest.getTenantId();
+
+        EdcrApplicationDetail ocDcr = applicationDetailService.findByDcrNumberAndTPUserTenant(ocdcrNo, tenantId);
+        EdcrApplicationDetail permitDcr = applicationDetailService.findByDcrNumberAndTPUserTenant(dcrNo, tenantId);
+
+        EdcrApplication dcrApplication = ocDcr.getApplication();
+
+        AmendmentService repo = (AmendmentService) specificRuleService.find("amendmentService");
+        Amendment amd = repo.getAmendments();
+
+        Date applicationDate = dcrApplication.getApplicationDate();
+
+        OcComparisonDetail ocComparisonDetailE = new OcComparisonDetail();
+        ocComparisonDetailE.setOcdcrNumber(ocdcrNo);
+        ocComparisonDetailE.setDcrNumber(dcrNo);
+        ocComparisonDetailE.setTenantId(tenantId);
+
+        InputStream ocreportStream = generateOcComparisonReport(applicationDate, amd, ocDcr, permitDcr, ocComparisonDetailE);
+
+        saveComparisonReport(ocComparisonDetailE, ocreportStream);
+
+        return ocComparisonDetailE;
+    }
+    
     private List<ErrorDetail> validate(String ocdrNo, String dcrNo, EdcrApplicationDetail ocDcr,
             EdcrApplicationDetail permitDcr) {
         List<ErrorDetail> errors = new ArrayList<>();

@@ -60,104 +60,115 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EdcrRequest {
 
-	@JsonProperty("RequestInfo")
-	private RequestInfo requestInfo;
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
 
-	private String applicantName;
+    private String applicantName;
 
-	private String transactionNumber;
+    private String transactionNumber;
 
-	private String edcrNumber;
+    private String edcrNumber;
 
-	private String permitNumber;
+    private String permitNumber;
 
-	private Date permitDate;
+    private Date permitDate;
 
-	private File planFile;
+    private File planFile;
 
-	private String tenantId;
+    private String tenantId;
 
-	private String appliactionType;
+    private String appliactionType;
 
-	private String applicationSubType;
+    private String applicationSubType;
 
-	public RequestInfo getRequestInfo() {
-		return requestInfo;
-	}
+    private String comparisonEdcrNumber;
 
-	public void setRequestInfo(RequestInfo requestInfo) {
-		this.requestInfo = requestInfo;
-	}
+    public RequestInfo getRequestInfo() {
+        return requestInfo;
+    }
 
-	public String getApplicantName() {
-		return applicantName;
-	}
+    public void setRequestInfo(RequestInfo requestInfo) {
+        this.requestInfo = requestInfo;
+    }
 
-	public void setApplicantName(String applicantName) {
-		this.applicantName = applicantName;
-	}
+    public String getApplicantName() {
+        return applicantName;
+    }
 
-	public String getTransactionNumber() {
-		return transactionNumber;
-	}
+    public void setApplicantName(String applicantName) {
+        this.applicantName = applicantName;
+    }
 
-	public void setTransactionNumber(String transactionNumber) {
-		this.transactionNumber = transactionNumber;
-	}
+    public String getTransactionNumber() {
+        return transactionNumber;
+    }
 
-	public File getPlanFile() {
-		return planFile;
-	}
+    public void setTransactionNumber(String transactionNumber) {
+        this.transactionNumber = transactionNumber;
+    }
 
-	public void setPlanFile(File planFile) {
-		this.planFile = planFile;
-	}
+    public File getPlanFile() {
+        return planFile;
+    }
 
-	public String getEdcrNumber() {
-		return edcrNumber;
-	}
+    public void setPlanFile(File planFile) {
+        this.planFile = planFile;
+    }
 
-	public void setEdcrNumber(String edcrNumber) {
-		this.edcrNumber = edcrNumber;
-	}
+    public String getEdcrNumber() {
+        return edcrNumber;
+    }
 
-	public String getTenantId() {
-		return tenantId;
-	}
+    public void setEdcrNumber(String edcrNumber) {
+        this.edcrNumber = edcrNumber;
+    }
 
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
+    public String getTenantId() {
+        return tenantId;
+    }
 
-	public String getPermitNumber() {
-		return permitNumber;
-	}
+    public void setTenantId(String tenantId) {
+        this.tenantId = tenantId;
+    }
 
-	public void setPermitNumber(String permitNumber) {
-		this.permitNumber = permitNumber;
-	}
+    public String getPermitNumber() {
+        return permitNumber;
+    }
 
-	public Date getPermitDate() {
-		return permitDate;
-	}
+    public void setPermitNumber(String permitNumber) {
+        this.permitNumber = permitNumber;
+    }
 
-	public void setPermitDate(Date permitDate) {
-		this.permitDate = permitDate;
-	}
+    public Date getPermitDate() {
+        return permitDate;
+    }
 
-	public String getAppliactionType() {
-		return appliactionType;
-	}
+    public void setPermitDate(Date permitDate) {
+        this.permitDate = permitDate;
+    }
 
-	public void setAppliactionType(String appliactionType) {
-		this.appliactionType = appliactionType;
-	}
+    public String getAppliactionType() {
+        return appliactionType;
+    }
 
-	public String getApplicationSubType() {
-		return applicationSubType;
-	}
+    public void setAppliactionType(String appliactionType) {
+        this.appliactionType = appliactionType;
+    }
 
-	public void setApplicationSubType(String applicationSubType) {
-		this.applicationSubType = applicationSubType;
-	}
+    public String getApplicationSubType() {
+        return applicationSubType;
+    }
+
+    public void setApplicationSubType(String applicationSubType) {
+        this.applicationSubType = applicationSubType;
+    }
+
+    public String getComparisonEdcrNumber() {
+        return comparisonEdcrNumber;
+    }
+
+    public void setComparisonEdcrNumber(String comparisonEdcrNumber) {
+        this.comparisonEdcrNumber = comparisonEdcrNumber;
+    }
+
 }
