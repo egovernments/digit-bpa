@@ -469,17 +469,19 @@ public class OcComparisonReportService {
 
     private BigDecimal getDeviation(BigDecimal ocValue, BigDecimal permitValue) {
         BigDecimal numerator = ocValue.subtract(permitValue).multiply(BigDecimal.valueOf(100));
-        BigDecimal finalValue = ocValue.compareTo(BigDecimal.ZERO) > 0 ? numerator.divide(ocValue, DECIMALDIGITS_MEASUREMENTS,
+        BigDecimal finalValue = ocValue.compareTo(BigDecimal.ZERO) > 0 ? numerator.divide(permitValue, DECIMALDIGITS_MEASUREMENTS,
                 ROUNDMODE_MEASUREMENTS) : numerator;
         return finalValue;
     }
 
     private List<ScrutinyDetail> buildReportObject(List<OcComparisonBlockDetail> ocComparison) {
-        Map<String, String> floorNos = new HashMap<>();
-        Map<String, String> bldngHgts = new HashMap<>();
+        
 
         List<ScrutinyDetail> scrutinyDetails = new ArrayList<>();
         for (OcComparisonBlockDetail blockDetail : ocComparison) {
+            Map<String, String> floorNos = new HashMap<>();
+            Map<String, String> bldngHgts = new HashMap<>();
+            
             ScrutinyDetail bltUpAreaSd = new ScrutinyDetail();
             bltUpAreaSd.setKey("Block_" + blockDetail.getNumber() + "_" + "BuiltUp Area");
             bltUpAreaSd.addColumnHeading(1, "Floor");
