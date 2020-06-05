@@ -431,9 +431,7 @@ public class EdcrRestService {
             if (edcrRequest != null && isNotBlank(edcrRequest.getTransactionNumber())) {
                 criteria.add(Restrictions.eq("application.transactionNumber", edcrRequest.getTransactionNumber()));
             }
-            if (userInfo != null && isNotBlank(userInfo.getId())) {
-                criteria.add(Restrictions.eq("application.thirdPartyUserCode", userInfo.getId()));
-            }
+            
             
             String appliactionType = edcrRequest.getAppliactionType();
             
@@ -455,6 +453,16 @@ public class EdcrRestService {
             if (edcrRequest != null && isNotBlank(edcrRequest.getApplicationSubType())) {
                 criteria.add(Restrictions.eq("application.serviceType", edcrRequest.getApplicationSubType()));
             }
+            
+            boolean onlyTenantId = edcrRequest != null && isBlank(edcrRequest.getEdcrNumber())
+                    && isBlank(edcrRequest.getTransactionNumber())
+                    && isBlank(appliactionType)
+                    && isBlank(edcrRequest.getApplicationSubType())
+                    && isNotBlank(edcrRequest.getTenantId());
+            
+                if (onlyTenantId && userInfo != null && isNotBlank(userInfo.getId())) {
+                    criteria.add(Restrictions.eq("application.thirdPartyUserCode", userInfo.getId()));
+                }
             
             criteria.addOrder(Order.asc("edcrApplicationDetail.createdDate"));
             criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
