@@ -341,6 +341,12 @@ public class EdcrRestService {
     public List<EdcrDetail> fetchEdcr(final EdcrRequest edcrRequest, final RequestInfoWrapper reqInfoWrapper) {
         List<EdcrApplicationDetail> edcrApplications = new ArrayList<>();
         UserInfo userInfo = reqInfoWrapper.getRequestInfo() == null ? null : reqInfoWrapper.getRequestInfo().getUserInfo();
+        boolean onlyTenantId = edcrRequest != null && isBlank(edcrRequest.getEdcrNumber())
+                && isBlank(edcrRequest.getTransactionNumber())
+                && isBlank(edcrRequest.getAppliactionType())
+                && isBlank(edcrRequest.getApplicationSubType())
+                && isNotBlank(edcrRequest.getTenantId());
+        
         City stateCity = cityService.fetchStateCityDetails();
         if (edcrRequest != null && edcrRequest.getTenantId().equalsIgnoreCase(stateCity.getCode())) {
             final Map<String, String> params = new ConcurrentHashMap<>();
@@ -376,7 +382,7 @@ public class EdcrRestService {
                     params.put("transactionNumber", edcrRequest.getTransactionNumber());
                 }
 
-                if (userInfo != null && isNotBlank(userInfo.getId())) {
+                if (onlyTenantId && userInfo != null && isNotBlank(userInfo.getId())) {
                     queryStr.append("and appln.thirdPartyUserCode=:thirdPartyUserCode ");
                     params.put("thirdPartyUserCode", userInfo.getId());
                 }
@@ -453,12 +459,6 @@ public class EdcrRestService {
             if (edcrRequest != null && isNotBlank(edcrRequest.getApplicationSubType())) {
                 criteria.add(Restrictions.eq("application.serviceType", edcrRequest.getApplicationSubType()));
             }
-            
-            boolean onlyTenantId = edcrRequest != null && isBlank(edcrRequest.getEdcrNumber())
-                    && isBlank(edcrRequest.getTransactionNumber())
-                    && isBlank(appliactionType)
-                    && isBlank(edcrRequest.getApplicationSubType())
-                    && isNotBlank(edcrRequest.getTenantId());
             
                 if (onlyTenantId && userInfo != null && isNotBlank(userInfo.getId())) {
                     criteria.add(Restrictions.eq("application.thirdPartyUserCode", userInfo.getId()));
