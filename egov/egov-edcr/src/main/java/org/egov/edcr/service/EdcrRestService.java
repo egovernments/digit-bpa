@@ -153,7 +153,7 @@ public class EdcrRestService {
         EdcrApplicationDetail edcrApplicationDetail = new EdcrApplicationDetail();
         if (ApplicationType.OCCUPANCY_CERTIFICATE.toString()
                 .equalsIgnoreCase(edcrRequest.getAppliactionType())) {
-            edcrApplicationDetail.setDcrNumber(edcrRequest.getComparisonEdcrNumber());
+            edcrApplicationDetail.setComparisonDcrNumber(edcrRequest.getComparisonEdcrNumber());
         }
         List<EdcrApplicationDetail> edcrApplicationDetails = new ArrayList<>();
         edcrApplicationDetails.add(edcrApplicationDetail);
@@ -169,13 +169,13 @@ public class EdcrRestService {
         else
          edcrApplication.setApplicationType(ApplicationType.valueOf(edcrRequest.getAppliactionType()));
         if(edcrRequest.getPermitNumber()!=null)
-        	edcrApplication.setPlanPermitNumber(edcrRequest.getPermitNumber());
+            edcrApplication.setPlanPermitNumber(edcrRequest.getPermitNumber());
         
         
         if(edcrRequest.getPermitDate()!=null)
         {
-        	edcrApplication.setApplicationDate(edcrRequest.getPermitDate());
-        	edcrApplication.setPermitApplicationDate(edcrRequest.getPermitDate());
+            edcrApplication.setApplicationDate(edcrRequest.getPermitDate());
+            edcrApplication.setPermitApplicationDate(edcrRequest.getPermitDate());
         }
        
         edcrApplication.setEdcrApplicationDetails(edcrApplicationDetails);
@@ -485,35 +485,35 @@ public class EdcrRestService {
 
         
         String fileSize = edcrApplicationSettings.getValue("dcr.dxf.max.size");
-		final String maxAllowSizeInMB = fileSize;
+        final String maxAllowSizeInMB = fileSize;
         String extension;
-		if (file != null && !file.isEmpty()) {
-		    extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
-		    if (extension != null && !extension.isEmpty()) {
-		       
-		        if (!dcrAllowedExtenstions.contains(extension.toLowerCase())) {
-		            return new ErrorDetail("BPA-02", "Please upload " + dcrAllowedExtenstions + " format file only");
-		        } else if (file.getSize() > (Long.valueOf(maxAllowSizeInMB) * 1024 * 1024)) {
-		            return new ErrorDetail("BPA-04", "File size should not exceed 30 MB");
-		        } /*
-		           * else if (allowedExtenstions.contains(extension.toLowerCase()) && (!mimeTypes.contains(mimeType) ||
-		           * StringUtils.countMatches(file.getOriginalFilename(), ".") > 1 || file.getOriginalFilename().contains("%00")))
-		           * { return new ErrorDetail("BPA-03", "Malicious file upload"); }
-		           */
-		    }
-		} else {
-		    return new ErrorDetail(BPA_05, "Please upload plan file, It is mandatory");
-		}
-		
-		return null;
+        if (file != null && !file.isEmpty()) {
+            extension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf('.') + 1);
+            if (extension != null && !extension.isEmpty()) {
+               
+                if (!dcrAllowedExtenstions.contains(extension.toLowerCase())) {
+                    return new ErrorDetail("BPA-02", "Please upload " + dcrAllowedExtenstions + " format file only");
+                } else if (file.getSize() > (Long.valueOf(maxAllowSizeInMB) * 1024 * 1024)) {
+                    return new ErrorDetail("BPA-04", "File size should not exceed 30 MB");
+                } /*
+                   * else if (allowedExtenstions.contains(extension.toLowerCase()) && (!mimeTypes.contains(mimeType) ||
+                   * StringUtils.countMatches(file.getOriginalFilename(), ".") > 1 || file.getOriginalFilename().contains("%00")))
+                   * { return new ErrorDetail("BPA-03", "Malicious file upload"); }
+                   */
+            }
+        } else {
+            return new ErrorDetail(BPA_05, "Please upload plan file, It is mandatory");
+        }
+        
+        return null;
     }
 
     public ErrorDetail validateEdcrRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
-    	if (edcrRequest.getRequestInfo() == null)
+        if (edcrRequest.getRequestInfo() == null)
             return new ErrorDetail("BPA-07", "Required request body is missing");
-    	else if (edcrRequest.getRequestInfo().getUserInfo() == null || (edcrRequest.getRequestInfo().getUserInfo() != null && isBlank(edcrRequest.getRequestInfo().getUserInfo().getId())))
+        else if (edcrRequest.getRequestInfo().getUserInfo() == null || (edcrRequest.getRequestInfo().getUserInfo() != null && isBlank(edcrRequest.getRequestInfo().getUserInfo().getId())))
             return new ErrorDetail("BPA-07", "User id is mandatory");
-    	
+        
         if (isBlank(edcrRequest.getTransactionNumber()))
             return new ErrorDetail("BPA-07", "Please enter transaction number");
         if (isNotBlank(edcrRequest.getTransactionNumber())
@@ -525,11 +525,11 @@ public class EdcrRestService {
     }
     
     public ErrorDetail validateEdcrOcRequest(final EdcrRequest edcrRequest, final MultipartFile planFile) {
-    	if (edcrRequest.getRequestInfo() == null)
+        if (edcrRequest.getRequestInfo() == null)
             return new ErrorDetail("BPA-07", "Required request body is missing");
-    	else if (edcrRequest.getRequestInfo().getUserInfo() == null || (edcrRequest.getRequestInfo().getUserInfo() != null && isBlank(edcrRequest.getRequestInfo().getUserInfo().getId())))
+        else if (edcrRequest.getRequestInfo().getUserInfo() == null || (edcrRequest.getRequestInfo().getUserInfo() != null && isBlank(edcrRequest.getRequestInfo().getUserInfo().getId())))
             return new ErrorDetail("BPA-07", "User id is mandatory");
-    	
+        
         if (isBlank(edcrRequest.getTransactionNumber()))
             return new ErrorDetail("BPA-07", "Transaction number is mandatory");
         

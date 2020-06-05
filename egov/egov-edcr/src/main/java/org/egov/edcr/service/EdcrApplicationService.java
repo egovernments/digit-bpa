@@ -281,14 +281,14 @@ public class EdcrApplicationService {
     
     @Transactional
     public EdcrApplication createRestEdcr(final EdcrApplication edcrApplication) {
-        String dcrNumber = edcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber();
+        String comparisonDcrNo = edcrApplication.getEdcrApplicationDetails().get(0).getComparisonDcrNumber();
         if(edcrApplication.getApplicationDate()==null)
     	edcrApplication.setApplicationDate(new Date());
         edcrApplication.setApplicationNumber(applicationNumberGenerator.generate());
         edcrApplication.setSavedDxfFile(saveDXF(edcrApplication));
         edcrApplication.setStatus(ABORTED);
         edcrApplicationRepository.save(edcrApplication);
-        edcrApplication.getEdcrApplicationDetails().get(0).setDcrNumber(dcrNumber);
+        edcrApplication.getEdcrApplicationDetails().get(0).setComparisonDcrNumber(comparisonDcrNo);
         callDcrProcess(edcrApplication, NEW_SCRTNY);
         edcrIndexService.updateEdcrRestIndexes(edcrApplication, NEW_SCRTNY);
         return edcrApplication;

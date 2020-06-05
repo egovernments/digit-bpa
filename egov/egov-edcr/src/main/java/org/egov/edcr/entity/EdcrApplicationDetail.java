@@ -39,8 +39,6 @@
  */
 package org.egov.edcr.entity;
 
-import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -98,16 +96,19 @@ public class EdcrApplicationDetail extends AbstractAuditable {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "scrutinizedDxfFileId")
     private FileStoreMapper scrutinizedDxfFileId;
-/*
-    @OneToMany(mappedBy = "edcrApplicationDetail", fetch = LAZY, cascade = ALL)
-    @OrderBy("id DESC ")
-    private List<EdcrPdfDetail> edcrPdfDetails;*/
+    /*
+     * @OneToMany(mappedBy = "edcrApplicationDetail", fetch = LAZY, cascade = ALL)
+     * @OrderBy("id DESC ") private List<EdcrPdfDetail> edcrPdfDetails;
+     */
 
     @Transient
     private Long noOfErrors;
 
     @Transient
     private PlanInformation planInformation;
+
+    @Length(min = 1, max = 128)
+    private String comparisonDcrNumber;
 
     @Override
     public Long getId() {
@@ -171,7 +172,6 @@ public class EdcrApplicationDetail extends AbstractAuditable {
         this.dcrNumber = dcrNumber;
     }
 
-    
     public FileStoreMapper getScrutinizedDxfFileId() {
         return scrutinizedDxfFileId;
     }
@@ -180,14 +180,10 @@ public class EdcrApplicationDetail extends AbstractAuditable {
         this.scrutinizedDxfFileId = scrutinizedDxfFileId;
     }
 
-   /* public List<EdcrPdfDetail> getEdcrPdfDetails() {
-        return edcrPdfDetails;
-    }
-
-    public void setEdcrPdfDetails(List<EdcrPdfDetail> edcrPdfDetails) {
-        this.edcrPdfDetails = edcrPdfDetails;
-    }
-*/
+    /*
+     * public List<EdcrPdfDetail> getEdcrPdfDetails() { return edcrPdfDetails; } public void setEdcrPdfDetails(List<EdcrPdfDetail>
+     * edcrPdfDetails) { this.edcrPdfDetails = edcrPdfDetails; }
+     */
     public Long getNoOfErrors() {
         return noOfErrors;
     }
@@ -204,11 +200,20 @@ public class EdcrApplicationDetail extends AbstractAuditable {
         this.planInformation = planInformation;
     }
 
-	public Plan getPlan() {
-		return plan;
-	}
+    public Plan getPlan() {
+        return plan;
+    }
 
-	public void setPlan(Plan plan) {
-		this.plan = plan;
-	}
+    public void setPlan(Plan plan) {
+        this.plan = plan;
+    }
+
+    public String getComparisonDcrNumber() {
+        return comparisonDcrNumber;
+    }
+
+    public void setComparisonDcrNumber(String comparisonDcrNumber) {
+        this.comparisonDcrNumber = comparisonDcrNumber;
+    }
+
 }

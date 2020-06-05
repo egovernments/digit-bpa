@@ -55,13 +55,13 @@ public class OcComparisonBlockDetail {
 
     private Long number;
 
-    private Long noOfFloorsOc;
+    private Long noOfFloorsOc = 0L;
 
-    private Long noOfFloorsPermit;
+    private Long noOfFloorsPermit = 0L;
 
-    private BigDecimal hghtFromGroundOc;
+    private BigDecimal hghtFromGroundOc = BigDecimal.ZERO;
 
-    private BigDecimal hgtFromGroundPermit;
+    private BigDecimal hgtFromGroundPermit = BigDecimal.ZERO;;
 
     private List<OcComparisonReportFloorDetail> comparisonReportFloorDetails = new ArrayList<>();
 

@@ -91,7 +91,6 @@ public class PlanService {
 		plan.setMdmsMasterData(dcrApplication.getMdmsMasterData());
 		plan = applyRules(plan, amd, cityDetails);
 
-        String comparisondcrNo = dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber();
         InputStream reportStream = generateReport(plan, amd, dcrApplication);
         saveOutputReport(dcrApplication, reportStream, plan);
 
@@ -114,7 +113,7 @@ public class PlanService {
             if (plan.getEdcrPassed()) {
                 ComparisonRequest comparisonRequest = new ComparisonRequest();
                 EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
-                comparisonRequest.setEdcrNumber(comparisondcrNo);
+                comparisonRequest.setEdcrNumber(edcrApplicationDetail.getComparisonDcrNumber());
                 comparisonRequest.setOcdcrNumber(edcrApplicationDetail.getDcrNumber());
                 comparisonRequest.setTenantId(edcrApplicationDetail.getApplication().getThirdPartyUserTenant());
                 processCombined = ocComparisonService.processCombined(comparisonRequest);
