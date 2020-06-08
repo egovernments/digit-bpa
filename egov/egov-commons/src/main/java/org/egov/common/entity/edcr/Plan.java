@@ -194,6 +194,7 @@ public class Plan implements Serializable {
     private List<String> nocDeptCodes = new ArrayList<String>();
     private HashMap<String, String> featureAmendments = new LinkedHashMap<>();
     private transient Map<String, List<Object>> mdmsMasterData;
+    private transient Boolean mainDcrPassed = false;
     
     public List<BigDecimal> getCanopyDistanceFromPlotBoundary() {
         return canopyDistanceFromPlotBoundary;
@@ -607,6 +608,14 @@ public class Plan implements Serializable {
 
     public void setMdmsMasterData(Map<String, List<Object>> mdmsMasterData) {
         this.mdmsMasterData = mdmsMasterData;
+    }
+
+    public Boolean getMainDcrPassed() {
+        return mainDcrPassed;
+    }
+
+    public void setMainDcrPassed(Boolean mainDcrPassed) {
+        this.mainDcrPassed = mainDcrPassed;
     }
 
 }

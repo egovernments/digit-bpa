@@ -32,6 +32,7 @@ import org.egov.edcr.contract.ComparisonRequest;
 import org.egov.edcr.contract.EdcrRequest;
 import org.egov.edcr.entity.Amendment;
 import org.egov.edcr.entity.AmendmentDetails;
+import org.egov.edcr.entity.ApplicationType;
 import org.egov.edcr.entity.EdcrApplication;
 import org.egov.edcr.entity.EdcrApplicationDetail;
 import org.egov.edcr.entity.OcComparisonDetail;
@@ -70,32 +71,45 @@ public class PlanService {
 	private EdcrApplicationService edcrApplicationService;
 	@Autowired
 	private OcComparisonService ocComparisonService;
-	
-	public Plan process(EdcrApplication dcrApplication, String applicationType) {
-		Map<String, String> cityDetails = specificRuleService.getCityDetails();
+    @Autowired
+    private OcComparisonDetailService ocComparisonDetailService;
+	    
+    public Plan process(EdcrApplication dcrApplication, String applicationType) {
+        Map<String, String> cityDetails = specificRuleService.getCityDetails();
 
-		Date asOnDate = null;
-		if (dcrApplication.getPermitApplicationDate() != null) {
-			asOnDate = dcrApplication.getPermitApplicationDate();
-		} else if (dcrApplication.getApplicationDate() != null) {
-			asOnDate = dcrApplication.getApplicationDate();
-		} else {
-			asOnDate = new Date();
-		}
+        Date asOnDate = null;
+        if (dcrApplication.getPermitApplicationDate() != null) {
+            asOnDate = dcrApplication.getPermitApplicationDate();
+        } else if (dcrApplication.getApplicationDate() != null) {
+            asOnDate = dcrApplication.getApplicationDate();
+        } else {
+            asOnDate = new Date();
+        }
 
-		AmendmentService repo = (AmendmentService) specificRuleService.find("amendmentService");
-		Amendment amd = repo.getAmendments();
+        AmendmentService repo = (AmendmentService) specificRuleService.find("amendmentService");
+        Amendment amd = repo.getAmendments();
 
-		Plan plan = extractService.extract(dcrApplication.getSavedDxfFile(), amd, asOnDate,
-				featureService.getFeatures());
-		plan.setMdmsMasterData(dcrApplication.getMdmsMasterData());
-		plan = applyRules(plan, amd, cityDetails);
+        Plan plan = extractService.extract(dcrApplication.getSavedDxfFile(), amd, asOnDate,
+                featureService.getFeatures());
+        plan.setMdmsMasterData(dcrApplication.getMdmsMasterData());
+        plan = applyRules(plan, amd, cityDetails);
 
-        InputStream reportStream = generateReport(plan, amd, dcrApplication);
-        saveOutputReport(dcrApplication, reportStream, plan);
+        if (ApplicationType.PERMIT.getApplicationTypeVal()
+                .equalsIgnoreCase(dcrApplication.getApplicationType().getApplicationType())) {
+            InputStream reportStream = generateReport(plan, amd, dcrApplication);
+            saveOutputReport(dcrApplication, reportStream, plan);
+        } else if ("Occupancy certificate".equalsIgnoreCase(dcrApplication.getApplicationType().getApplicationType())) {
 
-        if ("Occupancy certificate".equalsIgnoreCase(dcrApplication.getApplicationType().getApplicationType())
-                && plan.getEdcrPassed()) {
+            ComparisonRequest comparisonRequest = new ComparisonRequest();
+            EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
+            comparisonRequest.setEdcrNumber(edcrApplicationDetail.getComparisonDcrNumber());
+            comparisonRequest.setTenantId(edcrApplicationDetail.getApplication().getThirdPartyUserTenant());
+            edcrApplicationDetail.setPlan(plan);
+            OcComparisonDetail ocComparisonE = ocComparisonService.processCombined(comparisonRequest, edcrApplicationDetail);
+            dcrApplication.setDeviationStatus(ocComparisonE.getStatus());
+
+            InputStream reportStream = generateReport(plan, amd, dcrApplication);
+            saveOutputReport(dcrApplication, reportStream, plan);
             final List<InputStream> pdfs = new ArrayList<>();
             Path path = fileStoreService.fetchAsPath(
                     dcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId().getFileStoreId(),
@@ -109,15 +123,21 @@ public class PlanService {
             }
             ByteArrayInputStream dcrReport = new ByteArrayInputStream(convertedDigitDcr);
             pdfs.add(dcrReport);
-            OcComparisonDetail processCombined = null;
-            if (plan.getEdcrPassed()) {
-                ComparisonRequest comparisonRequest = new ComparisonRequest();
-                EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
-                comparisonRequest.setEdcrNumber(edcrApplicationDetail.getComparisonDcrNumber());
-                comparisonRequest.setOcdcrNumber(edcrApplicationDetail.getDcrNumber());
-                comparisonRequest.setTenantId(edcrApplicationDetail.getApplication().getThirdPartyUserTenant());
-                processCombined = ocComparisonService.processCombined(comparisonRequest);
-                Path ocPath = fileStoreService.fetchAsPath(processCombined.getOcComparisonReport().getFileStoreId(),
+            if (plan.getMainDcrPassed()) {
+
+                final String fileName = ocComparisonE.getOcdcrNumber() + "-" + ocComparisonE.getDcrNumber()
+                        + "-comparison"
+                        + ".pdf";
+                final FileStoreMapper fileStoreMapper = fileStoreService.store(ocComparisonE.getOutput(), fileName,
+                        "application/pdf",
+                        DcrConstants.FILESTORE_MODULECODE);
+                ocComparisonE.setOcComparisonReport(fileStoreMapper);
+                if(StringUtils.isNotBlank(dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber())) {
+                    ocComparisonE.setOcdcrNumber(dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber());
+                }
+                ocComparisonDetailService.saveAndFlush(ocComparisonE);
+
+                Path ocPath = fileStoreService.fetchAsPath(ocComparisonE.getOcComparisonReport().getFileStoreId(),
                         "Digit DCR");
                 byte[] convertedComparison = null;
                 try {
@@ -133,9 +153,7 @@ public class PlanService {
             final byte[] data = appendFiles(pdfs);
             InputStream targetStream = new ByteArrayInputStream(data);
             saveOutputReport(dcrApplication, targetStream, plan);
-            updateFinalReport(dcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId(),
-                    processCombined.getStatus());
-            dcrApplication.getEdcrApplicationDetails().get(0).setStatus(processCombined.getStatus());
+            updateFinalReport(dcrApplication.getEdcrApplicationDetails().get(0).getReportOutputId());
         }
         return plan;
     }
@@ -357,7 +375,7 @@ public class PlanService {
 		return plan;
 	}
 	
-    private void updateFinalReport(FileStoreMapper fileStoreMapper, String status) {
+    private void updateFinalReport(FileStoreMapper fileStoreMapper) {
         try {
             Path path = fileStoreService.fetchAsPath(fileStoreMapper.getFileStoreId(),
                     "Digit DCR");
@@ -367,25 +385,13 @@ public class PlanService {
                 PDPage page = doc.getPage(i);
                 PDPageContentStream contentStream = new PDPageContentStream(doc, page, PDPageContentStream.AppendMode.APPEND,
                         true);
-                if (i == 0) {
-                    contentStream.setNonStrokingColor(Color.white);
-                    contentStream.addRect(275, 720, 60, 20);
-                    contentStream.fill();
-
-                    contentStream.setNonStrokingColor(Color.black);
-                    contentStream.beginText();
-
-                    contentStream.newLineAtOffset(275, 720);
-
-                    contentStream.setFont(PDType1Font.TIMES_BOLD, 12);
-                    if ("Not Accepted".equalsIgnoreCase(status)) {
-                        contentStream.setNonStrokingColor(Color.RED);
-                    } else {
-                        contentStream.setNonStrokingColor(0,127,0);
-                    }
-                    contentStream.showText(status);
-                    contentStream.endText();
-                }
+                /*
+                 * if (i == 0) { contentStream.setNonStrokingColor(Color.white); contentStream.addRect(275, 720, 60, 20);
+                 * contentStream.fill(); contentStream.setNonStrokingColor(Color.black); contentStream.beginText();
+                 * contentStream.newLineAtOffset(275, 720); contentStream.setFont(PDType1Font.TIMES_BOLD, 12); if
+                 * ("Not Accepted".equalsIgnoreCase(status)) { contentStream.setNonStrokingColor(Color.RED); } else {
+                 * contentStream.setNonStrokingColor(0,127,0); } contentStream.showText(status); contentStream.endText(); }
+                 */
                 // page coordinate
                 contentStream.setNonStrokingColor(Color.white);
                 contentStream.addRect(230, 20, 80, 40);

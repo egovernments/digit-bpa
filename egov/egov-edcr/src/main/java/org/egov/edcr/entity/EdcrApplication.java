@@ -44,7 +44,7 @@ public class EdcrApplication extends AbstractAuditable {
     @Id
     @GeneratedValue(generator = SEQ_EDCR_APPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
-    
+
     @Enumerated(EnumType.STRING)
     private ApplicationType applicationType;
 
@@ -62,24 +62,23 @@ public class EdcrApplication extends AbstractAuditable {
     private List<EdcrApplicationDetail> edcrApplicationDetails;
 
     private transient PlanInformation planInformation;
-    
+
     @Length(min = 1, max = 128)
     private String planPermitNumber;
-    
+
     @Temporal(value = TemporalType.DATE)
     private Date permitApplicationDate;
-    
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "buildingLicensee")
     private User buildingLicensee;
-    
+
     @Length(min = 1, max = 128)
     private String transactionNumber;
-    
-    private String thirdPartyUserCode;
-    
-    private String thirdPartyUserTenant;
 
+    private String thirdPartyUserCode;
+
+    private String thirdPartyUserTenant;
 
     private transient MultipartFile dxfFile; // File to be process.
 
@@ -98,11 +97,13 @@ public class EdcrApplication extends AbstractAuditable {
     private String architectInformation;
 
     private String projectType;
-    
+
     private transient String permitDateTemp;
 
-    private transient  Map<String, List<Object>> mdmsMasterData;
-    
+    private transient Map<String, List<Object>> mdmsMasterData;
+
+    private transient String deviationStatus;
+
     @Override
     public Long getId() {
         return id;
@@ -186,14 +187,14 @@ public class EdcrApplication extends AbstractAuditable {
     }
 
     public String getTransactionNumber() {
-		return transactionNumber;
-	}
+        return transactionNumber;
+    }
 
-	public void setTransactionNumber(String transactionNumber) {
-		this.transactionNumber = transactionNumber;
-	}
+    public void setTransactionNumber(String transactionNumber) {
+        this.transactionNumber = transactionNumber;
+    }
 
-	public File getSavedDxfFile() {
+    public File getSavedDxfFile() {
         return savedDxfFile;
     }
 
@@ -273,21 +274,21 @@ public class EdcrApplication extends AbstractAuditable {
         this.permitDateTemp = permitDateTemp;
     }
 
-	public String getThirdPartyUserCode() {
-		return thirdPartyUserCode;
-	}
+    public String getThirdPartyUserCode() {
+        return thirdPartyUserCode;
+    }
 
-	public void setThirdPartyUserCode(String thirdPartyUserCode) {
-		this.thirdPartyUserCode = thirdPartyUserCode;
-	}
+    public void setThirdPartyUserCode(String thirdPartyUserCode) {
+        this.thirdPartyUserCode = thirdPartyUserCode;
+    }
 
-	public String getThirdPartyUserTenant() {
-		return thirdPartyUserTenant;
-	}
+    public String getThirdPartyUserTenant() {
+        return thirdPartyUserTenant;
+    }
 
-	public void setThirdPartyUserTenant(String thirdPartyUserTenant) {
-		this.thirdPartyUserTenant = thirdPartyUserTenant;
-	}
+    public void setThirdPartyUserTenant(String thirdPartyUserTenant) {
+        this.thirdPartyUserTenant = thirdPartyUserTenant;
+    }
 
     public Map<String, List<Object>> getMdmsMasterData() {
         return mdmsMasterData;
@@ -296,5 +297,13 @@ public class EdcrApplication extends AbstractAuditable {
     public void setMdmsMasterData(Map<String, List<Object>> mdmsMasterData) {
         this.mdmsMasterData = mdmsMasterData;
     }
-    
+
+    public String getDeviationStatus() {
+        return deviationStatus;
+    }
+
+    public void setDeviationStatus(String deviationStatus) {
+        this.deviationStatus = deviationStatus;
+    }
+
 }

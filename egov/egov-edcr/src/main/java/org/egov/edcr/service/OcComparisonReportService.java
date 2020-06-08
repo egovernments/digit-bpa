@@ -248,6 +248,159 @@ public class OcComparisonReportService {
 
     }
 
+    public InputStream generatePreOcComparisonReport(EdcrApplicationDetail ocDcr,
+            EdcrApplicationDetail permitDcr, OcComparisonDetail comparisonDetail) {
+
+        Plan ocPlan = ocDcr.getPlan();
+
+        FileStoreMapper permitFileMapper = permitDcr.getPlanDetailFileStore();
+        File permitFile = permitFileMapper != null ? fileStoreService.fetch(
+                permitFileMapper.getFileStoreId(), DcrConstants.APPLICATION_MODULE_TYPE) : null;
+        ObjectMapper permitMapper = new ObjectMapper();
+        permitMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        Plan permitPlan = null;
+        try {
+            permitPlan = permitMapper.readValue(permitFile, Plan.class);
+        } catch (IOException e) {
+            LOG.log(Level.ERROR, e);
+        }
+
+        List<OcComparisonBlockDetail> ocComparison = buildOcComparison(permitPlan, ocPlan);
+        List<ScrutinyDetail> scrutinyDetails = buildReportObject(ocComparison);
+
+        boolean finalReportStatus = true;
+        FastReportBuilder drb = new FastReportBuilder();
+
+        final Style titleStyle = new Style("titleStyle");
+        titleStyle.setFont(new Font(50, Font._FONT_TIMES_NEW_ROMAN, true));
+        titleStyle.setHorizontalAlign(HorizontalAlign.CENTER);
+
+        titleStyle.setFont(new Font(2, Font._FONT_TIMES_NEW_ROMAN, false));
+        String applicationNumber = StringUtils.isNotBlank(ocDcr.getApplication().getApplicationNumber())
+                ? ocDcr.getApplication().getApplicationNumber()
+                : "NA";
+        String applicationDate = DateUtils.toDefaultDateFormat(ocDcr.getApplication().getApplicationDate());
+
+        drb.setPageSizeAndOrientation(new Page(842, 595, true));
+        final JRDataSource ds = new JRBeanCollectionDataSource(scrutinyDetails);
+
+        final Map<String, Object> valuesMap = new HashMap<>();
+        valuesMap.put("ulbName", ApplicationThreadLocals.getMunicipalityName());
+        valuesMap.put("applicationNumber", applicationNumber);
+        valuesMap.put("ocdcrNo", ocDcr.getDcrNumber());
+        valuesMap.put("dcrNo", permitDcr.getDcrNumber());
+        valuesMap.put("applicationDate", applicationDate);
+        valuesMap.put("applicantName", ocDcr.getApplication().getApplicantName());
+        valuesMap.put("reportGeneratedDate", DateUtils.toDefaultDateTimeFormat(new Date()));
+        valuesMap.put("combined", true);
+        String imageURL = ReportUtil.getImageURL("/egi/resources/global/images/digit-logo-black.png");
+        valuesMap.put("egovLogo", imageURL);
+        valuesMap.put("cityLogo", cityService.getCityLogoURLByCurrentTenant());
+
+        Set<String> common = new TreeSet<>();
+        Map<String, ScrutinyDetail> allMap = new HashMap<>();
+        Map<String, Set<String>> blocks = new TreeMap<>();
+        LOG.info("Generate Report.......");
+        for (ScrutinyDetail sd : scrutinyDetails) {
+            LOG.info(sd.getKey());
+            LOG.info(sd.getHeading());
+            String[] split = {};
+            if (sd.getKey() != null)
+                split = sd.getKey().split("_");
+            if (split.length == 2) {
+                common.add(split[1]);
+                allMap.put(split[1], sd);
+
+            } else if (split.length == 3) {
+                if (blocks.get(split[1]) == null) {
+                    Set<String> features = new TreeSet<>();
+                    features.add(split[2]);
+                    blocks.put(split[1], features);
+                } else {
+                    blocks.get(split[1]).add(split[2]);
+                }
+                allMap.put(split[1] + split[2], sd);
+            }
+        }
+        /*
+         * int i = 0; List<String> cmnHeading = new ArrayList<>(); cmnHeading.add("Common");
+         * drb.addConcatenatedReport(createHeaderSubreport("Common - Scrutiny Details", "Common")); valuesMap.put("Common",
+         * cmnHeading); for (String cmnFeature : common) { i++; drb.addConcatenatedReport(getSub(allMap.get(cmnFeature), i, i +
+         * "." + cmnFeature, allMap.get(cmnFeature).getHeading(), allMap.get(cmnFeature).getSubHeading(), cmnFeature));
+         * valuesMap.put(cmnFeature, allMap.get(cmnFeature).getDetail()); }
+         */
+
+        for (String blkName : blocks.keySet()) {
+            List blkHeading = new ArrayList();
+            blkHeading.add(BLOCK + blkName);
+            drb.addConcatenatedReport(
+                    createHeaderSubreport("Block " + blkName, BLOCK + blkName));
+            valuesMap.put(BLOCK + blkName, blkHeading);
+            int j = 0;
+
+            // This is only for rest
+            for (String blkFeature : blocks.get(blkName)) {
+                j++;
+                drb.addConcatenatedReport(getSub(allMap.get(blkName + blkFeature), j, j + "." + blkFeature,
+                        allMap.get(blkName + blkFeature).getHeading(),
+                        allMap.get(blkName + blkFeature).getSubHeading(), blkName + blkFeature));
+                valuesMap.put(blkName + blkFeature, allMap.get(blkName + blkFeature).getDetail());
+
+                List featureFooter = new ArrayList();
+                if (allMap.get(blkName + blkFeature).getRemarks() != null) {
+                    drb.addConcatenatedReport(
+                            createFooterSubreport("Remarks :  " + allMap.get(blkName + blkFeature).getRemarks(),
+                                    "Remarks_" + blkName + blkFeature));
+                    featureFooter.add(allMap.get(blkName + blkFeature).getRemarks());
+                    valuesMap.put("Remarks_" + blkName + blkFeature, featureFooter);
+
+                }
+
+            }
+
+        }
+
+        if (finalReportStatus)
+            for (String cmnFeature : common) {
+                for (Map<String, String> commonStatus : allMap.get(cmnFeature).getDetail()) {
+                    if (commonStatus.get(STATUS).equalsIgnoreCase(Result.Not_Accepted.getResultVal())) {
+                        finalReportStatus = false;
+                    }
+                }
+            }
+
+        if (finalReportStatus)
+            for (String blkName : blocks.keySet()) {
+                for (String blkFeature : blocks.get(blkName)) {
+                    for (Map<String, String> blkStatus : allMap.get(blkName + blkFeature).getDetail()) {
+                        if (blkStatus.get(STATUS).equalsIgnoreCase(Result.Not_Accepted.getResultVal())) {
+                            finalReportStatus = false;
+                        }
+                    }
+                }
+            }
+        drb.setTemplateFile("/reports/templates/oc_comparison_report.jrxml");
+        drb.setMargins(5, 0, 33, 20);
+        String endStatus = finalReportStatus ? "Accepted" : "Not Accepted";
+        valuesMap.put("reportStatus", endStatus);
+        comparisonDetail.setStatus(endStatus);
+
+        valuesMap.put("qrCode", generatePDF417Code(buildQRCodeDetails(ocDcr.getApplication(),
+                finalReportStatus)));
+
+        final DynamicReport dr = drb.build();
+        InputStream exportPdf = null;
+        try {
+            JasperPrint generateJasperPrint = DynamicJasperHelper.generateJasperPrint(dr, new ClassicLayoutManager(),
+                    ds, valuesMap);
+            exportPdf = reportService.exportPdf(generateJasperPrint);
+        } catch (IOException | JRException e) {
+            LOG.error("Error occurred when generating Jasper report", e);
+        }
+        return exportPdf;
+
+    }
+
     private Subreport createHeaderSubreport(String title, String dataSourceName) {
         try {
 
@@ -469,7 +622,7 @@ public class OcComparisonReportService {
 
     private BigDecimal getDeviation(BigDecimal ocValue, BigDecimal permitValue) {
         BigDecimal numerator = ocValue.subtract(permitValue).multiply(BigDecimal.valueOf(100));
-        BigDecimal finalValue = ocValue.compareTo(BigDecimal.ZERO) > 0 ? numerator.divide(permitValue, DECIMALDIGITS_MEASUREMENTS,
+        BigDecimal finalValue = permitValue.compareTo(BigDecimal.ZERO) > 0 ? numerator.divide(permitValue, DECIMALDIGITS_MEASUREMENTS,
                 ROUNDMODE_MEASUREMENTS) : numerator;
         return finalValue;
     }

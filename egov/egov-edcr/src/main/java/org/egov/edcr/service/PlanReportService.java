@@ -879,6 +879,11 @@ public class PlanReportService {
              */
         }
 
+        if (ApplicationType.OCCUPANCY_CERTIFICATE.equals(dcrApplication.getApplicationType())) {
+            plan.setMainDcrPassed(finalReportStatus);
+            finalReportStatus = finalReportStatus && (dcrApplication.getDeviationStatus().equalsIgnoreCase("Accepted"));
+        }
+        
         reportBuilder.append("Report Status : " + (finalReportStatus ? "Accepted" : "Not Accepted")).append("\\n")
                 .append("\\n");
         reportBuilder.append("Rules Verified : ").append("\\n");

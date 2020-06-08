@@ -39,6 +39,8 @@
  */
 package org.egov.edcr.entity;
 
+import java.io.InputStream;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -48,6 +50,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -78,6 +81,9 @@ public class OcComparisonDetail extends AbstractAuditable {
     private String status;
 
     private String tenantId;
+    
+    @Transient
+    private InputStream output;
 
     @Override
     public Long getId() {
@@ -131,6 +137,14 @@ public class OcComparisonDetail extends AbstractAuditable {
 
     public void setOcComparisonReport(FileStoreMapper ocComparisonReport) {
         this.ocComparisonReport = ocComparisonReport;
+    }
+
+    public InputStream getOutput() {
+        return output;
+    }
+
+    public void setOutput(InputStream output) {
+        this.output = output;
     }
 
 }

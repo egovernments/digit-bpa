@@ -32,6 +32,9 @@
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="reportStatus" class="java.lang.String"/>
 	<parameter name="dcrNo" class="java.lang.String"/>
+	<parameter name="combined" class="java.lang.Boolean">
+		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
+	</parameter>
 	<variable name="SUB_REPORT_ROW_CNT" class="java.lang.Integer"/>
 	<title>
 		<band height="130" splitType="Stretch">
@@ -77,11 +80,15 @@
 				<textFieldExpression><![CDATA[$P{applicationNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="130" y="90" width="118" height="20" uuid="f03077bd-6475-42e6-ae0d-2c37aa7725fc"/>
+				<reportElement x="432" y="90" width="118" height="20" uuid="f03077bd-6475-42e6-ae0d-2c37aa7725fc">
+					<printWhenExpression><![CDATA[!$P{combined}]]></printWhenExpression>
+				</reportElement>
 				<textFieldExpression><![CDATA[$P{ocdcrNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="20" y="90" width="110" height="20" uuid="12aae430-3666-453b-974b-81f600b8da60"/>
+				<reportElement x="322" y="90" width="110" height="20" uuid="12aae430-3666-453b-974b-81f600b8da60">
+					<printWhenExpression><![CDATA[!$P{combined}]]></printWhenExpression>
+				</reportElement>
 				<textFieldExpression><![CDATA["Ocdcr Number :"]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -101,7 +108,7 @@
 				<textFieldExpression><![CDATA["Scrutiny Date :"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement style="report status style" x="78" y="110" width="141" height="19" uuid="93e69995-0876-4e2c-81fc-8abb08610059"/>
+				<reportElement style="report status style" x="77" y="110" width="141" height="19" uuid="93e69995-0876-4e2c-81fc-8abb08610059"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -116,7 +123,7 @@
 				<textFieldExpression><![CDATA[$P{reportStatus}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="21" y="111" width="57" height="18" uuid="46d16fcf-ebe4-4d7c-a943-9c2e7805bbd6"/>
+				<reportElement x="20" y="110" width="57" height="18" uuid="46d16fcf-ebe4-4d7c-a943-9c2e7805bbd6"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.0" lineStyle="Solid" lineColor="#000000"/>
@@ -131,11 +138,11 @@
 				<text><![CDATA[STATUS :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="422" y="90" width="127" height="20" uuid="31af9a53-c39b-4a92-8999-033e167f3416"/>
+				<reportElement x="120" y="90" width="127" height="20" uuid="31af9a53-c39b-4a92-8999-033e167f3416"/>
 				<textFieldExpression><![CDATA[$P{dcrNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="322" y="90" width="100" height="20" uuid="f31a001a-5427-4350-ba98-96f86acded3e"/>
+				<reportElement x="20" y="90" width="100" height="20" uuid="f31a001a-5427-4350-ba98-96f86acded3e"/>
 				<textFieldExpression><![CDATA["Edcr Number :"]]></textFieldExpression>
 			</textField>
 		</band>
