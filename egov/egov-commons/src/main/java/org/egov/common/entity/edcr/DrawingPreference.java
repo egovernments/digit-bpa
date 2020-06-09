@@ -59,55 +59,64 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * 
  * @author pradeep
  * 
- *         Drawing preference Pojo used to verify drawing parameters.Drawing
- *         preferences are the first one to be validate in each plan scrutiny.
- *         Eg: Expecting all the plan to be submit in meter.
+ * Drawing preference Pojo used to verify drawing parameters.Drawing preferences are the first one to be validate in each plan
+ * scrutiny. Eg: Expecting all the plan to be submit in meter.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DrawingPreference implements Serializable {
 
-	private static final long serialVersionUID = 5705288339053140008L;
+    private static final long serialVersionUID = 5705288339053140008L;
 
-	@Transient
-	@JsonIgnore
-	private Boolean inMeters = true;
+    @Transient
+    @JsonIgnore
+    private Boolean inMeters = true;
 
-	@Transient
-	private Boolean lengthFactor = true;
+    @Transient
+    private Boolean lengthFactor = true;
 
-	private transient NorthDirection northDirection;
-	private transient List<Measurement> locationPlans;
+    private transient NorthDirection northDirection;
+    private transient List<Measurement> locationPlans;
 
-	public Boolean getInMeters() {
-		return inMeters;
-	}
+    private transient String uom;
 
-	public void setInMeters(Boolean inMeters) {
-		this.inMeters = inMeters;
-	}
+    public Boolean getInMeters() {
+        return inMeters;
+    }
 
-	public Boolean getLengthFactor() {
-		return lengthFactor;
-	}
+    public void setInMeters(Boolean inMeters) {
+        this.inMeters = inMeters;
+    }
 
-	public void setLengthFactor(Boolean lengthFactor) {
-		this.lengthFactor = lengthFactor;
-	}
+    public Boolean getLengthFactor() {
+        return lengthFactor;
+    }
 
-	public NorthDirection getNorthDirection() {
-		return northDirection;
-	}
+    public void setLengthFactor(Boolean lengthFactor) {
+        this.lengthFactor = lengthFactor;
+    }
 
-	public void setNorthDirection(NorthDirection northDirection) {
-		this.northDirection = northDirection;
-	}
+    public NorthDirection getNorthDirection() {
+        return northDirection;
+    }
 
-	public List<Measurement> getLocationPlans() {
-		return locationPlans;
-	}
+    public void setNorthDirection(NorthDirection northDirection) {
+        this.northDirection = northDirection;
+    }
 
-	public void setLocationPlans(List<Measurement> locationPlans) {
-		this.locationPlans = locationPlans;
-	}
+    public List<Measurement> getLocationPlans() {
+        return locationPlans;
+    }
+
+    public void setLocationPlans(List<Measurement> locationPlans) {
+        this.locationPlans = locationPlans;
+    }
+
+    public String getUom() {
+        return uom;
+    }
+
+    public void setUom(String uom) {
+        this.uom = uom;
+    }
 
 }
