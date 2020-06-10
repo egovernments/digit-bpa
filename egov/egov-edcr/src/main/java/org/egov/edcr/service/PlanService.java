@@ -99,14 +99,16 @@ public class PlanService {
             InputStream reportStream = generateReport(plan, amd, dcrApplication);
             saveOutputReport(dcrApplication, reportStream, plan);
         } else if ("Occupancy certificate".equalsIgnoreCase(dcrApplication.getApplicationType().getApplicationType())) {
-
             ComparisonRequest comparisonRequest = new ComparisonRequest();
             EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
             comparisonRequest.setEdcrNumber(edcrApplicationDetail.getComparisonDcrNumber());
             comparisonRequest.setTenantId(edcrApplicationDetail.getApplication().getThirdPartyUserTenant());
             edcrApplicationDetail.setPlan(plan);
-            OcComparisonDetail ocComparisonE = ocComparisonService.processCombined(comparisonRequest, edcrApplicationDetail);
-            dcrApplication.setDeviationStatus(ocComparisonE.getStatus());
+
+            OcComparisonDetail processCombinedStatus = ocComparisonService.processCombinedStatus(comparisonRequest,
+                    edcrApplicationDetail);
+
+            dcrApplication.setDeviationStatus(processCombinedStatus.getStatus());
 
             InputStream reportStream = generateReport(plan, amd, dcrApplication);
             saveOutputReport(dcrApplication, reportStream, plan);
@@ -123,7 +125,9 @@ public class PlanService {
             }
             ByteArrayInputStream dcrReport = new ByteArrayInputStream(convertedDigitDcr);
             pdfs.add(dcrReport);
+
             if (plan.getMainDcrPassed()) {
+                OcComparisonDetail ocComparisonE = ocComparisonService.processCombined(processCombinedStatus, edcrApplicationDetail);
 
                 final String fileName = ocComparisonE.getOcdcrNumber() + "-" + ocComparisonE.getDcrNumber()
                         + "-comparison"
@@ -132,7 +136,7 @@ public class PlanService {
                         "application/pdf",
                         DcrConstants.FILESTORE_MODULECODE);
                 ocComparisonE.setOcComparisonReport(fileStoreMapper);
-                if(StringUtils.isNotBlank(dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber())) {
+                if (StringUtils.isNotBlank(dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber())) {
                     ocComparisonE.setOcdcrNumber(dcrApplication.getEdcrApplicationDetails().get(0).getDcrNumber());
                 }
                 ocComparisonDetailService.saveAndFlush(ocComparisonE);

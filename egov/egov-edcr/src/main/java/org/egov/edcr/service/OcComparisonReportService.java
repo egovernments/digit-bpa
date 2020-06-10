@@ -265,8 +265,7 @@ public class OcComparisonReportService {
             LOG.log(Level.ERROR, e);
         }
 
-        List<OcComparisonBlockDetail> ocComparison = buildOcComparison(permitPlan, ocPlan);
-        List<ScrutinyDetail> scrutinyDetails = buildReportObject(ocComparison);
+        List<ScrutinyDetail> scrutinyDetails = comparisonDetail.getScrutinyDetails();
 
         boolean finalReportStatus = true;
         FastReportBuilder drb = new FastReportBuilder();
@@ -292,7 +291,6 @@ public class OcComparisonReportService {
         valuesMap.put("applicationDate", applicationDate);
         valuesMap.put("applicantName", ocDcr.getApplication().getApplicantName());
         valuesMap.put("reportGeneratedDate", DateUtils.toDefaultDateTimeFormat(new Date()));
-        valuesMap.put("combined", true);
         String imageURL = ReportUtil.getImageURL("/egi/resources/global/images/digit-logo-black.png");
         valuesMap.put("egovLogo", imageURL);
         valuesMap.put("cityLogo", cityService.getCityLogoURLByCurrentTenant());
@@ -398,6 +396,87 @@ public class OcComparisonReportService {
             LOG.error("Error occurred when generating Jasper report", e);
         }
         return exportPdf;
+
+    }
+
+    public OcComparisonDetail getComparisonReportStatus(EdcrApplicationDetail ocDcr,
+            EdcrApplicationDetail permitDcr, OcComparisonDetail comparisonDetail) {
+
+        Plan ocPlan = ocDcr.getPlan();
+
+        FileStoreMapper permitFileMapper = permitDcr.getPlanDetailFileStore();
+        File permitFile = permitFileMapper != null ? fileStoreService.fetch(
+                permitFileMapper.getFileStoreId(), DcrConstants.APPLICATION_MODULE_TYPE) : null;
+        ObjectMapper permitMapper = new ObjectMapper();
+        permitMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        Plan permitPlan = null;
+        try {
+            permitPlan = permitMapper.readValue(permitFile, Plan.class);
+        } catch (IOException e) {
+            LOG.log(Level.ERROR, e);
+        }
+
+        List<OcComparisonBlockDetail> ocComparison = buildOcComparison(permitPlan, ocPlan);
+        List<ScrutinyDetail> scrutinyDetails = buildReportObject(ocComparison);
+
+        boolean finalReportStatus = true;
+
+        Set<String> common = new TreeSet<>();
+        Map<String, ScrutinyDetail> allMap = new HashMap<>();
+        Map<String, Set<String>> blocks = new TreeMap<>();
+        LOG.info("Generate Report.......");
+        for (ScrutinyDetail sd : scrutinyDetails) {
+            LOG.info(sd.getKey());
+            LOG.info(sd.getHeading());
+            String[] split = {};
+            if (sd.getKey() != null)
+                split = sd.getKey().split("_");
+            if (split.length == 2) {
+                common.add(split[1]);
+                allMap.put(split[1], sd);
+
+            } else if (split.length == 3) {
+                if (blocks.get(split[1]) == null) {
+                    Set<String> features = new TreeSet<>();
+                    features.add(split[2]);
+                    blocks.put(split[1], features);
+                } else {
+                    blocks.get(split[1]).add(split[2]);
+                }
+                allMap.put(split[1] + split[2], sd);
+            }
+        }
+        /*
+         * int i = 0; List<String> cmnHeading = new ArrayList<>(); cmnHeading.add("Common");
+         * drb.addConcatenatedReport(createHeaderSubreport("Common - Scrutiny Details", "Common")); valuesMap.put("Common",
+         * cmnHeading); for (String cmnFeature : common) { i++; drb.addConcatenatedReport(getSub(allMap.get(cmnFeature), i, i +
+         * "." + cmnFeature, allMap.get(cmnFeature).getHeading(), allMap.get(cmnFeature).getSubHeading(), cmnFeature));
+         * valuesMap.put(cmnFeature, allMap.get(cmnFeature).getDetail()); }
+         */
+
+        if (finalReportStatus)
+            for (String cmnFeature : common) {
+                for (Map<String, String> commonStatus : allMap.get(cmnFeature).getDetail()) {
+                    if (commonStatus.get(STATUS).equalsIgnoreCase(Result.Not_Accepted.getResultVal())) {
+                        finalReportStatus = false;
+                    }
+                }
+            }
+
+        if (finalReportStatus)
+            for (String blkName : blocks.keySet()) {
+                for (String blkFeature : blocks.get(blkName)) {
+                    for (Map<String, String> blkStatus : allMap.get(blkName + blkFeature).getDetail()) {
+                        if (blkStatus.get(STATUS).equalsIgnoreCase(Result.Not_Accepted.getResultVal())) {
+                            finalReportStatus = false;
+                        }
+                    }
+                }
+            }
+
+        comparisonDetail.setScrutinyDetails(scrutinyDetails);
+        comparisonDetail.setStatus(finalReportStatus ? Result.Accepted.getResultVal() : Result.Not_Accepted.getResultVal());
+        return comparisonDetail;
 
     }
 

@@ -40,6 +40,7 @@
 package org.egov.edcr.entity;
 
 import java.io.InputStream;
+import java.util.List;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -52,6 +53,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
+import org.egov.common.entity.edcr.ScrutinyDetail;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.Length;
@@ -81,9 +83,15 @@ public class OcComparisonDetail extends AbstractAuditable {
     private String status;
 
     private String tenantId;
-    
+
     @Transient
     private InputStream output;
+
+    @Transient
+    private List<ScrutinyDetail> scrutinyDetails;
+
+    @Transient
+    private EdcrApplicationDetail permitDcr;
 
     @Override
     public Long getId() {
@@ -145,6 +153,22 @@ public class OcComparisonDetail extends AbstractAuditable {
 
     public void setOutput(InputStream output) {
         this.output = output;
+    }
+
+    public List<ScrutinyDetail> getScrutinyDetails() {
+        return scrutinyDetails;
+    }
+
+    public void setScrutinyDetails(List<ScrutinyDetail> scrutinyDetails) {
+        this.scrutinyDetails = scrutinyDetails;
+    }
+
+    public EdcrApplicationDetail getPermitDcr() {
+        return permitDcr;
+    }
+
+    public void setPermitDcr(EdcrApplicationDetail permitDcr) {
+        this.permitDcr = permitDcr;
     }
 
 }

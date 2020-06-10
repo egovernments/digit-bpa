@@ -32,9 +32,6 @@
 	<parameter name="applicationDate" class="java.lang.String"/>
 	<parameter name="reportStatus" class="java.lang.String"/>
 	<parameter name="dcrNo" class="java.lang.String"/>
-	<parameter name="combined" class="java.lang.Boolean">
-		<defaultValueExpression><![CDATA[false]]></defaultValueExpression>
-	</parameter>
 	<variable name="SUB_REPORT_ROW_CNT" class="java.lang.Integer"/>
 	<title>
 		<band height="130" splitType="Stretch">
@@ -80,15 +77,11 @@
 				<textFieldExpression><![CDATA[$P{applicationNumber}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="432" y="90" width="118" height="20" uuid="f03077bd-6475-42e6-ae0d-2c37aa7725fc">
-					<printWhenExpression><![CDATA[!$P{combined}]]></printWhenExpression>
-				</reportElement>
-				<textFieldExpression><![CDATA[$P{ocdcrNo}]]></textFieldExpression>
+				<reportElement x="422" y="90" width="128" height="20" uuid="f03077bd-6475-42e6-ae0d-2c37aa7725fc"/>
+				<textFieldExpression><![CDATA[$P{ocdcrNo}!=null?$P{ocdcrNo}:"N/A"]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="322" y="90" width="110" height="20" uuid="12aae430-3666-453b-974b-81f600b8da60">
-					<printWhenExpression><![CDATA[!$P{combined}]]></printWhenExpression>
-				</reportElement>
+				<reportElement x="322" y="90" width="100" height="20" uuid="12aae430-3666-453b-974b-81f600b8da60"/>
 				<textFieldExpression><![CDATA["Ocdcr Number :"]]></textFieldExpression>
 			</textField>
 			<textField>
@@ -138,11 +131,11 @@
 				<text><![CDATA[STATUS :]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="120" y="90" width="127" height="20" uuid="31af9a53-c39b-4a92-8999-033e167f3416"/>
+				<reportElement x="130" y="90" width="127" height="20" uuid="31af9a53-c39b-4a92-8999-033e167f3416"/>
 				<textFieldExpression><![CDATA[$P{dcrNo}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="20" y="90" width="100" height="20" uuid="f31a001a-5427-4350-ba98-96f86acded3e"/>
+				<reportElement x="20" y="90" width="110" height="20" uuid="f31a001a-5427-4350-ba98-96f86acded3e"/>
 				<textFieldExpression><![CDATA["Edcr Number :"]]></textFieldExpression>
 			</textField>
 		</band>

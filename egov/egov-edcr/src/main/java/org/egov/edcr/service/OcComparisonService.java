@@ -113,7 +113,24 @@ public class OcComparisonService {
         return comparisonDetail;
     }
 
-    public OcComparisonDetail processCombined(ComparisonRequest comparisonRequest, EdcrApplicationDetail ocDcr) {
+    public OcComparisonDetail processCombined(OcComparisonDetail comparisonDetail, EdcrApplicationDetail ocDcr) {
+
+        EdcrApplication dcrApplication = ocDcr.getApplication();
+
+        AmendmentService repo = (AmendmentService) specificRuleService.find("amendmentService");
+        Amendment amd = repo.getAmendments();
+
+        Date applicationDate = dcrApplication.getApplicationDate();
+
+        InputStream ocreportStream = generatePreOcComparisonReport(applicationDate, amd, ocDcr, comparisonDetail.getPermitDcr(),
+                comparisonDetail);
+
+        comparisonDetail.setOutput(ocreportStream);
+
+        return comparisonDetail;
+    }
+    
+    public OcComparisonDetail processCombinedStatus(ComparisonRequest comparisonRequest, EdcrApplicationDetail ocDcr) {
         String ocdcrNo = comparisonRequest.getOcdcrNumber();
         String dcrNo = comparisonRequest.getEdcrNumber();
         String tenantId = comparisonRequest.getTenantId();
@@ -131,11 +148,10 @@ public class OcComparisonService {
         ocComparisonDetailE.setOcdcrNumber(ocdcrNo);
         ocComparisonDetailE.setDcrNumber(dcrNo);
         ocComparisonDetailE.setTenantId(tenantId);
+        ocComparisonDetailE.setPermitDcr(permitDcr);
 
-        InputStream ocreportStream = generatePreOcComparisonReport(applicationDate, amd, ocDcr, permitDcr, ocComparisonDetailE);
-        
-        ocComparisonDetailE.setOutput(ocreportStream);
-        
+        getComparisonReportStatus(applicationDate, amd, ocDcr, permitDcr, ocComparisonDetailE);
+
         return ocComparisonDetailE;
     }
     
@@ -258,6 +274,48 @@ public class OcComparisonService {
         return reportStream;
     }
 
+    private OcComparisonDetail getComparisonReportStatus(Date applicationDate, Amendment amd, EdcrApplicationDetail ocDcr,
+            EdcrApplicationDetail permitDcr, OcComparisonDetail detail) {
+
+        String beanName = "OcComparisonReportService";
+        OcComparisonReportService service = null;
+        int index = -1;
+        AmendmentDetails[] amdArray = null;
+        Boolean comparisonReportStatus = null;
+        int length = amd.getDetails().size();
+        if (!amd.getDetails().isEmpty()) {
+            index = amd.getIndex(applicationDate);
+            amdArray = new AmendmentDetails[amd.getDetails().size()];
+            amd.getDetails().toArray(amdArray);
+        }
+
+        try {
+            beanName = beanName.substring(0, 1).toLowerCase() + beanName.substring(1);
+
+            if (amd.getDetails().isEmpty() || index == -1)
+                service = (OcComparisonReportService) specificRuleService.find(beanName);
+            else if (index >= 0) {
+                for (int i = index; i < length; i++) {
+
+                    service = (OcComparisonReportService) specificRuleService
+                            .find(beanName + "_" + amdArray[i].getDateOfBylawString());
+                    if (service != null)
+                        break;
+                }
+            }
+            if (service == null) {
+                service = (OcComparisonReportService) specificRuleService.find(beanName);
+            }
+
+            service.getComparisonReportStatus(ocDcr, permitDcr, detail);
+
+        } catch (BeansException e) {
+            LOG.error("No Bean Defined for the Rule " + beanName);
+        }
+
+        return detail;
+    }
+    
     @Transactional
     public void saveComparisonReport(OcComparisonDetail detail, InputStream reportOutputStream) {
         final String fileName = detail.getOcdcrNumber() + "-" + detail.getDcrNumber() +
