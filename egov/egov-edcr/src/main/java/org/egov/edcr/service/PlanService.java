@@ -94,11 +94,17 @@ public class PlanService {
         plan.setMdmsMasterData(dcrApplication.getMdmsMasterData());
         plan = applyRules(plan, amd, cityDetails);
 
+        String comparisonDcrNumber = dcrApplication.getEdcrApplicationDetails().get(0).getComparisonDcrNumber();
         if (ApplicationType.PERMIT.getApplicationTypeVal()
-                .equalsIgnoreCase(dcrApplication.getApplicationType().getApplicationType())) {
+                .equalsIgnoreCase(dcrApplication.getApplicationType().getApplicationType())
+                || (ApplicationType.OCCUPANCY_CERTIFICATE.getApplicationTypeVal()
+                        .equalsIgnoreCase(dcrApplication.getApplicationType().getApplicationType())
+                        && StringUtils.isBlank(comparisonDcrNumber))) {
             InputStream reportStream = generateReport(plan, amd, dcrApplication);
             saveOutputReport(dcrApplication, reportStream, plan);
-        } else if ("Occupancy certificate".equalsIgnoreCase(dcrApplication.getApplicationType().getApplicationType())) {
+        } else if (ApplicationType.OCCUPANCY_CERTIFICATE.getApplicationTypeVal()
+                .equalsIgnoreCase(dcrApplication.getApplicationType().getApplicationType())
+                && StringUtils.isNotBlank(comparisonDcrNumber)) {
             ComparisonRequest comparisonRequest = new ComparisonRequest();
             EdcrApplicationDetail edcrApplicationDetail = dcrApplication.getEdcrApplicationDetails().get(0);
             comparisonRequest.setEdcrNumber(edcrApplicationDetail.getComparisonDcrNumber());
