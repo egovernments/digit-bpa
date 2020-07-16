@@ -183,7 +183,7 @@ public class Occupancy extends Measurement {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
+        result = prime * result + ((typeHelper == null) ? 0 : typeHelper.hashCode());
         return result;
     }
 
@@ -196,7 +196,7 @@ public class Occupancy extends Measurement {
         if (getClass() != obj.getClass())
             return false;
         Occupancy other = (Occupancy) obj;
-        if (type != other.type)
+        if (!typeHelper.equals(other.typeHelper))
             return false;
         return true;
     }
