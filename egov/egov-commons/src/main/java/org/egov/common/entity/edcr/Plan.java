@@ -167,7 +167,7 @@ public class Plan implements Serializable {
     // Plot all sides compound wall and their railing heights
     private CompoundWall compoundWall;
     // Roads reserved by government for road widening purpose
-    private transient List<Measurement> roadReserves = new ArrayList<>();
+    private transient List<Road> roadReserves = new ArrayList<>();
 
     @Transient
     @JsonIgnore
@@ -620,11 +620,11 @@ public class Plan implements Serializable {
         this.mainDcrPassed = mainDcrPassed;
     }
 
-    public List<Measurement> getRoadReserves() {
+    public List<Road> getRoadReserves() {
         return roadReserves;
     }
 
-    public void setRoadReserves(List<Measurement> roadReserves) {
+    public void setRoadReserves(List<Road> roadReserves) {
         this.roadReserves = roadReserves;
     }
 
