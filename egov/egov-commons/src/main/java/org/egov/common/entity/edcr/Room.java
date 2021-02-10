@@ -52,76 +52,83 @@ import java.util.List;
 
 public class Room {
 
-	private static final long serialVersionUID = 28L;
+    private static final long serialVersionUID = 28L;
 
-	private String number;
+    private String number;
 
-	private List<RoomHeight> heightOfRooms = new ArrayList<>();
-	private Boolean closed = false;
+    private List<RoomHeight> heightOfRooms = new ArrayList<>();
+    private Boolean closed = false;
 
-	private List<Measurement> rooms = new ArrayList<>();
+    private List<Measurement> rooms = new ArrayList<>();
 
-	private MeasurementWithHeight lightAndVentilation = new MeasurementWithHeight();
+    private MeasurementWithHeight lightAndVentilation = new MeasurementWithHeight();
 
-	public List<RoomHeight> getHeights() {
-		return heightOfRooms;
-	}
+    private List<Occupancy> mezzanineAreas = new ArrayList<>();
 
-	public void setHeights(List<RoomHeight> heights) {
-		this.heightOfRooms = heights;
-	}
+    public List<RoomHeight> getHeights() {
+        return heightOfRooms;
+    }
 
-	/**
-	 * @return the closed
-	 */
-	public Boolean getClosed() {
-		return closed;
-	}
+    public void setHeights(List<RoomHeight> heights) {
+        this.heightOfRooms = heights;
+    }
 
-	/**
-	 * @param closed
-	 *            the closed to set
-	 */
-	public void setClosed(Boolean closed) {
-		this.closed = closed;
-	}
+    /**
+     * @return the closed
+     */
+    public Boolean getClosed() {
+        return closed;
+    }
 
-	/**
-	 * @return the number
-	 */
-	public String getNumber() {
-		return number;
-	}
+    /**
+     * @param closed the closed to set
+     */
+    public void setClosed(Boolean closed) {
+        this.closed = closed;
+    }
 
-	/**
-	 * @param number
-	 *            the number to set
-	 */
-	public void setNumber(String number) {
-		this.number = number;
-	}
+    /**
+     * @return the number
+     */
+    public String getNumber() {
+        return number;
+    }
 
-	/**
-	 * @return the lightAndVentilation
-	 */
-	public MeasurementWithHeight getLightAndVentilation() {
-		return lightAndVentilation;
-	}
+    /**
+     * @param number the number to set
+     */
+    public void setNumber(String number) {
+        this.number = number;
+    }
 
-	/**
-	 * @param lightAndVentilation
-	 *            the lightAndVentilation to set
-	 */
-	public void setLightAndVentilation(MeasurementWithHeight lightAndVentilation) {
-		this.lightAndVentilation = lightAndVentilation;
-	}
+    /**
+     * @return the lightAndVentilation
+     */
+    public MeasurementWithHeight getLightAndVentilation() {
+        return lightAndVentilation;
+    }
 
-	public List<Measurement> getRooms() {
-		return rooms;
-	}
+    /**
+     * @param lightAndVentilation the lightAndVentilation to set
+     */
+    public void setLightAndVentilation(MeasurementWithHeight lightAndVentilation) {
+        this.lightAndVentilation = lightAndVentilation;
+    }
 
-	public void setRooms(List<Measurement> rooms) {
-		this.rooms = rooms;
-	}
+    public List<Measurement> getRooms() {
+        return rooms;
+    }
+
+    public void setRooms(List<Measurement> rooms) {
+        this.rooms = rooms;
+    }
+
+    public List<Occupancy> getMezzanineAreas() {
+        return mezzanineAreas;
+    }
+
+    public void setMezzanineAreas(List<Occupancy> mezzanineAreas) {
+        this.mezzanineAreas = mezzanineAreas;
+    }
 
 }
