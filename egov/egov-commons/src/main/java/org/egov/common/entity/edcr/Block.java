@@ -421,4 +421,7 @@ public class Block extends Measurement {
         this.porticos = porticos;
     }
     
+    public void addPorticos(Portico portico) {
+        this.porticos.add(portico);
+    }
 }
