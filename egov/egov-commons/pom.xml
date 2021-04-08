@@ -35,7 +35,7 @@
 	<parent>
 		<artifactId>egov-erp</artifactId>
 		<groupId>org.egov</groupId>
-		<version>BPA-3.0.1-SNAPSHOT</version>
+		<version>BPA-3.0.2-SNAPSHOT</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 
